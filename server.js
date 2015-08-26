@@ -1,4 +1,6 @@
 var express = require('express');
+var morgan = require('morgan');
+var bodyParser = require('body-parser')
 var passport = require('passport');
 var Strategy = require('passport-http').DigestStrategy;
 var db = require('./db');
@@ -25,28 +27,25 @@ passport.use(new Strategy({ qop: 'auth' },
 // Create a new Express application.
 var app = express();
 
-// Configure Express application.
-app.configure(function() {
-  app.use(express.logger());
-});
+app.use(morgan('dev'));
 
 app.get('/',
   passport.authenticate('digest', { session: false }),
   function(req, res) {
     res.json({ username: req.user.username, email: req.user.emails[0].value });
   });
-  
+
 // curl -v --user jack:secret --digest "http://127.0.0.1:3000/hello?name=World&x=y"
 app.get('/hello',
   passport.authenticate('digest', { session: false }),
   function(req, res) {
     res.json({ message: 'Hello, ' + req.query.name, from: req.user.username });
   });
-  
+
 // curl -v -d "name=World" --user jack:secret --digest http://127.0.0.1:3000/hello
 app.post('/hello',
   passport.authenticate('digest', { session: false }),
-  express.bodyParser(),
+  bodyParser,
   function(req, res) {
     res.json({ message: 'Hello, ' + req.body.name, from: req.user.username });
   });
