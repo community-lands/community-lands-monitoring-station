@@ -5,10 +5,6 @@ var createFormList = require('openrosa-formlist')
 var persistFs = require('../helpers/persist-fs')
 var fmt = require('moment')
 
-var PREFIX = process.env.directory || ''
-var ROOT_PATH = PREFIX + '/Community Lands Data/Monitoring'
-var SUBMISSIONS = ROOT_PATH + '/' + process.env.station + '/Submissions'
-
 function getForm(req, res, next) {
   storage.getForm(req.params.id, function(err, xml) {
     if (err)
@@ -46,24 +42,28 @@ function getForms(req, res, next) {
 function createForm(req, res, next) {
   var submission = req.submission
   var user = req.user.username
-  var date = fmt().format('YYYY-MM-DD')
+  var date = submission.date
   var ext = submission.geojson ? '.geojson' : '.json'
-  var filename = user + '/' + date + '/' + submission.instanceId + ext
+  var filename = submission.instanceId + ext
   var json = JSON.stringify(submission.json, null, '  ')
 
   var options = {
     filesystem: {
-      path: SUBMISSIONS + '/'
+      path: req.submission.location
     },
     filename: filename
   }
   persistFs(json, options, function(err) {
     if (err)
       next(err)
-    else
-      res.status(201).send({
-        saved: filename
-      })
+    else {
+      options.filename = submission.instanceId + '.xml'
+      persistFs(submission.xml, options, function(err) {
+        res.status(201).send({
+          saved: filename
+        })
+      });
+    }
   });
 }
 

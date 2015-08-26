@@ -1,16 +1,12 @@
 var extend = require('xtend')
 var fs = require('fs')
+var path = require('path')
 var persistFs = require('../helpers/persist-fs')
 //var updateFileRef = require('../helpers/update-file-ref')
 
 var defaults = {
   store: 'fs'
 }
-
-var PREFIX = process.env.directory || ''
-var ROOT_PATH = PREFIX + '/Community Lands Data/Monitoring'
-var SUBMISSIONS = ROOT_PATH + '/' + process.env.station + '/Submissions'
-
 
 /**
  * openrosa-form-submission middleware saves the files to `tmp` and attaches
@@ -33,16 +29,19 @@ function SaveMedia (options) {
 
     var taskCount = 0
     var s3bucket = req.params.s3bucket
+    var index = 1
 
     req.files.forEach(function (file) {
       var storeOptions = {
         filesystem: {
-          path: SUBMISSIONS
+          path: req.submission.location
         },
-        filename: req.submission.instanceId + '/' + file.originalFilename,
+        filename: req.submission.instanceId + ' ' + index + path.extname(file.originalFilename), //file.originalFilename,
         s3bucket: s3bucket,
         file: file
       }
+
+      index++
 
       store(fs.createReadStream(file.path), storeOptions, function onSave (err, url) {
         if (err) onError(err)
