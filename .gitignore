@@ -2,5 +2,6 @@
 .DS_Store
 
 # Node.js
+.env
 node_modules/
 npm-debug.log

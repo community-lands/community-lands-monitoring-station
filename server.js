@@ -5,6 +5,13 @@ var passport = require('passport');
 var Strategy = require('passport-http').DigestStrategy;
 var db = require('./db');
 
+var FormSubmissionMiddleware = require('openrosa-form-submission-middleware')
+var ProcessSubmission = require('./middlewares/process-submission')
+var SaveMedia = require('./middlewares/save-media')
+
+var forms = require('./controllers/forms')
+
+var error = require('./controllers/error-handler')
 
 // Configure the Digest strategy for use by Passport.
 //
@@ -50,4 +57,34 @@ app.post('/hello',
     res.json({ message: 'Hello, ' + req.body.name, from: req.user.username });
   });
 
-app.listen(3000);
+app.get('/files', function(req, res, next) {
+  list.getFormUrls(function(err, files) {
+    if (err)
+      next(err)
+    else {
+      res.json(files);
+    }
+  });
+});
+
+app.get('/formList', forms.index)
+
+app.get('/forms', forms.index)
+app.get('/forms/:id', forms.show)
+
+app.head('/submission', 
+  passport.authenticate('digest', { session: false }),
+  FormSubmissionMiddleware())
+
+app.post('/submission',
+  passport.authenticate('digest', { session: false }),
+  FormSubmissionMiddleware(),
+  ProcessSubmission(),
+  SaveMedia(),
+  forms.create);
+
+app.use(error)
+  
+var port = process.env.PORT || 3000
+app.listen(port);
+console.log('Listening on port %s', port)
