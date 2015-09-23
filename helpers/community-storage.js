@@ -1,10 +1,13 @@
 require('dotenv').load();
 
 var fs = require('fs')
+var path = require('path')
+var mkdirp = require('mkdirp')
 
-var PREFIX = process.env.directory || ''
-var ROOT_PATH = PREFIX + '/Community Lands Data/Monitoring'
-var GLOBAL_FORMS = ROOT_PATH + '/Forms'
+var PREFIX = process.env.directory || '';
+var ROOT_PATH = PREFIX + '/Community Lands Data/Monitoring';
+var GLOBAL_FORMS = ROOT_PATH + '/Forms';
+var GLOBAL_MAPS = ROOT_PATH + '/Maps';
 
 function getFormUrls(cb) {
   var local_forms = ROOT_PATH + '/' + process.env.station + '/Forms'
@@ -38,7 +41,42 @@ function getForm(file, cb) {
   });
 }
 
+function getMap(file, cb) {
+  var mapFile = GLOBAL_MAPS + '/' + file;
+  fs.exists(mapFile, function(exists) {
+    if (exists) {
+      fs.readFile(mapFile, function(err, data) {
+        cb(err, data);
+      });
+    } else {
+      mkdirp(path.dirname(mapFile), function(err) {
+        if (err)
+          cb(err);
+        else {
+          blank = '{ "type": "FeatureCollection", "features": [] }'
+          fs.writeFile(mapFile, blank, function(err) {
+            if (err)
+              cb(err);
+            else {
+              getMap(file, cb);
+            }
+          });
+        }
+      });
+    }
+  });
+}
+
+function saveMap(file, data, cb) {
+  var mapFile = GLOBAL_MAPS + '/' + file;
+  fs.writeFile(mapFile, data, function(err) {
+    cb(err);
+  });
+}
+
 module.exports = {
   getFormUrls: getFormUrls,
-  getForm: getForm
+  getForm: getForm,
+  getMap: getMap,
+  saveMap: saveMap
 }

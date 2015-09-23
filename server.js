@@ -8,6 +8,9 @@ var db = require('./db');
 var FormSubmissionMiddleware = require('openrosa-form-submission-middleware')
 var ProcessSubmission = require('./middlewares/process-submission')
 var SaveMedia = require('./middlewares/save-media')
+var AppendGeoJSON = require ('./middlewares/append-geojson')
+
+var storage = require('./helpers/community-storage')
 
 var forms = require('./controllers/forms')
 
@@ -57,6 +60,12 @@ app.post('/hello',
     res.json({ message: 'Hello, ' + req.body.name, from: req.user.username });
   });
 
+app.get('/map', function(req, res, next) {
+  storage.getMap('Monitoring.geojson', function(err, data) {
+    res.json(JSON.parse(data));
+  });
+});
+
 app.get('/files', function(req, res, next) {
   list.getFormUrls(function(err, files) {
     if (err)
@@ -81,6 +90,7 @@ app.post('/submission',
   FormSubmissionMiddleware(),
   ProcessSubmission(),
   SaveMedia(),
+  AppendGeoJSON(),
   forms.create);
 
 app.use(error)
