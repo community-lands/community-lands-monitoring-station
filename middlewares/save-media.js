@@ -36,7 +36,7 @@ function SaveMedia (options) {
         filesystem: {
           path: req.submission.location
         },
-        filename: req.submission.instanceId + ' ' + index + path.extname(file.originalFilename), //file.originalFilename,
+        filename: req.submission.instanceId + '_' + index + path.extname(file.originalFilename), //file.originalFilename,
         s3bucket: s3bucket,
         file: file
       }
@@ -46,7 +46,8 @@ function SaveMedia (options) {
       store(fs.createReadStream(file.path), storeOptions, function onSave (err, url) {
         if (err) onError(err)
         // store a reference to where the file is now stored on the file object
-        file.url = url
+        file.url = (req.submission.location + storeOptions.filename).replace('/Community Lands Data/Monitoring/','')
+        req.submission.json["properties"]["photos"]["picture"] = file.url
         //updateFileRef(req.submission.json, file)
         taskCount++
         // Quick and dirty check whether we have processed all the files
