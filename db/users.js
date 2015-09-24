@@ -30,7 +30,9 @@ exports.findByUsername = function(username, cb) {
       }
     }
     if (match == null && community != null) {
-      match = community;
+      //Make a "new" user based on the community user
+      match = JSON.parse(JSON.stringify(community));
+      match.username = username
     }
     return cb(null, match);
   });
