@@ -36,8 +36,11 @@ passport.use(new Strategy({ qop: 'auth' },
 
 // Create a new Express application.
 var app = express();
+var fs = require('fs');
 
 app.use(morgan('dev'));
+
+app.use('/mapfilter',express.static('mapfilter'));
 
 app.get('/',
   passport.authenticate('digest', { session: false }),
@@ -47,8 +50,7 @@ app.get('/',
 
 // curl -v --user jack:secret --digest "http://127.0.0.1:3000/hello?name=World&x=y"
 app.get('/hello',
-  passport.authenticate('digest', { session: false }),
-  function(req, res) {
+  function(req, res, next) {
     res.json({ message: 'Hello, ' + req.query.name, from: req.user.username });
   });
 
@@ -66,6 +68,13 @@ app.get('/map', function(req, res, next) {
   });
 });
 
+app.get('/json/Monitoring.json', function(req, res, next) {
+  storage.getMap('Monitoring.geojson', function(err, data) {
+    res.json(JSON.parse(data).features);
+  });
+});
+
+
 app.get('/files', function(req, res, next) {
   list.getFormUrls(function(err, files) {
     if (err)
@@ -81,7 +90,7 @@ app.get('/formList', forms.index)
 app.get('/forms', forms.index)
 app.get('/forms/:id', forms.show)
 
-app.head('/submission', 
+app.head('/submission',
   passport.authenticate('digest', { session: false }),
   FormSubmissionMiddleware())
 
@@ -94,7 +103,7 @@ app.post('/submission',
   forms.create);
 
 app.use(error)
-  
+
 var port = process.env.PORT || 3000
 app.listen(port);
 console.log('Listening on port %s', port)
