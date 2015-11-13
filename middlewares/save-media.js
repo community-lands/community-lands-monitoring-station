@@ -46,8 +46,15 @@ function SaveMedia (options) {
       store(fs.createReadStream(file.path), storeOptions, function onSave (err, url) {
         if (err) onError(err)
         // store a reference to where the file is now stored on the file object
+        console.log(req.submission.json)
         file.url = (req.submission.location + storeOptions.filename).replace('/Community Lands Data/Monitoring/','')
-        req.submission.json["properties"]["photos"]["picture"] = file.url
+        if(req.submission.json["properties"]["photos"]){
+          req.submission.json["properties"]["photos"]["picture"] = file.url
+        } else {
+            if(req.submission.json["properties"]["picture"]){
+              req.submission.json["properties"]["picture"] = file.url
+            }
+        }
         //updateFileRef(req.submission.json, file)
         taskCount++
         // Quick and dirty check whether we have processed all the files
