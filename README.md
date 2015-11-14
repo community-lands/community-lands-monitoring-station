@@ -1,6 +1,6 @@
-This example demonstrates how to use [Express](http://expressjs.com/) 4.x and
-[Passport](http://passportjs.org/) to authenticate users via the HTTP Digest
-scheme.  Use this example as a starting point for your own web applications.
+This is a self-contained offline monitoring station for the Community Lands
+project. It includes other components such as MapFilter in a preconfigured
+way for deployment to various communities.
 
 ## Instructions
 
@@ -16,11 +16,11 @@ $ npm install
 Start the server.
 
 ```bash
-$ node server.js
+$ npm start
 ```
 
-Use `curl` to send an authenticated request.
+Read the output to see the default settings for your server and, if needed,
+adjust them using environment variables.
 
-```bash
-$ curl -v --user jack:secret --digest http://127.0.0.1:3000/
-```
+This branch is tested from a Node command line install on both Windows and
+Mac.

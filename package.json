@@ -1,7 +1,7 @@
 {
-  "name": "express-4.x-http-digest-example",
-  "version": "0.0.0",
-  "description": "Express 4.x app using Passport for authentication via HTTP Digest scheme.",
+  "name": "community-lands-monitoring-station",
+  "version": "1.0.0",
+  "description": "Community Lands Monitoring Station",
   "keywords": [
     "example",
     "express",
@@ -9,13 +9,13 @@
   ],
   "author": "Rob Heittman",
   "license": "Unlicense",
-  "homepage": "https://github.com/rfc2616/express-4.x-http-digest-example",
+  "homepage": "https://github.com/rfc2616/community-lands-monitoring-station",
   "repository": {
     "type": "git",
-    "url": "git://github.com/rfc2616/express-4.x-http-digest-example.git"
+    "url": "git://github.com/rfc2616/community-lands-monitoring-station.git"
   },
   "bugs": {
-    "url": "https://github.com/rfc2616/express-4.x-http-digest-example/issues"
+    "url": "https://github.com/rfc2616/community-lands-monitoring-station/issues"
   },
   "dependencies": {
     "body-parser": "^1.13.3",
