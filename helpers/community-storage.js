@@ -4,8 +4,8 @@ var fs = require('fs')
 var path = require('path')
 var mkdirp = require('mkdirp')
 
-var PREFIX = process.env.directory || '';
-var ROOT_PATH = PREFIX + '/Community Lands Data/Monitoring';
+var PREFIX = process.env.directory || '.';
+var ROOT_PATH = PREFIX + '/Monitoring';
 var GLOBAL_FORMS = ROOT_PATH + '/Forms';
 var GLOBAL_MAPS = ROOT_PATH + '/Maps';
 

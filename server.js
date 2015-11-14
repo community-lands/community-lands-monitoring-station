@@ -41,7 +41,7 @@ var fs = require('fs');
 app.use(morgan('dev'));
 
 app.use('/mapfilter',express.static('mapfilter'));
-app.use('/monitoring-files',express.static('community-lands'));
+app.use('/monitoring-files',express.static('Monitoring'));
 
 app.get('/',
   passport.authenticate('digest', { session: false }),
