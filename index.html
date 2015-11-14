@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>Community Lands Monitoring Station</title>
+    <script>
+    var ipc = require('ipc');
+    ipc.on('has_configuration', function(configuration) {
+      var cdiv = document.getElementById('configuration')
+      cdiv.innerHTML = ""
+      if(configuration.length == 0) {
+        cdiv.innerHTML = "Configuration unknown. This station is not working properly."
+      }
+      for (_i = 0, _len = configuration.length; _i < _len; _i++) {
+        var f = configuration[_i]
+        var d = document.createElement("div")
+        d.innerHTML = f
+        cdiv.appendChild(d)
+      }
+    });
+    ipc.send('show_configuration');
+    </script>
+  </head>
+  <body>
+    <h1>Community Lands Monitoring Station</h1>
+    <div id="configuration">
+      Loading monitoring station settings
+    </div>
+  </body>
+</html>
