@@ -4,12 +4,12 @@ way for deployment to various communities.
 
 ## Instructions
 
-To install this example on your computer, clone the repository and install
+To install this station on your computer, clone the repository and install
 dependencies.
 
 ```bash
-$ git clone git@github.com:rfc2616/express-4.x-http-digest-example.git
-$ cd express-3.x-http-digest-example
+$ git clone git@github.com:rfc2616/community-lands-monitoring-station.git
+$ cd community-lands-monitoring-station
 $ npm install
 ```
 
@@ -20,7 +20,7 @@ $ npm start
 ```
 
 Read the output to see the default settings for your server and, if needed,
-adjust them using environment variables.
+adjust them using environment variables and restart.
 
 This branch is tested from a Node command line install on both Windows and
 Mac.
