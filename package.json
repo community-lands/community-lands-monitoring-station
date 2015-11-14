@@ -1,6 +1,7 @@
 {
   "name": "community-lands-monitoring-station",
   "version": "1.0.0",
+  "main": "main.js",
   "description": "Community Lands Monitoring Station",
   "keywords": [
     "example",
