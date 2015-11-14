@@ -1,4 +1,5 @@
 var app = require('app');  // Module to control application life.
+process.env.directory = process.env.directory || app.getAppPath()
 var BrowserWindow = require('browser-window');  // Module to create native browser window.
 
 var fs = require('fs');
@@ -7,10 +8,12 @@ var server = require('./server')
 
 ipc.on('show_configuration', function(event, arg) {
   try{
-    list = fs.readdirSync('.');
+    list = fs.readdirSync(process.env.directory);
     _results = [];
-    _results.push("station:"+process.env.station)
-    _results.push("baseUrl:"+process.env.baseUrl)
+    _results.push("directory: "+process.env.directory+"/Monitoring")
+    _results.push("station: "+process.env.station)
+    _results.push("baseUrl: "+process.env.baseUrl)
+    _results.push("shared_secret: "+process.env.shared_secret)
     for (_i = 0, _len = list.length; _i < _len; _i++) {
       var file = list[_i];
       _results.push(file);

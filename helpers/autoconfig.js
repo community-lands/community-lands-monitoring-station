@@ -11,6 +11,7 @@ process.env.port = process.env.port || '3000'
 console.log("Port number to use for the local web server")
 console.log("  port: " + process.env.port)
 process.env.directory = process.env.directory || '.'
+process.chdir(process.env.directory)
 console.log("Where your Monitoring folder lives")
 console.log("  directory: " + process.env.directory)
 process.env.station = process.env.station || 'DEMO'
