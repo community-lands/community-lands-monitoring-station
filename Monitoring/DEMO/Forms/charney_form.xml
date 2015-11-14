@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <h:head>
+    <h:title>Charney Form</h:title>
+    <model>
+      <instance>
+        <new_form id="new_form">
+          <location/>
+          <picture/>
+          <placename/>
+          <happening/>
+          <today/>
+          <people/>
+          <start/>
+          <end/>
+          <meta>
+            <instanceID/>
+          </meta>
+        </new_form>
+      </instance>
+      <bind nodeset="/new_form/location" required="false()" type="geopoint"/>
+      <bind nodeset="/new_form/picture" required="true()" type="binary"/>
+      <bind nodeset="/new_form/placename" required="true()" type="string"/>
+      <bind nodeset="/new_form/happening" required="true()" type="select1"/>
+      <bind nodeset="/new_form/today" required="true()" type="date"/>
+      <bind nodeset="/new_form/people" required="true()" type="string"/>
+      <bind jr:preload="timestamp" jr:preloadParams="start" nodeset="/new_form/start" type="dateTime"/>
+      <bind jr:preload="timestamp" jr:preloadParams="end" nodeset="/new_form/end" type="dateTime"/>
+      <bind calculate="concat('uuid:', uuid())" nodeset="/new_form/meta/instanceID" readonly="true()" type="string"/>
+    </model>
+  </h:head>
+  <h:body>
+    <input ref="/new_form/location">
+      <label>Record Location</label>
+      <hint>GPS coordinates can only be collected when outside.</hint>
+    </input>
+    <upload mediatype="image/*" ref="/new_form/picture">
+      <label>Take a picture</label>
+    </upload>
+    <input ref="/new_form/placename">
+      <label>Photo caption</label>
+      <hint>Describe what is in the photo</hint>
+    </input>
+    <select1 ref="/new_form/happening">
+      <label>What kind of thing is this</label>
+      <item>
+        <label>Tree or Plant</label>
+        <value>tree_or_plant</value>
+      </item>
+      <item>
+        <label>Old Building</label>
+        <value>old_building</value>
+      </item>
+      <item>
+        <label>New Building</label>
+        <value>new_building</value>
+      </item>
+      <item>
+        <label>Old Object</label>
+        <value>old_object</value>
+      </item>
+      <item>
+        <label>New Object</label>
+        <value>new_object</value>
+      </item>
+      <item>
+        <label>Activity</label>
+        <value>activity</value>
+      </item>
+      <item>
+        <label>Creature</label>
+        <value>creature</value>
+      </item>
+    </select1>
+    <input ref="/new_form/today">
+      <label>Visited Date</label>
+    </input>
+    <input ref="/new_form/people">
+      <label>Visited by</label>
+      <hint>What is your name?</hint>
+    </input>
+  </h:body>
+</h:html>
