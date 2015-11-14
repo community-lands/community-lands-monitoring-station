@@ -8,16 +8,12 @@ var server = require('./server')
 
 ipc.on('show_configuration', function(event, arg) {
   try{
-    list = fs.readdirSync(process.env.directory);
-    _results = [];
-    _results.push("directory: "+process.env.directory+"/Monitoring")
-    _results.push("station: "+process.env.station)
-    _results.push("baseUrl: "+process.env.baseUrl)
-    _results.push("shared_secret: "+process.env.shared_secret)
-    for (_i = 0, _len = list.length; _i < _len; _i++) {
-      var file = list[_i];
-      _results.push(file);
-    }
+    _results = {
+      'directory': process.env.directory,
+      'station': process.env.station,
+      'baseUrl': process.env.baseUrl,
+      'shared_secret': process.env.shared_secret
+    };
     event.sender.send('has_configuration', _results);
   } catch (err) {
     event.sender.send('has_configuration', []);

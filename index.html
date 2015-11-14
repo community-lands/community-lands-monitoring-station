@@ -1,28 +1,50 @@
 <html>
   <head>
     <title>Community Lands Monitoring Station</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <script>
     var ipc = require('ipc');
     ipc.on('has_configuration', function(configuration) {
-      var cdiv = document.getElementById('configuration')
-      cdiv.innerHTML = ""
-      if(configuration.length == 0) {
-        cdiv.innerHTML = "Configuration unknown. This station is not working properly."
-      }
-      for (_i = 0, _len = configuration.length; _i < _len; _i++) {
-        var f = configuration[_i]
-        var d = document.createElement("div")
-        d.innerHTML = f
-        cdiv.appendChild(d)
-      }
+      document.getElementById('baseUrl').innerHTML = configuration.baseUrl
+      document.getElementById('shared_secret').innerHTML = configuration.shared_secret
+      document.getElementById('mapUrl').innerHTML = configuration.baseUrl + "/mapfilter"
+      document.getElementById('form_folder').innerHTML = configuration.directory + "/Monitoring/" + configuration.station + "/Forms"
     });
     ipc.send('show_configuration');
     </script>
   </head>
-  <body>
-    <h1>Community Lands Monitoring Station</h1>
-    <div id="configuration">
-      Loading monitoring station settings
+  <body><div class="container-fluid"><div class="row"><div class="col-xs-12">
+    <div class="alert alert-info" style='margin-top: 10px'><b>The monitoring station will run as long as this window is open.</b></div>
+    <h4>ODK Collect settings</h4>
+    <div class="well">
+      <div>
+        Base URL:
+      </div>
+      <div><b id="baseUrl"></b></div>
+      <div>
+        Use your agent number as the username.
+      </div>
+      <div>
+        Password:
+      </div>
+      <div><b id="shared_secret"></b></div>
     </div>
-  </body>
+    <h4>Browser settings</h3>
+    <div class="well">
+      <div>
+        URL for viewing maps in your browser:
+      </div>
+      <div><b id="mapUrl"></b></div>
+    </div>
+    <h4>Advanced</h4>
+    <div class="well">
+      <div>
+        Folder for blank monitoring forms:
+      </div>
+      <div><b id="form_folder"></b></div>
+      <div class="btn btn-small btn-primary" style="margin-top: 10px">Backup Data</div>
+    </div>
+
+  </div></div></div></body>
 </html>
