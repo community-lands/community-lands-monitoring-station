@@ -9,7 +9,7 @@ var defaults = {
 }
 
 var PREFIX = process.env.directory
-var ROOT_PATH = PREFIX + '/Community Lands Data/Monitoring'
+var ROOT_PATH = PREFIX + '/Monitoring'
 var SUBMISSIONS = ROOT_PATH + '/' + process.env.station + '/Submissions'
 
 /**

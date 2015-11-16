@@ -47,7 +47,7 @@ function SaveMedia (options) {
         if (err) onError(err)
         // store a reference to where the file is now stored on the file object
         console.log(req.submission.json)
-        file.url = (req.submission.location + storeOptions.filename).replace('/Community Lands Data/Monitoring/','')
+        file.url = (req.submission.location + storeOptions.filename).replace(/.*Monitoring/,'')
         if(req.submission.json["properties"]["photos"]){
           req.submission.json["properties"]["photos"]["picture"] = file.url
         } else {
