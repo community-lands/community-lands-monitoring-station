@@ -7,6 +7,9 @@ var passport = require('passport');
 var Strategy = require('passport-http').DigestStrategy;
 var db = require('./db');
 
+var tile_cache = require('./helpers/tile-cache');
+# tile_cache.pyramid_urls(-76.3605,-9.4491,-72.757,-6.1078, 1, 13);
+
 var FormSubmissionMiddleware = require('openrosa-form-submission-middleware')
 var ProcessSubmission = require('./middlewares/process-submission')
 var SaveMedia = require('./middlewares/save-media')
