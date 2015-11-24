@@ -18,6 +18,7 @@ var AppendGeoJSON = require ('./middlewares/append-geojson')
 var storage = require('./helpers/community-storage')
 var forms = require('./controllers/forms')
 var error = require('./controllers/error-handler')
+var CommunityLands = require('./controllers/community-lands');
 
 // Configure the Digest strategy for use by Passport.
 //
@@ -92,6 +93,10 @@ app.get('/formList', forms.index)
 
 app.get('/forms', forms.index)
 app.get('/forms/:id', forms.show)
+
+app.get('/backup/latest', CommunityLands.backup);
+app.get('/backup/all', CommunityLands.resync);
+app.get('/backup/status', CommunityLands.lastBackup);
 
 app.head('/submission',
   passport.authenticate('digest', { session: false }),

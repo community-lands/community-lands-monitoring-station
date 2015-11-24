@@ -19,6 +19,7 @@
     "url": "https://github.com/rfc2616/community-lands-monitoring-station/issues"
   },
   "dependencies": {
+    "archiver": "*",
     "body-parser": "^1.13.3",
     "dotenv": "^0.5.1",
     "express": "^4.13.3",
