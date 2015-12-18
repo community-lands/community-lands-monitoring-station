@@ -5,30 +5,43 @@ var moment = require('moment');
 var fs = require('fs');
 var http = require('http');
 
-function lastSubmission(req, res, next) {
+function ensureConfigured(req, res, next, cont) {
   var cl_server = process.env.community_lands_server // || default_server
   var cl_token = process.env.community_lands_token
 
   if (cl_server == null || cl_token == null)
     res.json({error: 500, message: 'Please configure community lands server and/or token in settings.'});
-  else {
+  else
+    cont(req, res, next);
+}
+
+function lastSubmission(req, res, next) {
+  ensureConfigured(req, res, next, function() {
     getLastSubmissionDate(function(date) {
       res.json({date: date});
     });
-  }
+  });
+}
+
+function saveFilter(req, res, next) {
+  ensureConfigured(req, res, next, function() {
+    var post = req.body;
+    var headers = {
+      'Content-length': post.length,
+      'Content-type': 'application/json'
+    }
+    var clReq = http.request(getCLRequestOpts('POST', '/maps'), clCallback(res), headers);
+    clReq.write(JSON.stringify(post));
+    clReq.end();
+  });
 }
 
 function uploadSubmissions(req, res, next) {
-  var cl_server = process.env.community_lands_server // || default_server
-  var cl_token = process.env.community_lands_token
-
-  if (cl_server == null || cl_token == null)
-    res.json({error: 500, message: 'Please configure community lands server and/or token in settings.'});
-  else {
+  ensureConfigured(req, res, next, function() {
     getLastSubmissionDate(function(date) {
       uploadSubmissionsSince(req, res, next, date);
     });
-  }
+  });
 }
 
 function uploadAllSubmissions(req, res, next) {
@@ -49,7 +62,17 @@ function uploadSubmissionsSince(req, res, next, since) {
     }
   }
 
-  var clCallback = function(clRes) {
+  var clReq = http.request(getCLRequestOpts('POST', '/submissions'), clCallback(res));
+
+  var archive = archiver.create('zip', {});
+
+  archive.pipe(clReq);
+  archive.bulk(opts);
+  archive.finalize();
+}
+
+function clCallback(res) {
+  return function(clRes) {
     var clData = '';
     clRes.on('data', function(d) {
       clData += d;
@@ -58,16 +81,9 @@ function uploadSubmissionsSince(req, res, next, since) {
       if (res.statusCode >= 200 && res.statusCode <= 299)
         res.json(JSON.parse(clData));
       else
-        res.json(JSON.parse({error: true, code: res.statusCode}))
+        res.json(JSON.parse({error: true, code: res.statusCode}));
     });
   };
-  var clReq = http.request(getCLRequestOpts('POST', '/submissions'), clCallback);
-
-  var archive = archiver.create('zip', {});
-
-  archive.pipe(clReq);
-  archive.bulk(opts);
-  archive.finalize();
 }
 
 function getLastSubmissionDate(callback) {
@@ -88,11 +104,15 @@ function getLastSubmissionDate(callback) {
   }).end();
 }
 
-function getCLRequestOpts(method, path) {
+function getCLRequestOpts(method, path, headers) {
   var opts = {
     host: process.env.community_lands_server,
     path: '/api/v1/' + process.env.community_lands_token + path,
     method: method
+  }
+  if (headers != undefined) {
+    for (var key in headers)
+      opts[key] = headers[key]
   }
   if (process.env.community_lands_port != undefined)
     opts['port'] = process.env.community_lands_port
@@ -103,6 +123,7 @@ module.exports = {
 
   backup: uploadSubmissions,
   resync: uploadAllSubmissions,
-  lastBackup: lastSubmission
+  lastBackup: lastSubmission,
+  saveFilter: saveFilter
 
 }
