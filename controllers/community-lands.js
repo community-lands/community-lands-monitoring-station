@@ -63,7 +63,9 @@ function uploadSubmissionsSince(req, res, next, since) {
   }
 
   var clReq = http.request(getCLRequestOpts('POST', '/submissions'), clCallback(res));
-
+  clReq.on('error', function(e) {
+    res.json({error: true, code: 1001, message: "Could not make connection to Community Lands"});
+  });
   var archive = archiver.create('zip', {});
 
   archive.pipe(clReq);
@@ -81,7 +83,7 @@ function clCallback(res) {
       if (res.statusCode >= 200 && res.statusCode <= 299)
         res.json(JSON.parse(clData));
       else
-        res.json(JSON.parse({error: true, code: res.statusCode}));
+        res.json({error: true, code: res.statusCode});
     });
   };
 }
@@ -101,6 +103,8 @@ function getLastSubmissionDate(callback) {
           callback(null);
       }
     });
+  }).on('error', function(e) {
+    callback(null);
   }).end();
 }
 
