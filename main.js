@@ -10,13 +10,12 @@ var server = require('./server')
 ipc.on('show_configuration', function(event, arg) {
   try{
     _results = {
-      'directory': process.env.directory,
+      'directory': process.env.data_directory,
       'station': process.env.station,
       'baseUrl': process.env.baseUrl,
-      'shared_secret': process.env.shared_secret
+      'shared_secret': process.env.shared_secret,
+      'community_lands': !(process.env.community_lands_server === undefined || process.env.community_lands_token === undefined)
     };
-    if (process.env.community_lands_server != null && process.env.community_lands_token != null)
-      _results['community_lands'] = true;
     console.log(_results);
     event.sender.send('has_configuration', _results);
   } catch (err) {

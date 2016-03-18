@@ -49,7 +49,7 @@ function uploadAllSubmissions(req, res, next) {
 }
 
 function uploadSubmissionsSince(req, res, next, since) {
-  var dir = process.env.directory + "/Monitoring/" + process.env.station + "/Submissions";
+  var dir = process.env.data_directory + "/Monitoring/" + process.env.station + "/Submissions";
 
   var opts = { expand: true, src: ['**/*'], dest: '/Submissions', cwd: dir }
   if (since != null) {

@@ -1,3 +1,7 @@
+// Required for Electron to find initial config
+process.env.directory = process.env.directory || '.'
+process.chdir(process.env.directory)
+
 require('dotenv').load();
 
 // Detect IP, set up defaults for configuration variables if not set
@@ -10,10 +14,9 @@ console.log("----------------------")
 process.env.port = process.env.port || '3000'
 console.log("Port number to use for the local web server")
 console.log("  port: " + process.env.port)
-process.env.directory = process.env.directory || '.'
-process.chdir(process.env.directory)
+process.env.data_directory = process.env.data_directory || process.env.directory
 console.log("Where your Monitoring folder lives")
-console.log("  directory: " + process.env.directory)
+console.log("  directory: " + process.env.data_directory)
 process.env.station = process.env.station || 'DEMO'
 console.log("Name of this monitoring station")
 console.log("(and its station-specific folder under Monitoring)")

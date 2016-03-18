@@ -8,7 +8,7 @@ var defaults = {
   geojson: true
 }
 
-var PREFIX = process.env.directory
+var PREFIX = process.env.data_directory
 var ROOT_PATH = PREFIX + '/Monitoring'
 var SUBMISSIONS = ROOT_PATH + '/' + process.env.station + '/Submissions'
 
