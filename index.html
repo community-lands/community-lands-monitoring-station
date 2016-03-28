@@ -4,10 +4,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <script>
-    var ipc = require('ipc');
+    const ipc = require('ipc');
+    const shell = require('shell');
+    var config = null;
     var updateOnlineStatus = function() {
       ipc.send('community_lands_online', navigator.onLine);
     };
+    ipc.on('backup_submissions_complete', function(result) {
+      document.getElementById("backup_status").innerHTML = "";
+      var json = JSON.parse(result);
+      if (json.error) {
+        alert(json.message);
+      } else {
+        document.getElementById('backup_status').innerHTML = 'Backup of ' + json.file + 
+          ' complete.<br/>Open: <a id="backup_file" href="javascript:openBackupFile();" ' + 
+          'data-location="' + json.location + '">' + json.location + '</a>';
+        ipc.send('check_last_backup');
+      }
+    });
+    ipc.on('has_last_backup', function(result) {
+      var json = JSON.parse(result);
+      if (json.date)
+        document.getElementById('last_backup').innerHTML = '<p>Last Backup: <a href="javascript:openBackupFolder();">' + new Date(json.date) + '</a></p>';
+    });
     ipc.on('has_community_lands_online', function(status) {
       if (status == true || status == 'true')
         ipc.send('community_lands_status');
@@ -45,6 +64,7 @@
       ipc.send('community_lands_status');
     });
     ipc.on('has_configuration', function(configuration) {
+      config = configuration;
       document.getElementById('baseUrl').innerHTML = configuration.baseUrl
       document.getElementById('shared_secret').innerHTML = configuration.shared_secret
       document.getElementById('mapUrl').innerHTML = configuration.baseUrl + "/mapfilter"
@@ -53,6 +73,7 @@
         document.getElementById('community_lands_content').className = "";
     });
     ipc.send('show_configuration');
+    ipc.send('check_last_backup');
 
     window.addEventListener('online',  updateOnlineStatus);
     window.addEventListener('offline',  updateOnlineStatus);
@@ -66,6 +87,21 @@
       } else {
         alert("No internet connection detected");
       }
+    }
+
+    function backupFiles() {
+      document.getElementById('backup_status').innerHTML = "Saving files, please wait...";
+      ipc.send('backup_submissions');
+    }
+
+    function openBackupFile() {
+      var file = document.getElementById('backup_file').getAttribute('data-location');
+      shell.showItemInFolder(file);
+    }
+
+    function openBackupFolder() {
+      if (config)
+        shell.openItem(config.directory + "/Monitoring/" + config.station + "/Backup");
     }
     </script>
   </head>
@@ -98,7 +134,9 @@
         Folder for blank monitoring forms:
       </div>
       <div><b id="form_folder"></b></div>
-      <div class="btn btn-small btn-primary" style="margin-top: 10px">Backup Data</div>
+      <div id="last_backup"></div>
+      <div class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:backupFiles()">Backup Data</div>
+      <div style="margin-top: 10px" id="backup_status"></div>
     </div>
     <div class="hidden" id="community_lands_content">
       <h4>Community Lands</h4>

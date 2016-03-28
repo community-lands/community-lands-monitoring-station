@@ -20,6 +20,8 @@ var forms = require('./controllers/forms')
 var error = require('./controllers/error-handler')
 var CommunityLands = require('./controllers/community-lands');
 
+var Backup = require('./controllers/backup');
+
 // Configure the Digest strategy for use by Passport.
 //
 // The Digest strategy requires a `secret`function, which is used to look up
@@ -100,6 +102,9 @@ app.get('/forms/:id', forms.show)
 app.get('/backup/latest', CommunityLands.backup);
 app.get('/backup/all', CommunityLands.resync);
 app.get('/backup/status', CommunityLands.lastBackup);
+
+app.get('/save/all', Backup.backup);
+app.get('/save/status', Backup.lastBackup);
 
 app.post('/filters', bodyParser.json(), CommunityLands.saveFilter);
 

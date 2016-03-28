@@ -23,6 +23,44 @@ ipc.on('show_configuration', function(event, arg) {
   }
 });
 
+ipc.on('backup_submissions', function(event, arg) {
+  var options = {
+    hostname: 'localhost',
+    port: process.env.port || 3000,
+    path: '/save/all',
+    method: 'GET'
+  };
+  var req = http.request(options, function(res) {
+    var data = "";
+    res.on('data', function(chunk) {
+      data += chunk;
+    });
+    res.on('end', function() {
+      event.sender.send('backup_submissions_complete', data);
+    });
+  }).on('error', function(e) {
+    event.sender.send('backup_submissions_complete', '{"error":true, "message":"Could not connect to server"}');
+  }).end();
+});
+
+ipc.on('check_last_backup', function(event, arg) {
+  var options = {
+    hostname: 'localhost',
+    port: process.env.port || 3000,
+    path: '/save/status',
+    method: 'GET'
+  };
+  var req = http.request(options, function(res) {
+    var data = ""
+    res.on('data', function(chunk) {
+      data += chunk;
+    });
+    res.on('end', function() {
+      event.sender.send('has_last_backup', data);
+    });
+  }).end();
+});
+
 ipc.on('community_lands_backup', function(event, arg) {
   if (process.env.community_lands_server) {
     var options = {
