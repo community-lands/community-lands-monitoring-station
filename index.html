@@ -58,6 +58,29 @@
         document.getElementById('form_listing').innerHTML = "";
       }
     });
+    ipc.on('has_filter_list', function(result) {
+      document.getElementById('saved-filters').innerHTML = "";
+      var json = JSON.parse(result);
+      if (!json.error) {
+        var filters = json.filters;
+        if (filters.length > 0) {
+          var content = '<h5>Saved Filters</h5><ul>';
+          for (var index in filters) {
+            content += '<li><a class="map-link" href="' + config.baseUrl + '/mapfilter?filter=' + filters[index].id + '">' +
+              filters[index].name + '</a></li>';
+          }
+          content += "</ul>"
+          document.getElementById('saved-filters').innerHTML = content;
+          var els = document.getElementsByClassName('map-link');
+          for (var i in els) {
+            els[i].onclick = function(event) {
+              event.preventDefault();
+              shell.openExternal(this.getAttribute('href'));
+            };
+          }
+        }
+      }
+    });
     ipc.on('has_community_lands_online', function(status) {
       if (status == true || status == 'true')
         ipc.send('community_lands_status');
@@ -106,6 +129,7 @@
     ipc.send('show_configuration');
     ipc.send('check_last_backup');
     ipc.send('form_list');
+    ipc.send('filter_list');
 
     window.addEventListener('online',  updateOnlineStatus);
     window.addEventListener('offline',  updateOnlineStatus);
@@ -139,6 +163,7 @@
     function selectForm() {
       ipc.send('select_form');
     }
+
     </script>
   </head>
   <body><div class="container-fluid"><div class="row"><div class="col-xs-12">
@@ -163,6 +188,8 @@
         URL for viewing maps in your browser:
       </div>
       <div><b id="mapUrl"></b></div>
+      <div id="saved-filters">
+      </div>
     </div>
     <h4>Monitoring Forms</h4>
     <div class="well">

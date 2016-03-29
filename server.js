@@ -19,6 +19,7 @@ var storage = require('./helpers/community-storage')
 var forms = require('./controllers/forms')
 var error = require('./controllers/error-handler')
 var CommunityLands = require('./controllers/community-lands');
+var MapFilter = require('./controllers/map-filter');
 
 var Backup = require('./controllers/backup');
 
@@ -47,26 +48,9 @@ var path = require('path');
 app.use(morgan('dev'));
 
 app.use('/mapfilter',express.static(__dirname + '/mapfilter'));
-app.get('/mapfilter/json/mapfilter-config.json', function(req, res, next) {
-  var data = {
-    canSaveFilters: true
-  };
-  var filter = req.query.filter;
-  if (filter) {
-    var file = path.join(process.env.data_directory, 'Monitoring', process.env.station, 'Filters', filter);
-    fs.access(file, fs.F_OK | fs.R_OK, function(err) {
-      if (err)
-        res.json(data);
-      else {
-        fs.readFile(file, 'utf8', function(err, contents) {
-          data["filters"] = JSON.parse(contents);
-          res.json(data);
-        });
-      }
-    });
-  } else
-    res.json(data);
-});
+app.get('/mapfilter/json/mapfilter-config.json', MapFilter.config);
+app.get('/mapfilter/filters', MapFilter.listFilters);
+app.post('/mapfilter/filters/local', bodyParser.json(), MapFilter.saveFilter);
 
 app.use('/monitoring-files',express.static('Monitoring'));
 
