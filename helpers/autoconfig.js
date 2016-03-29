@@ -23,6 +23,10 @@ console.log("The secret password for ODK users who connect to this station")
 console.log("(User ID should be a pseudonymous agent or device number you make up)")
 console.log("  shared_secret: " + process.env.shared_secret)
 
+process.env.community_lands_token = process.env.community_lands_token || 'test_token'
+process.env.community_lands_server = process.env.community_lands_server || 'www.communitylands.org'
+process.env.community_lands_port = process.env.community_lands_port || '80'
+
 Object.keys(ifaces).forEach(function (ifname) {
   var alias = 0;
 
