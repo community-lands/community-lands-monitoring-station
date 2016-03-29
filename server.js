@@ -42,12 +42,30 @@ passport.use(new Strategy({ qop: 'auth' },
 // Create a new Express application.
 var app = express();
 var fs = require('fs');
+var path = require('path');
 
 app.use(morgan('dev'));
 
 app.use('/mapfilter',express.static(__dirname + '/mapfilter'));
 app.get('/mapfilter/json/mapfilter-config.json', function(req, res, next) {
-  res.json({canSaveFilters: true});
+  var data = {
+    canSaveFilters: true
+  };
+  var filter = req.query.filter;
+  if (filter) {
+    var file = path.join(process.env.data_directory, 'Monitoring', process.env.station, 'Filters', filter);
+    fs.access(file, fs.F_OK | fs.R_OK, function(err) {
+      if (err)
+        res.json(data);
+      else {
+        fs.readFile(file, 'utf8', function(err, contents) {
+          data["filters"] = JSON.parse(contents);
+          res.json(data);
+        });
+      }
+    });
+  } else
+    res.json(data);
 });
 
 app.use('/monitoring-files',express.static('Monitoring'));
