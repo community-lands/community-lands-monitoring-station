@@ -23,6 +23,7 @@
     "body-parser": "^1.13.3",
     "dotenv": "^0.5.1",
     "express": "^4.13.3",
+    "fs-extra": "^0.26.7",
     "openrosa-form-submission-middleware": "^1.0.3",
     "openrosa-formlist": "git://github.com/rfc2616/openrosa-formlist.git#ersatz",
     "openrosa-manifest": "0.0.1",
