@@ -3,8 +3,10 @@ process.env.directory = process.env.directory || app.getAppPath()
 var BrowserWindow = require('browser-window');  // Module to create native browser window.
 
 var http = require('http');
-var fs = require('fs');
+var fs = require('fs-extra');
+var path = require('path');
 var ipc = require('ipc');
+var dialog = require('dialog');
 var server = require('./server')
 
 ipc.on('show_configuration', function(event, arg) {
@@ -59,6 +61,60 @@ ipc.on('check_last_backup', function(event, arg) {
       event.sender.send('has_last_backup', data);
     });
   }).end();
+});
+
+ipc.on('form_delete', function(event, arg) {
+  var folder = path.join(process.env.data_directory, 'Monitoring', process.env.station, 'Forms');
+  fs.readdir(folder, function(err, files) {
+    if (err) {
+      event.sender.send('has_form_delete');
+    } else {
+      for (var i in files) {
+        if (files[i] == arg) {
+          fs.unlinkSync(path.join(folder, files[i]));
+          event.sender.send('has_form_delete');
+          break;
+        }
+      }
+    }
+  });
+});
+
+ipc.on('form_list', function(event, arg) {
+  var folder = path.join(process.env.data_directory, 'Monitoring', process.env.station, 'Forms');
+  fs.readdir(folder, function(err, files) {
+    var data = { forms: [] };
+    if (err)
+      event.sender.send('has_form_list', data);
+    else {
+      data.forms = files;
+      event.sender.send('has_form_list', data);
+    }
+  });
+});
+
+ipc.on('select_form', function(event, arg) {
+  var options = {
+    properties: ['openFile', 'multiSelections'],
+    filters: [ { name: 'XML', extensions: ['xml'] } ]
+  };
+  dialog.showOpenDialog(mainWindow, options, function(arr) {
+    if (arr !== undefined) {
+      var destDir = path.join(process.env.data_directory, 'Monitoring', process.env.station, 'Forms');
+      var uploaded = {
+        count: arr.length,
+        names: []
+      };
+      for (var index in arr) {
+        var source = arr[index];
+        var filename = path.basename(source);
+        var target = path.join(destDir, filename);
+        fs.copySync(source, target);
+        uploaded.names.push(filename);
+      }
+      event.sender.send('has_select_form', uploaded);
+    }
+  });
 });
 
 ipc.on('community_lands_backup', function(event, arg) {
