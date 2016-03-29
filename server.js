@@ -20,6 +20,8 @@ var forms = require('./controllers/forms')
 var error = require('./controllers/error-handler')
 var CommunityLands = require('./controllers/community-lands');
 
+var Backup = require('./controllers/backup');
+
 // Configure the Digest strategy for use by Passport.
 //
 // The Digest strategy requires a `secret`function, which is used to look up
@@ -43,7 +45,11 @@ var fs = require('fs');
 
 app.use(morgan('dev'));
 
-app.use('/mapfilter',express.static('mapfilter'));
+app.use('/mapfilter',express.static(__dirname + '/mapfilter'));
+app.get('/mapfilter/json/mapfilter-config.json', function(req, res, next) {
+  res.json({canSaveFilters: true});
+});
+
 app.use('/monitoring-files',express.static('Monitoring'));
 
 app.get('/',
@@ -78,7 +84,6 @@ app.get('/json/Monitoring.json', function(req, res, next) {
   });
 });
 
-
 app.get('/files', function(req, res, next) {
   list.getFormUrls(function(err, files) {
     if (err)
@@ -97,6 +102,11 @@ app.get('/forms/:id', forms.show)
 app.get('/backup/latest', CommunityLands.backup);
 app.get('/backup/all', CommunityLands.resync);
 app.get('/backup/status', CommunityLands.lastBackup);
+
+app.get('/save/all', Backup.backup);
+app.get('/save/status', Backup.lastBackup);
+
+app.post('/filters', bodyParser.json(), CommunityLands.saveFilter);
 
 app.head('/submission',
   passport.authenticate('digest', { session: false }),

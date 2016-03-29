@@ -2,6 +2,7 @@ var app = require('app');  // Module to control application life.
 process.env.directory = process.env.directory || app.getAppPath()
 var BrowserWindow = require('browser-window');  // Module to create native browser window.
 
+var http = require('http');
 var fs = require('fs');
 var ipc = require('ipc');
 var server = require('./server')
@@ -9,16 +10,110 @@ var server = require('./server')
 ipc.on('show_configuration', function(event, arg) {
   try{
     _results = {
-      'directory': process.env.directory,
+      'directory': process.env.data_directory,
       'station': process.env.station,
       'baseUrl': process.env.baseUrl,
-      'shared_secret': process.env.shared_secret
+      'shared_secret': process.env.shared_secret,
+      'community_lands': !(process.env.community_lands_server === undefined || process.env.community_lands_token === undefined)
     };
+    console.log(_results);
     event.sender.send('has_configuration', _results);
   } catch (err) {
     event.sender.send('has_configuration', []);
   }
 });
+
+ipc.on('backup_submissions', function(event, arg) {
+  var options = {
+    hostname: 'localhost',
+    port: process.env.port || 3000,
+    path: '/save/all',
+    method: 'GET'
+  };
+  var req = http.request(options, function(res) {
+    var data = "";
+    res.on('data', function(chunk) {
+      data += chunk;
+    });
+    res.on('end', function() {
+      event.sender.send('backup_submissions_complete', data);
+    });
+  }).on('error', function(e) {
+    event.sender.send('backup_submissions_complete', '{"error":true, "message":"Could not connect to server"}');
+  }).end();
+});
+
+ipc.on('check_last_backup', function(event, arg) {
+  var options = {
+    hostname: 'localhost',
+    port: process.env.port || 3000,
+    path: '/save/status',
+    method: 'GET'
+  };
+  var req = http.request(options, function(res) {
+    var data = ""
+    res.on('data', function(chunk) {
+      data += chunk;
+    });
+    res.on('end', function() {
+      event.sender.send('has_last_backup', data);
+    });
+  }).end();
+});
+
+ipc.on('community_lands_backup', function(event, arg) {
+  if (process.env.community_lands_server) {
+    var options = {
+      hostname: 'localhost',
+      port: process.env.port || 3000,
+      path: '/backup/latest',
+      method: 'GET'
+    };
+    var req = http.request(options, function(res) {
+      var data = "";
+      res.on('data', function(chunk) {
+        data += chunk;
+      });
+      res.on('end', function() {
+        event.sender.send('has_community_lands_backup', data);
+      });
+    }).on('error', function(e) {
+      event.sender.send('has_community_lands_backup', '{"error":true, "message":"Could not connect to server"}');
+    }).end();
+  } else {
+    event.sender.send('has_community_lands_backup', '{"error":true, "message":"Community Lands connection not configured"}');
+  }
+});
+
+ipc.on('community_lands_status', function(event, arg) {
+  if (process.env.community_lands_server) {
+    var options = {
+      hostname: 'localhost',
+      port: process.env.port || 3000,
+      path: '/backup/status',
+      method: 'GET',
+    };
+    var req = http.request(options, function(res) {
+      var data = "";
+      res.on('data', function(chunk) {
+        data += chunk;
+      });
+      res.on('end', function() {
+        event.sender.send('has_community_lands_status', data);
+      });
+    }).on('error', function(e) {
+      event.sender.send('has_community_lands_status', null);
+    }).end();
+  } else {
+    event.sender.send('has_community_lands_status', null);
+  }
+});
+
+ipc.on('community_lands_online', function(event, arg) {
+  event.sender.send('has_community_lands_online', arg);
+});
+
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
