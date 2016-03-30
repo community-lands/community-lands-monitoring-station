@@ -16,6 +16,7 @@ ipc.on('show_configuration', function(event, arg) {
       'station': process.env.station,
       'baseUrl': process.env.baseUrl,
       'shared_secret': process.env.shared_secret,
+      'locale': process.env.locale || 'en',
       'community_lands': !(process.env.community_lands_server === undefined || process.env.community_lands_token === undefined)
     };
     console.log(_results);
@@ -41,7 +42,7 @@ ipc.on('backup_submissions', function(event, arg) {
       event.sender.send('backup_submissions_complete', data);
     });
   }).on('error', function(e) {
-    event.sender.send('backup_submissions_complete', '{"error":true, "message":"Could not connect to server"}');
+    event.sender.send('backup_submissions_complete', '{"error":true, "code":"could_not_connect", "message":"Could not connect to server"}');
   }).end();
 });
 
@@ -133,7 +134,7 @@ ipc.on('filter_list', function(event, arg) {
       event.sender.send('has_filter_list', data);
     });
   }).on('error', function(e) {
-    event.sender.send('has_filter_list', '{"error":true, "message":"Could not connect to server"}');
+    event.sender.send('has_filter_list', '{"error":true, "code":"could_not_connect", "message":"Could not connect to server"}');
   }).end();
 });
 
@@ -154,10 +155,10 @@ ipc.on('community_lands_backup', function(event, arg) {
         event.sender.send('has_community_lands_backup', data);
       });
     }).on('error', function(e) {
-      event.sender.send('has_community_lands_backup', '{"error":true, "message":"Could not connect to server"}');
+      event.sender.send('has_community_lands_backup', '{"error":true, "code":"could_not_connect", "message":"Could not connect to server"}');
     }).end();
   } else {
-    event.sender.send('has_community_lands_backup', '{"error":true, "message":"Community Lands connection not configured"}');
+    event.sender.send('has_community_lands_backup', '{"error":true, "code":"community_lands_not_configured", "message":"Community Lands connection not configured"}');
   }
 });
 
@@ -214,7 +215,7 @@ app.on('ready', function() {
   mainWindow = new BrowserWindow({width: 400, height: 400});
 
   // and load the index.html of the app.
-  mainWindow.loadUrl('file://' + __dirname + '/index.html');
+  mainWindow.loadUrl('file://' + __dirname + '/index.html?locale=' + (process.env.locale || 'en'));
 
   // Open the DevTools.
   // mainWindow.openDevTools();
