@@ -126,6 +126,39 @@
       document.getElementById('community_lands_sync_status').innerHTML = html;
       ipc.send('community_lands_status');
     });
+    ipc.on('has_settings_list', function(settings) {
+      var html = '<form>';
+      for (var key in settings) {
+        var item_id = "settings-form-" + key;
+        html += '<div class="form-group">'
+        html += '<label for="'+item_id+'">' + t('prompt.settings.' + key) + '</label>';
+        if (key == 'locale') {
+          var options = [ { name: t('language.en'), value: 'en' }, { name: t('language.es'), value: 'es' }];
+          html += '<select id="'+item_id+'" class="form-control key-value" data-key="' + key + '">';
+          for (var k = 0; k < options.length; k++) {
+            var opt = options[k];
+            html += '<option value="' + opt.value + '"'
+            if (opt.value == settings[key])
+              html += ' selected';
+            html += '>' + opt.name + '</option>';
+          }
+          html += "</select>";
+        } else if (key == 'data_directory') {
+          html += '<div class="row">';
+          html += '<div class="col-xs-3">';
+          html += '<button onclick="javascript:chooseDataDirectory();" class="form-control btn btn-small btn-default">' + t('button.choose') + '</button>';
+          html += '</div><div class="col-xs-9">';
+          html += '<input id="'+item_id+'" type="text" data-key="' + key + '" class="form-control key-value" value="' + settings[key] + '" />';
+          html += '</div></div>';
+        } else
+          html += '<input id="'+item_id+'" type="text" data-key="' + key + '" class="form-control key-value" value="' + settings[key] + '" />';
+        if (t_exists('help.settings.'+key))
+          html += '<span class="help-block">' + t('help.settings.'+key) + '</span>';
+        html += '</div>';
+      }
+      html += "</form>";
+      document.getElementById('settings_form').innerHTML = html;
+    });
     ipc.on('has_configuration', function(configuration) {
       config = configuration;
       document.getElementById('baseUrl').innerHTML = configuration.baseUrl
@@ -135,10 +168,21 @@
       if (configuration.community_lands == true)
         document.getElementById('community_lands_content').className = "";
     });
+    ipc.on('has_select_data_directory', function(folder) {
+      document.getElementById('settings-form-data_directory').value = folder;
+    });
+    ipc.on('has_settings_save', function(result) {
+      var json = JSON.parse(result);
+      if (json.error)
+        alert(t('error.'+json.code));
+      else
+        alert(t('message.settings_saved'));
+    });
     ipc.send('show_configuration');
     ipc.send('check_last_backup');
     ipc.send('form_list');
     ipc.send('filter_list');
+    ipc.send('settings_list');
 
     window.addEventListener('online',  updateOnlineStatus);
     window.addEventListener('offline',  updateOnlineStatus);
@@ -182,6 +226,21 @@
             els[k].innerHTML = window.t(els[k].getAttribute("data-translate"));
         }
       }
+    }
+
+    function chooseDataDirectory() {
+      ipc.send('select_data_directory');
+    }
+
+    function saveSettings() {
+      var els = document.getElementsByClassName('key-value');
+      var object = {};
+      for (var i = 0; i < els.length; i++) {
+        var el = els[i];
+        var key = el.getAttribute('data-key');
+        object[key] = el.value;
+      }
+      ipc.send('settings_save', object);
     }
 
     </script>
@@ -231,7 +290,7 @@
       <h5 data-translate="title.new_form">Add New Form</h5>
       <button onclick="javascript:selectForm();" class="btn btn-small btn-primary" data-translate="button.select_file">Select from File</button>
     </div>
-    <h4 title="title.data_backup">Data Backup</h4>
+    <h4 data-translate="title.data_backup">Data Backup</h4>
     <div class="well">
       <div id="last_backup"></div>
       <div data-translate="button.backup_data"class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:backupFiles()">Backup Data</div>
@@ -251,6 +310,15 @@
         <div data-translate="button.upload" class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:communityLandsUpload()">Upload</div>
         <div style="margin-top: 10px" id="community_lands_sync_status"></div>
       </div>
+    </div>
+    <h4 data-translate="title.settings">Settings</h4>
+    <div class="well">
+      <div id="settings_form">
+
+      </div>
+      <button onclick="javascript:saveSettings();" class="btn btn-small btn-primary" data-translate="button.update_settings">Update Settings</button>
+      <div id="settings_status"></div>
+    </div>
     </div>
   </div></div></div></body>
 </html>

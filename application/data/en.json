@@ -8,10 +8,27 @@
         "connection_status": "Connection Status: ",
         "last_synchronized": "Last Synchronized: ",
         "last_backup": "Last Backup: ",
-        "open": "Open: "
+        "open": "Open: ",
+        "settings": {
+            "data_directory": "Data Directory",
+            "shared_secret": "Shared Secret",
+            "station": "Station",
+            "locale": "Locale",
+            "port": "Port",
+            "community_lands_server": "Community Lands Host",
+            "community_lands_port": "Community Lands Port",
+            "community_lands_token": "Community Lands Token"
+        }
+    },
+    "help": {
+        "settings": {
+        }
     },
     "confirm": {
         "delete_form": "Are you sure you want to delete this form?"
+    },
+    "message": {
+        "settings_saved": "Settings saved. Restart your app for settings to take effect."
     },
     "title": {
         "odk_collect": "ODK Collect settings",
@@ -21,12 +38,19 @@
         "data_backup": "Data Backup",
         "community_lands": "Community Lands",
         "my_monitoring_forms": "My Monitoring Forms",
-        "saved_filters": "Saved Filters"
+        "saved_filters": "Saved Filters",
+        "settings": "Application Settings"
     },
     "button": {
         "select_file": "Select from File",
         "backup_data": "Backup Data",
-        "upload": "Upload"
+        "upload": "Upload",
+        "choose": "Choose",
+        "update_settings": "Update Settings"
+    },
+    "language": {
+        "en": "English",
+        "es": "Español"
     },
     "text": {
         "online": "Online",

@@ -53,6 +53,17 @@ locale.init = function() {
   return locale.current(loc);
 }
 
+window.t_exists = function(s, loc) {
+  loc = loc || locale._current;
+  if (!s) return false;
+
+  var path = s.split(".").reverse(), rep = locale[loc];
+
+  while (rep !== undefined && path.length) rep = rep[path.pop()];
+
+  return rep !== undefined;
+}
+
 window.t = function(s, o, loc) {
     loc = loc || locale._current;
     if (!s) return s;

@@ -7,16 +7,18 @@ var fs = require('fs-extra');
 var path = require('path');
 var ipc = require('ipc');
 var dialog = require('dialog');
-var server = require('./server')
+var server = require('./server');
+var dotenv = require('dotenv');
 
 ipc.on('show_configuration', function(event, arg) {
   try{
+    _defaults = getDefaultSettings()
     _results = {
-      'directory': process.env.data_directory,
-      'station': process.env.station,
+      'directory': process.env.data_directory || _defaults.data_directory,
+      'station': process.env.station || _defaults.station,
       'baseUrl': process.env.baseUrl,
       'shared_secret': process.env.shared_secret,
-      'locale': process.env.locale || 'en',
+      'locale': process.env.locale || _defaults.locale,
       'community_lands': !(process.env.community_lands_server === undefined || process.env.community_lands_token === undefined)
     };
     console.log(_results);
@@ -94,6 +96,18 @@ ipc.on('form_list', function(event, arg) {
   });
 });
 
+ipc.on('select_data_directory', function(event, arg) {
+  var options = {
+    properties: ['openDirectory'],
+    defaultPath: process.env.data_directory
+  };
+  dialog.showOpenDialog(mainWindow, options, function(folder) {
+    if (folder) {
+      event.sender.send('has_select_data_directory', folder);
+    }
+  });
+});
+
 ipc.on('select_form', function(event, arg) {
   var options = {
     properties: ['openFile', 'multiSelections'],
@@ -136,6 +150,30 @@ ipc.on('filter_list', function(event, arg) {
   }).on('error', function(e) {
     event.sender.send('has_filter_list', '{"error":true, "code":"could_not_connect", "message":"Could not connect to server"}');
   }).end();
+});
+
+ipc.on('settings_list', function(event, arg) {
+  fs.readFile(path.join(__dirname, '.env'), 'utf8', function(err, data) {
+    if (err) {
+      event.sender.send('has_settings_list', getDefaultSettings());
+    } else {
+      event.sender.send('has_settings_list', dotenv.parse(data));
+    }
+  });
+});
+
+ipc.on('settings_save', function(event, arg) {
+  var properties = "";
+  for (var key in arg) {
+    properties += key + '=' + arg[key];
+    properties += "\r\n"
+  }
+  fs.writeFile(path.join(__dirname, '.env'), properties, 'utf8', function(err) {
+    if (err)
+      event.sender.send('has_settings_save', '{"error",true, "code":"could_not_save_settings", "message":"Could not save settings file"}');
+    else
+      event.sender.send('has_settings_save', '{"error":false}');
+  });
 });
 
 ipc.on('community_lands_backup', function(event, arg) {
@@ -198,6 +236,19 @@ try {
 fs.watch(FiltersDir, function(evt, filename) {
   mainWindow.reload();
 });
+
+var getDefaultSettings = function() {
+  return {
+    data_directory: path.join(__dirname),
+    station: 'DEMO',
+    locale: 'en',
+    community_lands_server: 'http://www.communitylands.org',
+    community_lands_port: 80,
+    community_lands_token: null,
+    port: 3000,
+    shared_secret: 'demo'
+  };
+};
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
