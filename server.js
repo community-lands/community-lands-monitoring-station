@@ -19,6 +19,7 @@ var storage = require('./helpers/community-storage')
 var forms = require('./controllers/forms')
 var error = require('./controllers/error-handler')
 var CommunityLands = require('./controllers/community-lands');
+var MapFilter = require('./controllers/map-filter');
 
 var Backup = require('./controllers/backup');
 
@@ -42,13 +43,14 @@ passport.use(new Strategy({ qop: 'auth' },
 // Create a new Express application.
 var app = express();
 var fs = require('fs');
+var path = require('path');
 
 app.use(morgan('dev'));
 
 app.use('/mapfilter',express.static(__dirname + '/mapfilter'));
-app.get('/mapfilter/json/mapfilter-config.json', function(req, res, next) {
-  res.json({canSaveFilters: true});
-});
+app.get('/mapfilter/json/mapfilter-config.json', MapFilter.config);
+app.get('/mapfilter/filters', MapFilter.listFilters);
+app.post('/mapfilter/filters/local', bodyParser.json(), MapFilter.saveFilter);
 
 app.use('/monitoring-files',express.static('Monitoring'));
 

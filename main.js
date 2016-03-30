@@ -117,6 +117,26 @@ ipc.on('select_form', function(event, arg) {
   });
 });
 
+ipc.on('filter_list', function(event, arg) {
+  var options = {
+    hostname: 'localhost',
+    port: process.env.port || 3000,
+    path: '/mapfilter/filters',
+    method: 'GET'
+  };
+  var req = http.request(options, function(res) {
+    var data = "";
+    res.on('data', function(chunk) {
+      data += chunk;
+    });
+    res.on('end', function() {
+      event.sender.send('has_filter_list', data);
+    });
+  }).on('error', function(e) {
+    event.sender.send('has_filter_list', '{"error":true, "message":"Could not connect to server"}');
+  }).end();
+});
+
 ipc.on('community_lands_backup', function(event, arg) {
   if (process.env.community_lands_server) {
     var options = {
@@ -169,7 +189,14 @@ ipc.on('community_lands_online', function(event, arg) {
   event.sender.send('has_community_lands_online', arg);
 });
 
-
+var FiltersDir = path.join(process.env.data_directory, 'Monitoring', process.env.station, 'Filters');
+try {
+  fs.mkdirpSync(FiltersDir);
+} catch (e) { //It's ok
+}
+fs.watch(FiltersDir, function(evt, filename) {
+  mainWindow.reload();
+});
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
