@@ -1,0 +1,76 @@
+{
+    "prompt": {
+        "baseurl": "URL: ",
+        "username": "Utilizar tu identificación personal para el nombre de usuario.",
+        "password": "Contraseña: ",
+        "map_url": "URL para ver mapas en su navegador:",
+        "monitoring_forms_folder": "Carpeta para formularios de monitoreo:",
+        "connection_status": "El estado de conexión: ",
+        "last_synchronized": "Última sincronización: ",
+        "last_backup": "Última copia de respaldo: ",
+        "open": "Abierto: ",
+        "settings": {
+            "data_directory": "Data Directory",
+            "shared_secret": "Shared Secret",
+            "station": "Station",
+            "locale": "Locale",
+            "port": "Port",
+            "community_lands_server": "Community Lands Host",
+            "community_lands_port": "Community Lands Port",
+            "community_lands_token": "Community Lands Token"
+        }
+    },
+    "help": {
+        "settings": {
+        }
+    },
+    "confirm": {
+        "delete_form": "Estas seguro que quieres borrar este formulario"
+    },
+    "message": {
+        "settings_saved": "Settings saved. Restart your app for settings to take effect."
+    },
+    "title": {
+        "odk_collect": "Configuración del ODK Collect",
+        "browser_settings": "Configuración del navegador",
+        "monitoring_forms": "Formularios de monitoreo",
+        "new_form": "Agrega nuevo formulario",
+        "data_backup": "Copia segura de datos",
+        "community_lands": "Community Lands",
+        "my_monitoring_forms": "Mis formularios de monitoreo",
+        "saved_filters": "Filtros guardados",
+        "settings": "Application Settings"
+    },
+    "button": {
+        "select_file": "Selecciona archivo",
+        "backup_data": "Copia segura de sus datos",
+        "upload": "Subir datos",
+        "choose": "Choose",
+        "update_settings": "Update Settings"
+    },
+    "language": {
+        "en": "English",
+        "es": "Español"
+    },
+    "text": {
+        "online": "En línea",
+        "offline": "Desconectado",
+        "unavailable": "No disponible",
+        "upload_failed": "Subida fallida.",
+        "upload_success": "Subida lograda.",
+        "files_uploaded": "Archivos subidos:",
+        "backup_complete": "Copia de archivo completo."
+    },
+    "progress": {
+        "uploading": "Subiendo datos, espera por favor...",
+        "saving": "Guardando archivos, espera por favor..."
+    },
+    "alert": {
+        "no_internet": "Conexión al internet no detectada",
+        "running": "La estación de monitoreo funcionará siempre y cuando esta ventana está abierta."
+    },
+    "error": {
+        "could_not_connect": "No puede conectar al servidor",
+        "community_lands_not_configured": "Conexión al community lands no configurada"
+    }
+}
