@@ -10,8 +10,7 @@ var TILES_FOLDER = path.join(path.join(ROOT_PATH, 'Maps'), 'Tiles')
 function listTileLayers (req, res, next) {
   fs.readdir(TILES_FOLDER, function (err, files) {
     if (err) {
-      res.status(500)
-      res.render('error', {
+      res.json(500, {
         message: err.message,
         error: err
       })
