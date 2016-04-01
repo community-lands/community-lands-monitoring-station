@@ -17,11 +17,15 @@
             "port": "Port",
             "community_lands_server": "Community Lands Host",
             "community_lands_port": "Community Lands Port",
-            "community_lands_token": "Community Lands Token"
+            "community_lands_token": "Community Lands Token",
+            "mapZoom": "MapFilter Zoom",
+            "mapCenterLat": "MapFilter Starting Latitude",
+            "mapCenterLong": "MapFilter Starting Longitude"
         }
     },
     "help": {
         "settings": {
+            "mapZoom": "Value must be between 1 (closest) and 18 (farthest)"
         }
     },
     "confirm": {
