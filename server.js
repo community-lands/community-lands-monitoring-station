@@ -52,7 +52,7 @@ app.get('/mapfilter/json/mapfilter-config.json', MapFilter.config);
 app.get('/mapfilter/filters', MapFilter.listFilters);
 app.post('/mapfilter/filters/local', bodyParser.json(), MapFilter.saveFilter);
 
-app.use('/monitoring-files',express.static('Monitoring'));
+app.use('/monitoring-files', express.static(path.join(process.env.data_directory, 'Monitoring')));
 
 app.get('/',
   passport.authenticate('digest', { session: false }),
