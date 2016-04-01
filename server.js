@@ -42,6 +42,7 @@ passport.use(new Strategy({ qop: 'auth' },
 
 // Create a new Express application.
 var app = express()
+var path = require('path')
 
 app.use(morgan('dev'))
 
@@ -50,7 +51,7 @@ app.get('/mapfilter/json/mapfilter-config.json', MapFilter.config)
 app.get('/mapfilter/filters', MapFilter.listFilters)
 app.post('/mapfilter/filters/local', bodyParser.json(), MapFilter.saveFilter)
 
-app.use('/monitoring-files', express.static(path.join(process.env.data_directory, 'Monitoring')));
+app.use('/monitoring-files', express.static(path.join(process.env.data_directory, 'Monitoring')))
 
 app.get('/',
   function (req, res) {
