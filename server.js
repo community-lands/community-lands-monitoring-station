@@ -58,10 +58,18 @@ app.get('/',
     res.redirect('/mapfilter')
   })
 
+var handleError = function (err, res) {
+  res.status(500)
+  res.render('error', {
+    message: err.message,
+    error: err
+  })
+}
+
 app.get('/map', function (req, res, next) {
   storage.getMap('Monitoring.geojson', function (err, data) {
     if (err) {
-      res.error(500)
+      handleError(err, res)
     } else {
       res.json(JSON.parse(data))
     }
@@ -71,7 +79,7 @@ app.get('/map', function (req, res, next) {
 app.get('/json/Monitoring.json', function (req, res, next) {
   storage.getMap('Monitoring.geojson', function (err, data) {
     if (err) {
-      res.error(500)
+      handleError(err, res)
     } else {
       res.json(JSON.parse(data).features)
     }
