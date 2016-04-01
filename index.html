@@ -145,13 +145,22 @@
           html += "</select>";
         } else if (key == 'data_directory') {
           html += '<div class="row">';
-          html += '<div class="col-xs-3">';
+          html += '<div class="col-xs-4">';
           html += '<button onclick="javascript:chooseDataDirectory();" class="form-control btn btn-small btn-default">' + t('button.choose') + '</button>';
-          html += '</div><div class="col-xs-9">';
+          html += '</div><div class="col-xs-8">';
           html += '<input id="'+item_id+'" type="text" data-key="' + key + '" class="form-control key-value" value="' + settings[key] + '" />';
           html += '</div></div>';
-        } else
-          html += '<input id="'+item_id+'" type="text" data-key="' + key + '" class="form-control key-value" value="' + settings[key] + '" />';
+        } else if (key == 'mapZoom') {
+          html += '<input id="'+item_id+'" type="number" data-key="' + key + '" class="form-control key-value" ';
+          if (settings[key])
+            html += 'value="' + settings[key] + '"';
+          html += ' min="1" max="18" />';
+        } else {
+          html += '<input id="'+item_id+'" type="text" data-key="' + key + '" class="form-control key-value" ';
+          if (settings[key])
+            html += 'value="' + settings[key] + '"';
+          html += ' />';
+        }
         if (t_exists('help.settings.'+key))
           html += '<span class="help-block">' + t('help.settings.'+key) + '</span>';
         html += '</div>';

@@ -157,7 +157,11 @@ ipc.on('settings_list', function(event, arg) {
     if (err) {
       event.sender.send('has_settings_list', getDefaultSettings());
     } else {
-      event.sender.send('has_settings_list', dotenv.parse(data));
+      var defaults = getDefaultSettings();
+      var selected = dotenv.parse(data);
+      for (var key in selected)
+        defaults[key] = selected[key];
+      event.sender.send('has_settings_list', defaults);
     }
   });
 });
@@ -165,8 +169,10 @@ ipc.on('settings_list', function(event, arg) {
 ipc.on('settings_save', function(event, arg) {
   var properties = "";
   for (var key in arg) {
-    properties += key + '=' + arg[key];
-    properties += "\r\n"
+    if (arg[key]) {
+      properties += key + '=' + arg[key];
+      properties += "\r\n"
+    }
   }
   fs.writeFile(path.join(__dirname, '.env'), properties, 'utf8', function(err) {
     if (err)
@@ -246,7 +252,10 @@ var getDefaultSettings = function() {
     community_lands_port: 80,
     community_lands_token: null,
     port: 3000,
-    shared_secret: 'demo'
+    shared_secret: 'demo',
+    mapZoom: null,
+    mapCenterLat: null,
+    mapCenterLong: null
   };
 };
 

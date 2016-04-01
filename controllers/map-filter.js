@@ -35,8 +35,23 @@ function config(req, res, next) {
     canSaveFilters: true,
     saveFilterTargets: [
       { name: 'Local', path: '/mapfilter/filters/local', value: 'local' }
-    ]
+    ],
   };
+  if (process.env.mapZoom) {
+    try {
+      data['mapZoom'] = parseInt(process.env.mapZoom);
+    } catch (e) { }
+  }
+  if (process.env.mapCenterLat) {
+    try {
+      data['mapCenterLat'] = parseFloat(process.env.mapCenterLat);
+    } catch (e) { }
+  }
+  if (process.env.mapCenterLong) {
+    try {
+      data['mapCenterLong'] = parseFloat(process.env.mapCenterLong);
+    } catch (e) { }
+  }
   var filter = req.query.filter;
   if (filter) {
     var file = path.join(process.env.data_directory, 'Monitoring', process.env.station, 'Filters', filter);
