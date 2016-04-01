@@ -55,23 +55,8 @@ app.post('/mapfilter/filters/local', bodyParser.json(), MapFilter.saveFilter);
 app.use('/monitoring-files',express.static('Monitoring'));
 
 app.get('/',
-  passport.authenticate('digest', { session: false }),
   function(req, res) {
-    res.json({ username: req.user.username, email: req.user.emails[0].value });
-  });
-
-// curl -v --user jack:secret --digest "http://127.0.0.1:3000/hello?name=World&x=y"
-app.get('/hello',
-  function(req, res, next) {
-    res.json({ message: 'Hello, ' + req.query.name, from: req.user.username });
-  });
-
-// curl -v -d "name=World" --user jack:secret --digest http://127.0.0.1:3000/hello
-app.post('/hello',
-  passport.authenticate('digest', { session: false }),
-  bodyParser,
-  function(req, res) {
-    res.json({ message: 'Hello, ' + req.body.name, from: req.user.username });
+    res.redirect('/mapfilter');
   });
 
 app.get('/map', function(req, res, next) {
