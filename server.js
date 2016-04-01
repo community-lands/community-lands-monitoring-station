@@ -21,6 +21,8 @@ var error = require('./controllers/error-handler')
 var CommunityLands = require('./controllers/community-lands')
 var MapFilter = require('./controllers/map-filter')
 
+var TileLayers = require('./controllers/tile-layers')
+
 var Backup = require('./controllers/backup')
 
 // Configure the Digest strategy for use by Passport.
@@ -97,6 +99,8 @@ app.get('/backup/status', CommunityLands.lastBackup)
 
 app.get('/save/all', Backup.backup)
 app.get('/save/status', Backup.lastBackup)
+
+app.get('/tileLayers', TileLayers.listTileLayers)
 
 app.post('/filters', bodyParser.json(), CommunityLands.saveFilter)
 
