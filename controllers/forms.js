@@ -5,41 +5,41 @@ var createFormList = require('openrosa-formlist')
 var persistFs = require('../helpers/persist-fs')
 var fmt = require('moment')
 
-function getForm(req, res, next) {
-  storage.getForm(req.params.id, function(err, xml) {
-    if (err)
+function getForm (req, res, next) {
+  storage.getForm(req.params.id, function (err, xml) {
+    if (err) {
       next(err)
-    else {
+    } else {
       res.set('X-OpenRosa-Version', '1.0')
       res.set('Content-Type', 'text/xml').status(200).send(xml)
     }
-  });
+  })
 }
 
-function getForms(req, res, next) {
-  storage.getFormUrls(function(err, files) {
-    if (err)
+function getForms (req, res, next) {
+  storage.getFormUrls(function (err, files) {
+    if (err) {
       next(err)
-    else {
+    } else {
       var opts = {
         headers: {
           'User-Agent': 'file-odk'
         }
       }
-      createFormList(files, opts, function(err, xml) {
-        if (err)
+      createFormList(files, opts, function (err, xml) {
+        if (err) {
           next(err)
-        else {
+        } else {
           res.set('X-OpenRosa-Version', '1.0')
           res.set('Content-type', 'text/xml; charset=utf-8')
           res.status(200).send(xml)
         }
-      });
+      })
     }
-  });
+  })
 }
 
-function createForm(req, res, next) {
+function createForm (req, res, next) {
   var submission = req.submission
   var user = req.user.username
   var date = submission.date
@@ -53,18 +53,18 @@ function createForm(req, res, next) {
     },
     filename: filename
   }
-  persistFs(json, options, function(err) {
-    if (err)
+  persistFs(json, options, function (err) {
+    if (err) {
       next(err)
-    else {
+    } else {
       options.filename = submission.instanceId + '.xml'
-      persistFs(submission.xml, options, function(err) {
+      persistFs(submission.xml, options, function (err) {
         res.status(201).send({
           saved: filename
         })
-      });
+      })
     }
-  });
+  })
 }
 
 module.exports = {
