@@ -248,7 +248,7 @@ var getDefaultSettings = function() {
     data_directory: path.join(__dirname),
     station: 'DEMO',
     locale: 'en',
-    community_lands_server: 'http://www.communitylands.org',
+    community_lands_server: 'www.communitylands.org',
     community_lands_port: 80,
     community_lands_token: null,
     port: 3000,
