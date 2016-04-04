@@ -127,8 +127,23 @@
       ipc.send('community_lands_status');
     });
     ipc.on('has_settings_list', function(settings) {
-      var html = '<form>';
+      var sections = {
+        general: '',
+        mapfilter: '',
+        communitylands: '',
+        advanced: ''
+      };
+      var section_keys = {
+        mapZoom: 'mapfilter',
+        mapCenterLat: 'mapfilter',
+        mapCenterLong: 'mapfilter',
+        community_lands_token: 'communitylands',
+        community_lands_server: 'advanced',
+        community_lands_port: 'advanced',
+        port: 'advanced'
+      };
       for (var key in settings) {
+        var html = sections[section_keys[key] || 'general'];
         var item_id = "settings-form-" + key;
         html += '<div class="form-group">'
         html += '<label for="'+item_id+'">' + t('prompt.settings.' + key) + '</label>';
@@ -164,6 +179,16 @@
         if (t_exists('help.settings.'+key))
           html += '<span class="help-block">' + t('help.settings.'+key) + '</span>';
         html += '</div>';
+        sections[section_keys[key] || 'general'] = html;
+      }
+      var html = '<form>';
+      for (var key in sections) {
+        if (sections[key] != '') {
+          html += '<h6 class="text-uppercase" style="letter-spacing: 1px; font-weight: 700; color: #959595">';
+          html += t("subtitle.settings."  + key);
+          html += '</h6>';
+          html += sections[key];
+        }
       }
       html += "</form>";
       document.getElementById('settings_form').innerHTML = html;
