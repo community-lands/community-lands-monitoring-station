@@ -197,10 +197,15 @@
       config = configuration;
       document.getElementById('baseUrl').innerHTML = configuration.baseUrl
       document.getElementById('shared_secret').innerHTML = configuration.shared_secret
-      document.getElementById('mapUrl').innerHTML = configuration.baseUrl + "/mapfilter"
+      document.getElementById('mapUrl').innerHTML = '<a id="mapUrlLink" href="' + configuration.baseUrl + '/mapfilter?locale=' + 
+        configuration.locale + '">' + configuration.baseUrl + '/mapfilter</a>'; 
       document.getElementById('form_folder').innerHTML = configuration.directory + "/Monitoring/" + configuration.station + "/Forms"
       if (configuration.community_lands == true)
         document.getElementById('community_lands_content').className = "";
+      document.getElementById('mapUrlLink').onclick = function(evt) {
+        evt.preventDefault();
+        shell.openExternal(this.getAttribute('href'));
+      };
     });
     ipc.on('has_select_data_directory', function(folder) {
       document.getElementById('settings-form-data_directory').value = folder;
@@ -296,10 +301,10 @@
         Base URL:
       </div>
       <div><b id="baseUrl"></b></div>
-      <div data-translate="prompt.username">
+      <div style='margin-top: 5px' data-translate="prompt.username">
         Use your agent number as the username.
       </div>
-      <div data-translate="prompt.password">
+      <div style='margin-top: 5px' data-translate="prompt.password">
         Password:
       </div>
       <div><b id="shared_secret"></b></div>
