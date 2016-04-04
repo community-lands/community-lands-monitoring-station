@@ -26,6 +26,10 @@
     "help": {
         "settings": {
             "mapZoom": "Value must be between 1 (closest) and 18 (farthest)"
+        },
+        "import": {
+            "merge": "Import new data, and updates existing files with contents of the backup. Nothing will be deleted.",
+            "overwrite": "Deletes all Submission data, replacing it with contents of the backup. You may want to backup your Submissions first, as this process can not be undone."
         }
     },
     "confirm": {
@@ -40,6 +44,7 @@
         "monitoring_forms": "Monitoring Forms",
         "new_form": "Add New Form",
         "data_backup": "Data Backup",
+        "data_import": "Data Import",
         "community_lands": "Community Lands",
         "my_monitoring_forms": "My Monitoring Forms",
         "saved_filters": "Saved Maps",
@@ -58,7 +63,9 @@
         "backup_data": "Backup Data",
         "upload": "Upload",
         "choose": "Choose",
-        "update_settings": "Update Settings"
+        "update_settings": "Update Settings",
+        "import_data_merge": "Import and Merge Data",
+        "import_data_overwrite": "Import and Overwrite Data"
     },
     "language": {
         "en": "English",
@@ -71,11 +78,13 @@
         "upload_failed": "Upload Failed.",
         "upload_success": "Upload Succeeded.",
         "files_uploaded": "Files Uploaded:",
-        "backup_complete": "Backup of file complete."
+        "backup_complete": "Backup of file complete.",
+        "import_complete": "Import of file complete."
     },
     "progress": {
         "uploading": "Uploading, please wait...",
-        "saving": "Saving files, please wait..."
+        "saving": "Saving files, please wait...",
+        "importing": "Importing files, please wait..."
     },
     "alert": {
         "no_internet": "No internet connection detected",
@@ -83,6 +92,8 @@
     },
     "error": {
         "could_not_connect": "Could not connect to server",
-        "community_lands_not_configured": "Community Lands connection not configured"
+        "community_lands_not_configured": "Community Lands connection not configured",
+        "import_delete_failed": "Could not overwrite files",
+        "import_unzip_failed": "Could not unzip import file"
     }
 }

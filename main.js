@@ -7,6 +7,7 @@ var fs = require('fs-extra')
 var path = require('path')
 var ipc = require('ipc')
 var dialog = require('dialog')
+var unzip = require('unzip2');
 
 require('./server')
 
@@ -181,7 +182,45 @@ ipc.on('settings_save', function (event, arg) {
   })
 })
 
-ipc.on('community_lands_backup', function (event, arg) {
+ipc.on('import_files', function(event, args) {
+  var options = {
+    properties: ['openFile'],
+    filters: [ { name: 'ZIP', extensions: ['zip'] } ]
+  };
+
+  dialog.showOpenDialog(mainWindow, options, function(file) {
+    if (file) {
+      var source = '' + file;
+      var target = path.dirname(settings.getSubmissionsDirectory());
+
+      var complete = function(err) {
+        if (err) {
+          event.sender.send('has_import_files', { error: true, code: 'import_delete_failed', ex: err });
+        } else {
+          try {
+            fs.createReadStream(source)
+            .pipe(unzip.Extract({ path: target }))
+            .on('close', function() {
+              event.sender.send('has_import_files', { error: false });
+            });
+          } catch (e) {
+            console.log(e);
+            event.sender.send('has_import_files', { error: true, code: 'import_unzip_failed', ex: e });
+          }
+        }
+      }
+
+      if (args.mode == 'merge')
+        complete(null);
+      else
+        fs.emptydir(path.join(target, 'Submissions'), complete);
+    } else {
+      event.sender.send('has_import_files', { error: true, code: 'import_cancelled' });
+    }
+  });
+});
+
+ipc.on('community_lands_backup', function(event, arg) {
   if (settings.getCommunityLandsServer()) {
     var options = {
       hostname: 'localhost',
