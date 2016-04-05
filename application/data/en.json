@@ -45,6 +45,14 @@
         "saved_filters": "Saved Filters",
         "settings": "Application Settings"
     },
+    "subtitle": {
+        "settings": {
+          "general": "General",
+          "advanced": "Advanced",
+          "mapfilter": "MapFilter",
+          "communitylands": "Community Lands"
+        }
+    },
     "button": {
         "select_file": "Select from File",
         "backup_data": "Backup Data",
