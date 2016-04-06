@@ -45,31 +45,31 @@
       <label>What kind of thing is this</label>
       <item>
         <label>Tree or Plant</label>
-        <value>tree_or_plant</value>
+        <value>tree_or_plant___00ff00</value>
       </item>
       <item>
         <label>Old Building</label>
-        <value>old_building</value>
+        <value>old_building___777700</value>
       </item>
       <item>
         <label>New Building</label>
-        <value>new_building</value>
+        <value>new_building___ffff00</value>
       </item>
       <item>
         <label>Old Object</label>
-        <value>old_object</value>
+        <value>old_object__brown</value>
       </item>
       <item>
         <label>New Object</label>
-        <value>new_object</value>
+        <value>new_object__blue</value>
       </item>
       <item>
         <label>Activity</label>
-        <value>activity</value>
+        <value>activity__pink</value>
       </item>
       <item>
         <label>Creature</label>
-        <value>creature</value>
+        <value>creature__orange</value>
       </item>
     </select1>
     <input ref="/new_form/today">
