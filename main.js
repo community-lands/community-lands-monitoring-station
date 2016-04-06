@@ -8,6 +8,7 @@ var path = require('path')
 var ipc = require('ipc')
 var dialog = require('dialog')
 var dotenv = require('dotenv')
+require('./server')
 
 ipc.on('show_configuration', function (event, arg) {
   try {
