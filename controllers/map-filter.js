@@ -35,8 +35,10 @@ function config (req, res, next) {
     canSaveFilters: true,
     saveFilterTargets: [
       { name: 'Local', path: '/mapfilter/filters/local', value: 'local' }
-    ]
-  }
+    ],
+    bingProxy: '/bing-proxy',
+    bingMetadata: '/bing-metadata'
+  };
   if (process.env.mapZoom) {
     try {
       data['mapZoom'] = parseInt(process.env.mapZoom, 10)
