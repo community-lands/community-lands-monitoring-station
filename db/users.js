@@ -1,15 +1,15 @@
-require('dotenv').load()
+var settings = require('../helpers/settings')
 
 var records = [
     { id: 1, username: 'jack', password: 'secret', displayName: 'Jack', emails: [ { value: 'jack@example.com' } ] }
   , { id: 2, username: 'jill', password: 'birthday', displayName: 'Jill', emails: [ { value: 'jill@example.com' } ] }
 ];
 
-if (process.env.shared_secret != null && process.env.shared_secret != undefined) {
+if (settings.getSharedSecret()) {
   shared = {
     id: records.length + 2,
-    username: process.env.shared_username || 'community',
-    password: process.env.shared_secret,
+    username: settings.getSharedUsername() || 'community',
+    password: settings.getSharedSecret(),
     displayName: 'Community Account',
     emails: [ { value: 'community@example.com' } ]
   };

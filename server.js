@@ -10,6 +10,8 @@ var request = require('request')
 var db = require('./db')
 var url = require('url')
 
+var settings = require('./helpers/settings')
+
 // var tile_cache = require('./helpers/tile-cache')
 // tile_cache.pyramid_urls(-76.3605,-9.4491,-72.757,-6.1078, 1, 13)
 
@@ -96,7 +98,7 @@ app.get('/bing-proxy/:url', function (req, res) {
   }
 })
 
-app.use('/monitoring-files', express.static(path.join(process.env.data_directory, 'Monitoring')))
+app.use('/monitoring-files', express.static(settings.getRootPath()))
 
 app.get('/',
   function (req, res) {
@@ -161,6 +163,6 @@ app.post('/submission',
 
 app.use(error)
 
-var port = process.env.port
+var port = settings.getPort()
 app.listen(port)
 console.log('Listening on port %s', port)

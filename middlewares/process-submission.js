@@ -1,16 +1,15 @@
-require('dotenv').load()
+var settings = require('../helpers/settings')
 
 var xform2json = require('xform-to-json')
 var extend = require('xtend')
 var fmt = require('moment')
+var path = require('path')
 
 var defaults = {
   geojson: true
 }
 
-var PREFIX = process.env.data_directory
-var ROOT_PATH = PREFIX + '/Monitoring'
-var SUBMISSIONS = ROOT_PATH + '/' + process.env.station + '/Submissions'
+var SUBMISSIONS = settings.getSubmissionsDirectory()
 
 /**
  * Converts form xml in `req.body` to json, adds meta data, attaches data to
@@ -41,7 +40,7 @@ function ProcessSubmission (options) {
         geojson: options.geojson,
         xml: req.body,
         date: date,
-        location: SUBMISSIONS + '/' + req.user.username + '/' + date + '/',
+        location: path.join(SUBMISSIONS, req.user.username, date) + '/',
         formId: meta.formId,
         instanceId: meta.instanceId.replace(/^uuid:/, '')
       }

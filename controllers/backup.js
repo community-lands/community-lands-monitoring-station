@@ -1,13 +1,12 @@
-require('dotenv').load()
+var settings = require('../helpers/settings')
 
 var archiver = require('archiver')
 var moment = require('moment')
+var path = require('path')
 var fs = require('fs')
 
-var PREFIX = process.env.data_directory
-var ROOT_PATH = PREFIX + '/Monitoring'
-var BACKUP_FOLDER = ROOT_PATH + '/' + process.env.station + '/Backup'
-var HISTORY_FILE = BACKUP_FOLDER + '/.backup_history.json'
+const BACKUP_FOLDER = settings.getBackupDirectory()
+const HISTORY_FILE = path.join(BACKUP_FOLDER, '.backup_history.json')
 
 function prepare (req, res, next, cont) {
   fs.mkdir(BACKUP_FOLDER, function (err) {
@@ -36,9 +35,9 @@ function lastBackup (req, res, next) {
 function runBackup (req, res, next) {
   prepare(req, res, next, function () {
     var date = new Date()
-    var file = process.env.station + '_backup_' + moment(date).format('YYYYMMDDHHmm') + '.zip'
+    var file = settings.getStation() + '_backup_' + moment(date).format('YYYYMMDDHHmm') + '.zip'
 
-    var dir = process.env.data_directory + '/Monitoring/' + process.env.station + '/Submissions'
+    var dir = settings.getSubmissionsDirectory()
     var opts = { expand: true, src: ['**/*'], dest: '/Submissions', cwd: dir }
 
     var output = fs.createWriteStream(BACKUP_FOLDER + '/' + file)

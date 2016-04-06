@@ -1,16 +1,14 @@
-require('dotenv').load()
+var settings = require('./settings')
 
 var fs = require('fs')
 var path = require('path')
 var mkdirp = require('mkdirp')
 
-var PREFIX = process.env.data_directory
-var ROOT_PATH = PREFIX + '/Monitoring'
-var GLOBAL_FORMS = ROOT_PATH + '/Forms'
-var GLOBAL_MAPS = ROOT_PATH + '/Maps'
+const GLOBAL_FORMS = settings.getGlobalFormsDirectory()
+const GLOBAL_MAPS = settings.getGlobalMapsDirectory()
 
 function getFormUrls (cb) {
-  var local_forms = ROOT_PATH + '/' + process.env.station + '/Forms'
+  var local_forms = settings.getUserFormsDirectory()
   fs.readdir(GLOBAL_FORMS, function (err, global) {
     fs.readdir(local_forms, function (err2, local) {
       if (err) {
@@ -21,7 +19,7 @@ function getFormUrls (cb) {
         var files = global.concat(local)
         var links = []
         for (var i = 0; i < files.length; i++) {
-          links[i] = process.env.baseUrl + '/forms/' + files[i]
+          links[i] = settings.getBaseUrl() + '/forms/' + files[i]
         }
         cb(err, links)
       }
@@ -30,7 +28,7 @@ function getFormUrls (cb) {
 }
 
 function getForm (file, cb) {
-  var local_forms = ROOT_PATH + '/' + process.env.station + '/Forms'
+  var local_forms = settings.getUserFormsDirectory()
   fs.readFile(local_forms + '/' + file, function (err, data) {
     if (err) {
       fs.readFile(GLOBAL_FORMS + '/' + file, function (err2, data2) {
@@ -43,7 +41,7 @@ function getForm (file, cb) {
 }
 
 function getMap (file, cb) {
-  var mapFile = GLOBAL_MAPS + '/' + file
+  var mapFile = path.join(GLOBAL_MAPS, file)
   fs.exists(mapFile, function (exists) {
     if (exists) {
       fs.readFile(mapFile, function (err, data) {
@@ -69,7 +67,7 @@ function getMap (file, cb) {
 }
 
 function saveMap (file, data, cb) {
-  var mapFile = GLOBAL_MAPS + '/' + file
+  var mapFile = path.join(GLOBAL_MAPS, file)
   fs.writeFile(mapFile, data, function (err) {
     cb(err)
   })

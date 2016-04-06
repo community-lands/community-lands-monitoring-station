@@ -7,19 +7,21 @@ var fs = require('fs-extra')
 var path = require('path')
 var ipc = require('ipc')
 var dialog = require('dialog')
-var dotenv = require('dotenv')
+
 require('./server')
+
+var settings = require('./helpers/settings')
 
 ipc.on('show_configuration', function (event, arg) {
   try {
-    var _defaults = getDefaultSettings()
+    var _defaults = settings.defaults
     var _results = {
-      'directory': process.env.data_directory || _defaults.data_directory,
-      'station': process.env.station || _defaults.station,
-      'baseUrl': process.env.baseUrl,
-      'shared_secret': process.env.shared_secret,
-      'locale': process.env.locale || _defaults.locale,
-      'community_lands': !(process.env.community_lands_server === undefined || process.env.community_lands_token === undefined)
+      'directory': settings.getDataDirectory() || _defaults.data_directory,
+      'station': settings.getStation() || _defaults.station,
+      'baseUrl': settings.getBaseUrl(),
+      'shared_secret': settings.getSharedSecret(),
+      'locale': settings.getLocale() || _defaults.locale,
+      'community_lands': !(settings.getCommunityLandsServer() === undefined || settings.getCommunityLandsToken() === undefined)
     }
     console.log(_results)
     event.sender.send('has_configuration', _results)
@@ -31,7 +33,7 @@ ipc.on('show_configuration', function (event, arg) {
 ipc.on('backup_submissions', function (event, arg) {
   var options = {
     hostname: 'localhost',
-    port: process.env.port || 3000,
+    port: settings.getPort() || 3000,
     path: '/save/all',
     method: 'GET'
   }
@@ -51,7 +53,7 @@ ipc.on('backup_submissions', function (event, arg) {
 ipc.on('check_last_backup', function (event, arg) {
   var options = {
     hostname: 'localhost',
-    port: process.env.port || 3000,
+    port: settings.getPort() || 3000,
     path: '/save/status',
     method: 'GET'
   }
@@ -67,24 +69,28 @@ ipc.on('check_last_backup', function (event, arg) {
 })
 
 ipc.on('form_delete', function (event, arg) {
-  var folder = path.join(process.env.data_directory, 'Monitoring', process.env.station, 'Forms')
+  var folder = settings.getUserFormsDirectory()
   fs.readdir(folder, function (err, files) {
     if (err) {
       event.sender.send('has_form_delete')
     } else {
+      var found = false
       for (var i in files) {
         if (files[i] === arg) {
           fs.unlinkSync(path.join(folder, files[i]))
           event.sender.send('has_form_delete')
+          found = true
           break
         }
       }
+      if (!found)
+        event.sender.send('has_form_delete')
     }
   })
 })
 
 ipc.on('form_list', function (event, arg) {
-  var folder = path.join(process.env.data_directory, 'Monitoring', process.env.station, 'Forms')
+  var folder = settings.getUserFormsDirectory();
   fs.readdir(folder, function (err, files) {
     var data = { forms: [] }
     if (err) {
@@ -99,7 +105,7 @@ ipc.on('form_list', function (event, arg) {
 ipc.on('select_data_directory', function (event, arg) {
   var options = {
     properties: ['openDirectory'],
-    defaultPath: process.env.data_directory
+    defaultPath: settings.getDataDirectory()
   }
   dialog.showOpenDialog(mainWindow, options, function (folder) {
     if (folder) {
@@ -115,7 +121,7 @@ ipc.on('select_form', function (event, arg) {
   }
   dialog.showOpenDialog(mainWindow, options, function (arr) {
     if (arr !== undefined) {
-      var destDir = path.join(process.env.data_directory, 'Monitoring', process.env.station, 'Forms')
+      var destDir = settings.getUserFormsDirectory()
       var uploaded = {
         count: arr.length,
         names: []
@@ -135,7 +141,7 @@ ipc.on('select_form', function (event, arg) {
 ipc.on('filter_list', function (event, arg) {
   var options = {
     hostname: 'localhost',
-    port: process.env.port || 3000,
+    port: settings.getPort() || 3000,
     path: '/mapfilter/filters',
     method: 'GET'
   }
@@ -153,12 +159,11 @@ ipc.on('filter_list', function (event, arg) {
 })
 
 ipc.on('settings_list', function (event, arg) {
-  fs.readFile(path.join(__dirname, '.env'), 'utf8', function (err, data) {
+  settings.get(function(err, selected) {
     if (err) {
-      event.sender.send('has_settings_list', getDefaultSettings())
+      event.sender.send('has_settings_list', settings.defaults)
     } else {
-      var defaults = getDefaultSettings()
-      var selected = dotenv.parse(data)
+      var defaults = settings.defaults
       for (var key in selected)
         defaults[key] = selected[key]
       event.sender.send('has_settings_list', defaults)
@@ -167,14 +172,7 @@ ipc.on('settings_list', function (event, arg) {
 })
 
 ipc.on('settings_save', function (event, arg) {
-  var properties = ''
-  for (var key in arg) {
-    if (arg[key]) {
-      properties += key + '=' + arg[key]
-      properties += '\r\n'
-    }
-  }
-  fs.writeFile(path.join(__dirname, '.env'), properties, 'utf8', function (err) {
+  settings.save(arg, function (err) {
     if (err) {
       event.sender.send('has_settings_save', '{"error",true, "code":"could_not_save_settings", "message":"Could not save settings file"}')
     } else {
@@ -184,10 +182,10 @@ ipc.on('settings_save', function (event, arg) {
 })
 
 ipc.on('community_lands_backup', function (event, arg) {
-  if (process.env.community_lands_server) {
+  if (settings.getCommunityLandsServer()) {
     var options = {
       hostname: 'localhost',
-      port: process.env.port || 3000,
+      port: settings.getPort() || 3000,
       path: '/backup/latest',
       method: 'GET'
     }
@@ -208,10 +206,10 @@ ipc.on('community_lands_backup', function (event, arg) {
 })
 
 ipc.on('community_lands_status', function (event, arg) {
-  if (process.env.community_lands_server) {
+  if (settings.getCommunityLandsServer()) {
     var options = {
       hostname: 'localhost',
-      port: process.env.port || 3000,
+      port: settings.getPort() || 3000,
       path: '/backup/status',
       method: 'GET'
     }
@@ -235,7 +233,7 @@ ipc.on('community_lands_online', function (event, arg) {
   event.sender.send('has_community_lands_online', arg)
 })
 
-var FiltersDir = path.join(process.env.data_directory, 'Monitoring', process.env.station, 'Filters')
+var FiltersDir = settings.getFiltersDirectory()
 try {
   fs.mkdirpSync(FiltersDir)
 } catch (e) { // It's ok
@@ -243,22 +241,6 @@ try {
 fs.watch(FiltersDir, function (evt, filename) {
   mainWindow.reload()
 })
-
-var getDefaultSettings = function () {
-  return {
-    data_directory: path.join(__dirname),
-    station: 'DEMO',
-    locale: 'en',
-    community_lands_server: 'www.communitylands.org',
-    community_lands_port: 80,
-    community_lands_token: null,
-    port: 3000,
-    shared_secret: 'demo',
-    mapZoom: null,
-    mapCenterLat: null,
-    mapCenterLong: null
-  }
-}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -276,7 +258,7 @@ app.on('ready', function () {
   mainWindow = new BrowserWindow({width: 400, height: 400})
 
   // and load the index.html of the app.
-  mainWindow.loadUrl('file://' + __dirname + '/index.html?locale=' + (process.env.locale || 'en'))
+  mainWindow.loadUrl('file://' + __dirname + '/index.html?locale=' + (settings.getLocale() || 'en'))
 
   // Open the DevTools.
   // mainWindow.openDevTools()

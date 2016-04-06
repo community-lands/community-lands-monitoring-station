@@ -1,5 +1,3 @@
-require('dotenv').load()
-
 var storage = require('../helpers/community-storage.js')
 var createFormList = require('openrosa-formlist')
 var persistFs = require('../helpers/persist-fs')
