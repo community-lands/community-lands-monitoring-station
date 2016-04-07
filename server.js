@@ -6,7 +6,6 @@ var morgan = require('morgan')
 var bodyParser = require('body-parser')
 var passport = require('passport')
 var Strategy = require('passport-http').DigestStrategy
-var request = require('request')
 var db = require('./db')
 var url = require('url')
 
@@ -27,6 +26,7 @@ var CommunityLands = require('./controllers/community-lands')
 var MapFilter = require('./controllers/map-filter')
 
 var TileLayers = require('./controllers/tile-layers')
+var Bing = require('./controllers/bing-proxy')
 
 var Backup = require('./controllers/backup')
 
@@ -58,45 +58,9 @@ app.get('/mapfilter/json/mapfilter-config.json', MapFilter.config)
 app.get('/mapfilter/filters', MapFilter.listFilters)
 app.post('/mapfilter/filters/local', bodyParser.json(), MapFilter.saveFilter)
 
-app.get('/bing-metadata/:url', function (req, res) {
-  var metadataUrl = decodeURIComponent(req.param('url'))
-  request
-    .get(metadataUrl)
-    .on('error', function (fetch_err) {
-      console.log("Could not fetch metadata. Sending fake Bing metadata.")
-      var parsedMetadataUrl = url.parse(metadataUrl, true)
-      var cbid = parsedMetadataUrl.query.jsonp
-      var metadata = fs.readFileSync('offline-metadata.js', 'utf8')
-      res.send(metadata.replace('_bing_metadata_mapfilter',cbid))
-    })
-    .pipe(res)
-})
+app.get('/bing-metadata/:url', Bing.metadata)
 
-app.get('/bing-proxy/:url', function (req, res) {
-  var tileUrl = decodeURIComponent(req.param('url'))
-  var fileName = tileUrl.match(/\/([^\/]*.jpe?g)/)[1]
-  var pathName = 'Monitoring' + '/Maps/Bing/' + fileName
-  try {
-    var stats = fs.statSync(pathName)
-    if (stats.size < 100) {
-      fs.unlinkSync(pathName)
-      throw new Error('Found truncated file')
-    }
-    var stream = fs.createReadStream(pathName)
-    console.log('cached: ' + pathName)
-    stream.pipe(res)
-  } catch (err) {
-    console.log('downloading: ' + fileName)
-    var r = request
-      .get(tileUrl)
-      .on('error', function (fetch_err) {
-        console.log(fetch_err)
-        res.status(500)
-      })
-    r.pipe(fs.createWriteStream(pathName))
-    r.pipe(res)
-  }
-})
+app.get('/bing-proxy/:url', Bing.prepare, Bing.proxy)
 
 app.use('/monitoring-files', express.static(settings.getRootPath()))
 
