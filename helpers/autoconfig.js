@@ -2,7 +2,7 @@
 process.env.directory = process.env.directory || '.'
 process.chdir(process.env.directory)
 
-require('dotenv').load()
+require('./settings').load()
 
 // Detect IP, set up defaults for configuration variables if not set
 var os = require('os')

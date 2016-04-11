@@ -1,19 +1,17 @@
-require('dotenv').load()
+var settings = require('../helpers/settings')
 
 var fs = require('fs')
 var path = require('path')
 var moment = require('moment')
 
-var PREFIX = process.env.data_directory
-var ROOT_PATH = path.join(PREFIX, 'Monitoring')
-var FILTERS_FOLDER = path.join(ROOT_PATH, process.env.station, 'Filters')
+const FILTERS_FOLDER = settings.getFiltersDirectory()
 
 function saveFilter (req, res, next) {
   var name = moment().format('YYYYMMDDHHmmss')
   var json = req.body
   fs.writeFile(path.join(FILTERS_FOLDER, name), JSON.stringify(json), function (err) {
     if (err) {
-      res.json({error: true, message: 'File did not save'})
+      res.json({error: true, code: 'save_failed', message: 'File did not save'})
     } else {
       res.json({error: false, message: 'Save successful'})
     }
@@ -39,24 +37,25 @@ function config (req, res, next) {
     bingProxy: '/bing-proxy',
     bingMetadata: '/bing-metadata'
   };
-  if (process.env.mapZoom) {
+  var mapFilterSettings = settings.getMapFilterSettings();
+  if (mapFilterSettings.mapZoom) {
     try {
-      data['mapZoom'] = parseInt(process.env.mapZoom, 10)
+      data['mapZoom'] = parseInt(mapFilterSettings.mapZoom, 10)
     } catch (e) {}
   }
-  if (process.env.mapCenterLat) {
+  if (mapFilterSettings.mapCenterLat) {
     try {
-      data['mapCenterLat'] = parseFloat(process.env.mapCenterLat)
+      data['mapCenterLat'] = parseFloat(mapFilterSettings.mapCenterLat)
     } catch (e) {}
   }
-  if (process.env.mapCenterLong) {
+  if (mapFilterSettings.mapCenterLong) {
     try {
-      data['mapCenterLong'] = parseFloat(process.env.mapCenterLong)
+      data['mapCenterLong'] = parseFloat(mapFilterSettings.mapCenterLong)
     } catch (e) {}
   }
   var filter = req.query.filter
   if (filter) {
-    var file = path.join(process.env.data_directory, 'Monitoring', process.env.station, 'Filters', filter)
+    var file = path.join(settings.getFiltersDirectory(), filter)
     fs.access(file, fs.F_OK | fs.R_OK, function (err) {
       if (err) {
         res.json(data)

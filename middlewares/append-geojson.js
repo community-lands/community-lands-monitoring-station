@@ -1,10 +1,5 @@
-require('dotenv').load()
-
 var storage = require('../helpers/community-storage.js')
 
-var PREFIX = process.env.data_directory;
-var ROOT_PATH = PREFIX + '/Monitoring';
-var SUBMISSIONS = ROOT_PATH + '/' + process.env.station + '/Submissions';
 var MAP = 'Monitoring.geojson';
 
 /**

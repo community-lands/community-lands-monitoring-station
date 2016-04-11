@@ -1,11 +1,8 @@
-require('dotenv').load()
+var settings = require('../helpers/settings')
 
 var fs = require('fs')
-var path = require('path')
 
-var PREFIX = process.env.data_directory
-var ROOT_PATH = path.join(PREFIX, 'Monitoring')
-var TILES_FOLDER = path.join(path.join(ROOT_PATH, 'Maps'), 'Tiles')
+const TILES_FOLDER = settings.getTilesDirectory()
 
 function listTileLayers (req, res, next) {
   fs.readdir(TILES_FOLDER, function (err, files) {
