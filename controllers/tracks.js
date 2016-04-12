@@ -46,14 +46,8 @@ function importColumbus (file, callback) {
       }
       float_coordinates.push(-parseFloat(e['height']))
       var properties = {
-        'meta': {
-          instanceId: 'uuid:' + instance_uuid,
-          instanceName: name,
-          formId: 'monitoring_form_v1',
-          version: 1.0,
-          submissionTime: (e['date'] + e['time']),
-          deviceId: 'Columbus V900'
-        }
+        name: name,
+        time: (e['date'] + ' ' + e['time'])
       }
       if (e['tag'] === 'V') {
         properties['voice_memo'] = e['vox'].replace('\u0000', '.WAV')
