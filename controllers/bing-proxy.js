@@ -3,6 +3,7 @@ var settings = require('../helpers/settings')
 var fs = require('fs')
 var path = require('path')
 var request = require('request')
+var url = require('url')
 
 var BING_ROOT = path.join(settings.getGlobalMapsDirectory(), 'Bing')
 
@@ -51,7 +52,7 @@ function handleMetadata(req, res) {
       console.log("Could not fetch metadata. Sending fake Bing metadata.")
       var parsedMetadataUrl = url.parse(metadataUrl, true)
       var cbid = parsedMetadataUrl.query.jsonp
-      var metadata = fs.readFileSync('../offline-metadata.js', 'utf8')
+      var metadata = fs.readFileSync(path.join(path.dirname(__dirname), 'application', 'offline-metadata.js'), 'utf8')
       res.send(metadata.replace('_bing_metadata_mapfilter',cbid))
     })
     .pipe(res)

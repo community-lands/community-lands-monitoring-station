@@ -7,7 +7,6 @@ var bodyParser = require('body-parser')
 var passport = require('passport')
 var Strategy = require('passport-http').DigestStrategy
 var db = require('./db')
-var url = require('url')
 
 var settings = require('./helpers/settings')
 
