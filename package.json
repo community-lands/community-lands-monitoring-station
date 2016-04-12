@@ -21,6 +21,7 @@
   "dependencies": {
     "archiver": "*",
     "body-parser": "^1.13.3",
+    "csv-parse": "^1.0.4",
     "dotenv": "^0.5.1",
     "express": "^4.13.3",
     "fs-extra": "^0.26.7",
@@ -34,6 +35,7 @@
     "passport": "^0.3.0",
     "passport-http": "*",
     "request": "^2.70.0",
+    "uuid": "^2.0.1",
     "xform-to-json": "^1.1.0",
     "xtend": "^4.0.1"
   }

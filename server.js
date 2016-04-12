@@ -28,6 +28,7 @@ var TileLayers = require('./controllers/tile-layers')
 var Bing = require('./controllers/bing-proxy')
 
 var Backup = require('./controllers/backup')
+var Tracks = require('./controllers/tracks')
 
 // Configure the Digest strategy for use by Passport.
 //
@@ -60,6 +61,9 @@ app.post('/mapfilter/filters/local', bodyParser.json(), MapFilter.saveFilter)
 app.get('/bing-metadata/:url', Bing.metadata)
 
 app.get('/bing-proxy/:url', Bing.prepare, Bing.proxy)
+
+app.get('/tracks', Tracks.tracks)
+app.get('/sounds/:file', Tracks.sounds)
 
 app.use('/monitoring-files', express.static(settings.getRootPath()))
 
