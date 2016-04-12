@@ -1,6 +1,6 @@
 var settings = require('../helpers/settings')
 
-var fs = require('fs')
+var fs = require('fs-extra')
 var path = require('path')
 var request = require('request')
 var url = require('url')
