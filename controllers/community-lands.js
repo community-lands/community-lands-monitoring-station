@@ -80,11 +80,28 @@ function clCallback (res) {
       clData += d
     })
     clRes.on('end', function () {
-      if (res.statusCode >= 200 && res.statusCode <= 299)
-        res.json(JSON.parse(clData))
-      else
-        res.json({error: true, code: res.statusCode})
+      var status = clRes.statusCode
+      var result;
+      try {
+        result = JSON.parse(clData)
+      } catch (err) {
+        res.status(422).json({error: true, code: 'unknown', status: 422, message: err.message})
+      }
+      if (result) {
+        if (status >= 200 && status <= 299)
+          res.status(status).json(result)
+        else if (status >= 400 && status <= 499)
+          res.status(400).json({error: true, code: 'client_error', status: status, message: result.message });
+        else if (status >= 500 && status <= 599)
+          res.status(500).json({error: true, code: 'server_error', status: status, message: result.message });
+        else
+          res.status(status).json({error: true, code: 'unknown', status: status})
+      } else
+        res.status(status).json({error: true, code: 'unknown', status: status})
     })
+    clRes.on('error', function(err) {
+      res.status(500).json({error: true, code: 'comm_failure', status: 1001, ex: err, message: err.message});
+    });
   }
 }
 
