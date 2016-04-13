@@ -153,6 +153,10 @@ function getGlobalFormsDirectory() {
   return path.join(getRootPath(), 'Forms');
 }
 
+function getTracksDirectory() {
+  return path.join(getRootPath(), 'Tracks');
+}
+
 function getUserFormsDirectory() {
   return path.join(getRootPath(), getStation(), 'Forms');
 }
@@ -192,6 +196,7 @@ module.exports = {
   getTilesDirectory: getTilesDirectory,
   getGlobalMapsDirectory: getGlobalMapsDirectory,
   getGlobalFormsDirectory: getGlobalFormsDirectory,
+  getTracksDirectory: getTracksDirectory,
   getUserFormsDirectory: getUserFormsDirectory,
   getSharedSecret: getSharedSecret,
   getSharedUsername: getSharedUsername,
