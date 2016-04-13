@@ -10,22 +10,22 @@
         "last_backup": "Última copia de respaldo: ",
         "open": "Abierto: ",
         "settings": {
-            "data_directory": "Data Directory",
-            "shared_secret": "Shared Secret",
-            "station": "Station",
-            "locale": "Locale",
-            "port": "Port",
-            "community_lands_server": "Community Lands Host",
-            "community_lands_port": "Community Lands Port",
-            "community_lands_token": "Community Lands Token",
+            "data_directory": "Datos del Directorio",
+            "shared_secret": "Clave compartida",
+            "station": "Estación",
+            "locale": "Ubicación",
+            "port": "Puerta",
+            "community_lands_server": "Servidor de community lands",
+            "community_lands_port": "Puerta de community lands",
+            "community_lands_token": "Clave de community lands",
             "mapZoom": "MapFilter Zoom",
-            "mapCenterLat": "MapFilter Starting Latitude",
-            "mapCenterLong": "MapFilter Starting Longitude"
+            "mapCenterLat": "Latitud inicial de MapFilter",
+            "mapCenterLong": "Longitud inicial de Mapfilter"
         }
     },
     "help": {
         "settings": {
-            "mapZoom": "Value must be between 1 (closest) and 18 (farthest)"
+            "mapZoom": "Valor debe ser entre 1 (mas cercana) y 18 (mas lejos)"
         }
     },
     "confirm": {
@@ -44,6 +44,14 @@
         "my_monitoring_forms": "Mis formularios de monitoreo",
         "saved_filters": "Filtros guardados",
         "settings": "Application Settings"
+    },
+    "subtitle": {
+        "settings": {
+          "general": "General",
+          "advanced": "Advanced",
+          "mapfilter": "MapFilter",
+          "communitylands": "Community Lands"
+        }
     },
     "button": {
         "select_file": "Selecciona archivo",
