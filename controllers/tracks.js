@@ -5,7 +5,7 @@ var path = require('path')
 var parse = require('csv-parse/lib/sync')
 var uuid = require('uuid')
 
-var TRACKS_FOLDER = path.join(settings.getRootPath(), 'Tracks')
+var TRACKS_FOLDER = settings.getTracksDirectory()
 
 function importColumbus (file, callback) {
   console.log('Importing ' + file)

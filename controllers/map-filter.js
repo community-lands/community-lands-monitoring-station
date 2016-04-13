@@ -35,8 +35,19 @@ function config (req, res, next) {
       { name: 'Local', path: '/mapfilter/filters/local', value: 'local' }
     ],
     bingProxy: '/bing-proxy',
-    bingMetadata: '/bing-metadata'
+    bingMetadata: '/bing-metadata',
+    tiles: {
+      url: '/tileLayers',
+      tilesPath: '/monitoring-files/Maps/Tiles'
+    }
   };
+  if (exists(settings.getTracksDirectory())) {
+    data['tracks'] = {
+      url: '/tracks',
+      soundsPath: '/sounds',
+      iconPath: '/mapfilter'
+    }
+  }
   var mapFilterSettings = settings.getMapFilterSettings();
   if (mapFilterSettings.mapZoom) {
     try {
@@ -69,6 +80,15 @@ function config (req, res, next) {
   } else {
     res.json(data)
   }
+}
+
+function exists(path) {
+  try {
+    fs.accessSync(path, fs.F_OK | fs.R_OK);
+  } catch (err) {
+    return false;
+  }
+  return true;
 }
 
 module.exports = {
