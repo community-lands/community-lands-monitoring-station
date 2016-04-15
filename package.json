@@ -35,7 +35,6 @@
     "passport": "^0.3.0",
     "passport-http": "*",
     "request": "^2.70.0",
-    "uuid": "^2.0.1",
     "xform-to-json": "^1.1.0",
     "xtend": "^4.0.1"
   }

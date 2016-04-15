@@ -3,7 +3,6 @@ var settings = require('../helpers/settings')
 var fs = require('fs-extra')
 var path = require('path')
 var parse = require('csv-parse/lib/sync')
-var uuid = require('uuid')
 
 var TRACKS_FOLDER = path.join(settings.getRootPath(), 'Tracks')
 
@@ -12,6 +11,8 @@ function importColumbus (file, callback) {
   var guts = fs.readFileSync(file, 'utf8')
   console.log('Importing ' + file + ' (' + (guts.split(/\r\n|\r|\n/).length) + ' lines)')
   var records = parse(guts)
+  var polyline = []
+  var ptime = ''
 
   for (var _i = 0, _len = records.length; _i < _len; _i++) {
     var row = records[_i]
@@ -25,26 +26,25 @@ function importColumbus (file, callback) {
     e['speed'] = row[7]
     e['heading'] = row[8]
     e['vox'] = row[9]
+    var float_coordinates = []
+    var long = e['longitude']
+    if (long.match(/E/)) {
+      float_coordinates.push(parseFloat(long.replace(/[^0-9\.]+/g, '')))
+    } else {
+      float_coordinates.push(-parseFloat(long.replace(/[^0-9\.]+/g, '')))
+    }
+    var lat = e['latitude']
+    if (lat.match(/N/)) {
+      float_coordinates.push(parseFloat(lat.replace(/[^0-9\.]+/g, '')))
+    } else {
+      float_coordinates.push(-parseFloat(lat.replace(/[^0-9\.]+/g, '')))
+    }
+    float_coordinates.push(-parseFloat(e['height']))
     if (e['tag'] === 'V' || e['tag'] === 'C') {
-      var instance_uuid = uuid.v1()
       var name = 'Columbus Waypoint'
       if (e['tag'] === 'V') {
         name = 'Columbus Voice Memo'
       }
-      var float_coordinates = []
-      var long = e['longitude']
-      if (long.match(/E/)) {
-        float_coordinates.push(parseFloat(long.replace(/[^0-9\.]+/g, '')))
-      } else {
-        float_coordinates.push(-parseFloat(long.replace(/[^0-9\.]+/g, '')))
-      }
-      var lat = e['latitude']
-      if (lat.match(/N/)) {
-        float_coordinates.push(parseFloat(lat.replace(/[^0-9\.]+/g, '')))
-      } else {
-        float_coordinates.push(-parseFloat(lat.replace(/[^0-9\.]+/g, '')))
-      }
-      float_coordinates.push(-parseFloat(e['height']))
       var properties = {
         name: name,
         time: (e['date'] + ' ' + e['time'])
@@ -62,9 +62,30 @@ function importColumbus (file, callback) {
         'properties': properties
       }
       callback(feature)
-    } else {
-      // creation of track polylines is broken
+    } else if (e['tag'] === 'T') {
+      polyline.push(float_coordinates)
+      ptime = e['date'] + ' ' + e['time']
     }
+  }
+
+  console.log(polyline)
+  if (polyline.length > 2) {
+    console.log('rendering a track polyline')
+    geometry = {
+      'type': 'LineString',
+      'coordinates': polyline
+    }
+    properties = {
+      name: 'Columbus Track',
+      time: ptime
+    }
+    feature = {
+      'type': 'Feature',
+      'geometry': geometry,
+      'properties': properties
+    }
+    console.log(feature)
+    callback(feature)
   }
 }
 
