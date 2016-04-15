@@ -33,14 +33,28 @@ function handleProxy(req, res) {
     stream.pipe(res)
   } catch (err) {
     console.log('downloading: ' + fileName)
-    var r = request
-      .get(tileUrl)
-      .on('error', function (fetch_err) {
-        console.log(fetch_err)
-        res.status(500)
-      })
-    r.pipe(fs.createWriteStream(pathName))
-    r.pipe(res)
+    try{
+      var r = request
+        .get({
+          timeout: 10000,
+          uri: tileUrl
+        })
+        .on('error', function (fetch_err) {
+          console.log(fetch_err)
+          res.status(500)
+        })
+      try {
+        cachefile = fs.createWriteStream(pathName)
+        r.pipe(cachefile)
+      } catch (err) {
+        console.log('error saving tile, streaming it anyway')
+        console.log(err)
+      }
+      r.pipe(res)
+    } catch (err) {
+      console.log('error saving or streaming tile')
+      console.log(err)
+    }
   }
 }
 
