@@ -72,7 +72,10 @@ function config (req, res, next) {
         res.json(data)
       } else {
         fs.readFile(file, 'utf8', function (err, contents) {
-          data['filters'] = JSON.parse(contents).value
+          var filterJson = JSON.parse(contents)
+          data['filters'] = filterJson.value
+          if (filterJson.baseLayer)
+            data['baseLayer'] = filterJson.baseLayer
           res.json(data)
         })
       }
