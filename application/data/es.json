@@ -10,29 +10,29 @@
         "last_backup": "Última copia de respaldo: ",
         "open": "Abierto: ",
         "settings": {
-            "data_directory": "Data Directory",
-            "shared_secret": "Shared Secret",
-            "station": "Station",
-            "locale": "Locale",
-            "port": "Port",
-            "community_lands_server": "Community Lands Host",
-            "community_lands_port": "Community Lands Port",
-            "community_lands_token": "Community Lands Token",
+            "data_directory": "Datos del Directorio",
+            "shared_secret": "Clave compartida",
+            "station": "Estación",
+            "locale": "Ubicación",
+            "port": "Puerta",
+            "community_lands_server": "Servidor de community lands",
+            "community_lands_port": "Puerta de community lands",
+            "community_lands_token": "Clave de community lands",
             "mapZoom": "MapFilter Zoom",
-            "mapCenterLat": "MapFilter Starting Latitude",
-            "mapCenterLong": "MapFilter Starting Longitude"
+            "mapCenterLat": "Latitud inicial de MapFilter",
+            "mapCenterLong": "Longitud inicial de Mapfilter"
         }
     },
     "help": {
         "settings": {
-            "mapZoom": "Value must be between 1 (closest) and 18 (farthest)"
+            "mapZoom": "Valor debe ser entre 1 (mas cercana) y 18 (mas lejos)"
         }
     },
     "confirm": {
         "delete_form": "Estas seguro que quieres borrar este formulario"
     },
     "message": {
-        "settings_saved": "Settings saved. Restart your app for settings to take effect."
+        "settings_saved": "Configuración guardada: Cerrar y iniciar programa de nuevo para actualizarla"
     },
     "title": {
         "odk_collect": "Configuración del ODK Collect",
@@ -42,15 +42,23 @@
         "data_backup": "Copia segura de datos",
         "community_lands": "Community Lands",
         "my_monitoring_forms": "Mis formularios de monitoreo",
-        "saved_filters": "Filtros guardados",
-        "settings": "Application Settings"
+        "saved_filters": "Mapas guardadas",
+        "settings": "Configuración de aplicación"
+    },
+    "subtitle": {
+        "settings": {
+          "general": "General",
+          "advanced": "Avanzada",
+          "mapfilter": "MapFilter",
+          "communitylands": "Community Lands"
+        }
     },
     "button": {
         "select_file": "Selecciona archivo",
         "backup_data": "Copia segura de sus datos",
         "upload": "Subir datos",
-        "choose": "Choose",
-        "update_settings": "Update Settings"
+        "choose": "Selecionar",
+        "update_settings": "Actualizar configuración"
     },
     "language": {
         "en": "English",
