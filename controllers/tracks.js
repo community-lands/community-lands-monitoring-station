@@ -3,6 +3,8 @@ var settings = require('../helpers/settings')
 var fs = require('fs-extra')
 var path = require('path')
 var parse = require('csv-parse/lib/sync')
+var tj = require('togeojson')
+var jsdom = require('jsdom').jsdom
 
 var TRACKS_FOLDER = settings.getTracksDirectory()
 
@@ -39,7 +41,7 @@ function importColumbus (file, callback) {
     } else {
       float_coordinates.push(-parseFloat(lat.replace(/[^0-9\.]+/g, '')))
     }
-    float_coordinates.push(-parseFloat(e['height']))
+    // float_coordinates.push(-parseFloat(e['height']))
     if (e['tag'] === 'V' || e['tag'] === 'C') {
       var name = 'Columbus Waypoint'
       if (e['tag'] === 'V') {
@@ -67,30 +69,29 @@ function importColumbus (file, callback) {
       ptime = e['date'] + ' ' + e['time']
     }
   }
+}
 
-  console.log(polyline)
-  if (polyline.length > 2) {
-    console.log('rendering a track polyline')
-    geometry = {
-      'type': 'LineString',
-      'coordinates': polyline
+function importGarmin (file, callback) {
+  console.log('Importing ' + file)
+  try {
+    var guts = jsdom(fs.readFileSync(file, 'utf8'))
+    var converted = tj.gpx(guts)
+    for (var index in converted.features) {
+      var feature = converted.features[index]
+      try {
+        callback(feature)
+      } catch (err) {
+        console.log('Error importing a GPX feature')
+      }
     }
-    properties = {
-      name: 'Columbus Track',
-      time: ptime
-    }
-    feature = {
-      'type': 'Feature',
-      'geometry': geometry,
-      'properties': properties
-    }
-    console.log(feature)
-    callback(feature)
+  } catch (err) {
+    console.log('Error reading GPX file ' + file)
   }
 }
 
 function tracks (req, res) {
   var COLUMBUS_FOLDER = path.join(TRACKS_FOLDER, 'Columbus')
+  var GARMIN_FOLDER = path.join(TRACKS_FOLDER, 'Garmin')
   var feature_collection_all = {
     'type': 'FeatureCollection',
     features: []
@@ -99,10 +100,28 @@ function tracks (req, res) {
   for (var index in files) {
     var name = '' + files[index]
     if (name.toLowerCase().endsWith('.csv')) {
-      importColumbus(path.join(COLUMBUS_FOLDER, name), function (feature) {
-        console.log(feature)
-        feature_collection_all['features'].push(feature)
-      })
+      try {
+        importColumbus(path.join(COLUMBUS_FOLDER, name), function (feature) {
+          console.log(feature)
+          feature_collection_all['features'].push(feature)
+        })
+      } catch (err) {
+        console.log('Error importing Columbus data')
+      }
+    }
+  }
+  files = fs.readdirSync(GARMIN_FOLDER)
+  for (index in files) {
+    name = '' + files[index]
+    if (name.toLowerCase().endsWith('.gpx')) {
+      try {
+        importGarmin(path.join(GARMIN_FOLDER, name), function (feature) {
+          console.log(feature)
+          feature_collection_all['features'].push(feature)
+        })
+      } catch (err) {
+        console.log('Error importing Garmin data')
+      }
     }
   }
   res.json(feature_collection_all)
