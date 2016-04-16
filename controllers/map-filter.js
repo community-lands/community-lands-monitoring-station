@@ -41,12 +41,10 @@ function config (req, res, next) {
       tilesPath: '/monitoring-files/Maps/Tiles'
     }
   };
-  if (exists(settings.getTracksDirectory())) {
-    data['tracks'] = {
-      url: '/tracks',
-      soundsPath: '/sounds',
-      iconPath: '/mapfilter'
-    }
+  data['tracks'] = {
+    url: '/tracks',
+    soundsPath: '/sounds',
+    iconPath: '/mapfilter'
   }
   var mapFilterSettings = settings.getMapFilterSettings();
   if (mapFilterSettings.mapZoom) {
