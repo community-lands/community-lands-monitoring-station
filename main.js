@@ -181,6 +181,19 @@ ipc.on('settings_save', function (event, arg) {
   })
 })
 
+ipc.on('list_map_layers', function (event, arg) {
+  fs.readdir(settings.getTilesDirectory(), function(err, files) {
+    if (err)
+      event.sender.send('has_list_map_layers', [])
+    else {
+      var arr = []
+      for (var i = 0; i < files.length; i++)
+        arr.push({name: files[i], value: files[i]});
+      event.sender.send('has_list_map_layers', arr);
+    }
+  });
+});
+
 ipc.on('community_lands_backup', function (event, arg) {
   if (settings.getCommunityLandsServer()) {
     var options = {

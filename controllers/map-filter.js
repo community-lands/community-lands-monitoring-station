@@ -46,6 +46,8 @@ function config (req, res, next) {
     soundsPath: '/sounds',
     iconPath: '/mapfilter'
   }
+  if (process.env.mapLayer)
+    data['baseLayer'] = process.env.mapLayer
   var mapFilterSettings = settings.getMapFilterSettings();
   if (mapFilterSettings.mapZoom) {
     try {
