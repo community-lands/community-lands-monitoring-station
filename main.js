@@ -258,7 +258,7 @@ app.on('ready', function () {
   mainWindow = new BrowserWindow({width: 400, height: 400})
 
   // and load the index.html of the app.
-  mainWindow.loadUrl('file://' + __dirname + '/index.html?locale=' + (settings.getLocale() || 'en'))
+  mainWindow.loadURL('file://' + __dirname + '/index.html?locale=' + (settings.getLocale() || 'en'))
 
   // Open the DevTools.
   // mainWindow.openDevTools()
