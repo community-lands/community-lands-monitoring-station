@@ -69,6 +69,25 @@ function importColumbus (file, callback) {
       ptime = e['date'] + ' ' + e['time']
     }
   }
+  console.log(polyline)
+  if (polyline.length > 2) {
+    console.log('rendering a track polyline')
+    geometry = {
+      'type': 'LineString',
+      'coordinates': polyline
+    }
+    properties = {
+      name: 'Columbus Track',
+      time: ptime
+    }
+    feature = {
+      'type': 'Feature',
+      'geometry': geometry,
+      'properties': properties
+    }
+    console.log(feature)
+    callback(feature)
+  }
 }
 
 function importGarmin (file, callback) {
