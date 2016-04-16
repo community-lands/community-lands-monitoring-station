@@ -134,6 +134,7 @@
         advanced: ''
       };
       var section_keys = {
+        mapLayer: 'mapfilter',
         mapZoom: 'mapfilter',
         mapCenterLat: 'mapfilter',
         mapCenterLong: 'mapfilter',
@@ -158,6 +159,11 @@
             html += '>' + opt.name + '</option>';
           }
           html += "</select>";
+        } else if (key == 'mapLayer') {
+          var options = [ { name: 'Bing', value: 'null' } ];
+          html += '<select id="'+item_id+'" class="form-control key-value" data-key="' + key + '" data-value="'+settings[key]+'">';
+          html += '<option value="null" selected>Bing</option>'
+          html += '</select>'
         } else if (key == 'data_directory') {
           html += '<div class="row">';
           html += '<div class="col-xs-4">';
@@ -192,6 +198,25 @@
       }
       html += "</form>";
       document.getElementById('settings_form').innerHTML = html;
+      ipc.send('list_map_layers');
+    });
+    ipc.on('has_list_map_layers', function(layers) {
+      var el = document.getElementById('settings-form-mapLayer')
+      var defaultLayer = el.getAttribute('data-value')
+      if (layers.length > 0) {
+        layers.unshift({
+          name: 'Bing', value: 'null'
+        });
+        var html = ''
+        for (var i = 0; i < layers.length; i++) {
+          var opt = layers[i];
+          html += '<option value="' + opt.value + '"'
+          if (opt.value == defaultLayer)
+            html += ' selected';
+          html += '>' + opt.name + '</option>';
+        }
+        el.innerHTML = html
+      }
     });
     ipc.on('has_configuration', function(configuration) {
       config = configuration;
@@ -277,7 +302,8 @@
       for (var i = 0; i < els.length; i++) {
         var el = els[i];
         var key = el.getAttribute('data-key');
-        object[key] = el.value;
+        if (el.value != 'null' && el.value != '')
+          object[key] = el.value;
       }
       ipc.send('settings_save', object);
     }

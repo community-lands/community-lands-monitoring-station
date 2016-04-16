@@ -87,6 +87,7 @@ function getDefaultSettings() {
     community_lands_token: null,
     port: 3000,
     shared_secret: 'demo',
+    mapLayer: null,
     mapZoom: null,
     mapCenterLat: null,
     mapCenterLong: null

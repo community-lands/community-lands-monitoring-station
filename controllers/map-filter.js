@@ -48,6 +48,8 @@ function config (req, res, next) {
       iconPath: '/mapfilter'
     }
   }
+  if (process.env.mapLayer)
+    data['baseLayer'] = process.env.mapLayer
   var mapFilterSettings = settings.getMapFilterSettings();
   if (mapFilterSettings.mapZoom) {
     try {
