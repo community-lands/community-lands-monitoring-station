@@ -2,16 +2,16 @@ var app = require('app') // Module to control application life.
 process.env.directory = process.env.directory || app.getAppPath()
 var BrowserWindow = require('browser-window') // Module to create native browser window.
 
+require('./server')
+var settings = require('./helpers/settings')
+
 var http = require('http')
 var fs = require('fs-extra')
 var path = require('path')
 var ipc = require('ipc')
 var dialog = require('dialog')
 var unzip = require('unzip2');
-
-require('./server')
-
-var settings = require('./helpers/settings')
+var GeoJson = require('./helpers/rebuild-geojson')
 
 ipc.on('show_configuration', function (event, arg) {
   try {
@@ -201,14 +201,19 @@ ipc.on('import_files', function(event, args) {
             fs.createReadStream(source)
             .pipe(unzip.Extract({ path: target }))
             .on('close', function() {
-              event.sender.send('has_import_files', { error: false });
+              GeoJson.generate(function(err_json, details) {
+                if (err_json)
+                  event.sender.send('has_import_files', err_json);
+                else
+                  event.sender.send('has_import_files', { error: false, details: details });
+              });
             });
           } catch (e) {
             console.log(e);
             event.sender.send('has_import_files', { error: true, code: 'import_unzip_failed', ex: e });
           }
         }
-      }
+      };
 
       if (args.mode == 'merge')
         complete(null);

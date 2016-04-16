@@ -67,8 +67,11 @@ function getMap (file, cb) {
 }
 
 function saveMap (file, data, cb) {
+  var contents = data
+  if (typeof(data) != 'string')
+    contents = JSON.stringify(data, null, 2)
   var mapFile = path.join(GLOBAL_MAPS, file)
-  fs.writeFile(mapFile, data, function (err) {
+  fs.writeFile(mapFile, contents, function (err) {
     cb(err)
   })
 }

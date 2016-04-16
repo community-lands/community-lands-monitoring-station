@@ -15,7 +15,7 @@ function AppendGeoJSON (options) {
         if (err) return next(err);
         var features = JSON.parse(data);
         features["features"].push(req.submission.json)
-        storage.saveMap(MAP, JSON.stringify(features), function(err) {
+        storage.saveMap(MAP, features, function(err) {
           if (err) return next(err);
           next();
         });
