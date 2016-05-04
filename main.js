@@ -2,15 +2,16 @@ var app = require('app') // Module to control application life.
 process.env.directory = process.env.directory || app.getAppPath()
 var BrowserWindow = require('browser-window') // Module to create native browser window.
 
+require('./server')
+var settings = require('./helpers/settings')
+
 var http = require('http')
 var fs = require('fs-extra')
 var path = require('path')
 var ipc = require('ipc')
 var dialog = require('dialog')
-
-require('./server')
-
-var settings = require('./helpers/settings')
+var unzip = require('unzip2');
+var GeoJson = require('./helpers/rebuild-geojson')
 
 ipc.on('show_configuration', function (event, arg) {
   try {
@@ -194,7 +195,50 @@ ipc.on('list_map_layers', function (event, arg) {
   });
 });
 
-ipc.on('community_lands_backup', function (event, arg) {
+ipc.on('import_files', function(event, args) {
+  var options = {
+    properties: ['openFile'],
+    filters: [ { name: 'ZIP', extensions: ['zip'] } ]
+  };
+
+  dialog.showOpenDialog(mainWindow, options, function(file) {
+    if (file) {
+      var source = '' + file;
+      var target = path.dirname(settings.getSubmissionsDirectory());
+
+      var complete = function(err) {
+        if (err) {
+          event.sender.send('has_import_files', { error: true, code: 'import_delete_failed', ex: err });
+        } else {
+          try {
+            fs.createReadStream(source)
+            .pipe(unzip.Extract({ path: target }))
+            .on('close', function() {
+              GeoJson.generate(function(err_json, details) {
+                if (err_json)
+                  event.sender.send('has_import_files', err_json);
+                else
+                  event.sender.send('has_import_files', { error: false, details: details });
+              });
+            });
+          } catch (e) {
+            console.log(e);
+            event.sender.send('has_import_files', { error: true, code: 'import_unzip_failed', ex: e });
+          }
+        }
+      };
+
+      if (args.mode == 'merge')
+        complete(null);
+      else
+        fs.emptydir(path.join(target, 'Submissions'), complete);
+    } else {
+      event.sender.send('has_import_files', { error: true, code: 'import_cancelled' });
+    }
+  });
+});
+
+ipc.on('community_lands_backup', function(event, arg) {
   if (settings.getCommunityLandsServer()) {
     var options = {
       hostname: 'localhost',

@@ -242,6 +242,12 @@
       else
         alert(t('message.settings_saved'));
     });
+    ipc.on('has_import_files', function(result) {
+      if (result.error)
+        document.getElementById('import_status').innerHTML = t('error.' + result.code);
+      else
+        document.getElementById('import_status').innerHTML = t('text.import_success');
+    });
     ipc.send('show_configuration');
     ipc.send('check_last_backup');
     ipc.send('form_list');
@@ -265,6 +271,16 @@
     function backupFiles() {
       document.getElementById('backup_status').innerHTML = t('progress.saving');
       ipc.send('backup_submissions');
+    }
+
+    function importFilesOverwrite() {
+      document.getElementById('import_status').innerHTML = t('progress.importing');
+      ipc.send('import_files', { mode: 'overwrite' });
+    }
+
+    function importFilesMerge() {
+      document.getElementById('import_status').innerHTML = t('progress.importing');
+      ipc.send('import_files', { mode: 'merge' });
     }
 
     function openBackupFile() {
@@ -355,12 +371,6 @@
       <h5 data-translate="title.new_form">Add New Form</h5>
       <button onclick="javascript:selectForm();" class="btn btn-small btn-primary" data-translate="button.select_file">Select from File</button>
     </div>
-    <h4 data-translate="title.data_backup">Data Backup</h4>
-    <div class="well">
-      <div id="last_backup"></div>
-      <div data-translate="button.backup_data"class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:backupFiles()">Backup Data</div>
-      <div style="margin-top: 10px" id="backup_status"></div>
-    </div>
     <div class="hidden" id="community_lands_content">
       <h4 data-translate="title.community_lands">Community Lands</h4>
       <div class="well">
@@ -375,6 +385,20 @@
         <div data-translate="button.upload" class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:communityLandsUpload()">Upload</div>
         <div style="margin-top: 10px" id="community_lands_sync_status"></div>
       </div>
+    </div>
+    <h4 data-translate="title.data_backup">Data Backup</h4>
+    <div class="well">
+      <div id="last_backup"></div>
+      <div data-translate="button.backup_data" class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:backupFiles()">Backup Data</div>
+      <div style="margin-top: 10px" id="backup_status"></div>
+    </div>
+    <h4 data-translate="title.data_import">Data Import</h4>
+    <div class="well">
+      <div data-translate="button.import_data_merge" class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:importFilesMerge()">Import and Merge Data</div>
+      <div data-translate="help.import.merge" class="help-block"></div>
+      <div data-translate="button.import_data_overwrite" class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:importFilesOverwrite()">Import and Overwrite Data</div>
+      <div data-translate="help.import.overwrite" class="help-block"></div>
+      <div style="margin-top: 10px" id="import_status"></div>
     </div>
     <h4 data-translate="title.settings">Settings</h4>
     <div class="well">
