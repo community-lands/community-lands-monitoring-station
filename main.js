@@ -1,6 +1,9 @@
-var app = require('app') // Module to control application life.
+const electron = require('electron')
+const app = electron.app // Module to control application life.
 process.env.directory = process.env.directory || app.getAppPath()
-var BrowserWindow = require('browser-window') // Module to create native browser window.
+const BrowserWindow = electron.BrowserWindow // Module to create native browser window.
+const ipc = electron.ipcMain
+const dialog = electron.dialog
 
 require('./server')
 var settings = require('./helpers/settings')
@@ -8,8 +11,6 @@ var settings = require('./helpers/settings')
 var http = require('http')
 var fs = require('fs-extra')
 var path = require('path')
-var ipc = require('ipc')
-var dialog = require('dialog')
 var unzip = require('unzip2');
 var GeoJson = require('./helpers/rebuild-geojson')
 
@@ -312,7 +313,7 @@ app.on('window-all-closed', function () {
 // initialization and is ready to create browser windows.
 app.on('ready', function () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 400, height: 400})
+  mainWindow = new BrowserWindow({minWidth: 400, minHeight: 400})
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/index.html?locale=' + (settings.getLocale() || 'en'))
