@@ -76,6 +76,12 @@ function config (req, res, next) {
           data['filters'] = filterJson.value
           if (filterJson.baseLayer)
             data['baseLayer'] = filterJson.baseLayer
+          if (filterJson.zoom)
+            data['mapZoom'] = filterJson.zoom
+          if (filterJson.latitude)
+            data['mapCenterLat'] = filterJson.latitude
+          if (filterJson.longitude)
+            data['mapCenterLong'] = filterJson.longitude
           res.json(data)
         })
       }
