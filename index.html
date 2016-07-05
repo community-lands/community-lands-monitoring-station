@@ -9,13 +9,13 @@
     window.locale.es = require('./application/data/es')
     window.locale.init();
 
-    const ipc = require('ipc');
-    const shell = require('shell');
+    const ipc = require('electron').ipcRenderer;
+    const shell = require('electron').shell;
     var config = null;
     var updateOnlineStatus = function() {
       ipc.send('community_lands_online', navigator.onLine);
     };
-    ipc.on('backup_submissions_complete', function(result) {
+    ipc.on('backup_submissions_complete', function(evt, result) {
       document.getElementById("backup_status").innerHTML = "";
       var json = JSON.parse(result);
       if (json.error) {
@@ -27,19 +27,19 @@
         ipc.send('check_last_backup');
       }
     });
-    ipc.on('has_last_backup', function(result) {
+    ipc.on('has_last_backup', function(evt, result) {
       var json = JSON.parse(result);
       if (json.date)
         document.getElementById('last_backup').innerHTML = '<p>' + 
           t('prompt.last_backup') + '<a href="javascript:openBackupFolder();">' + new Date(json.date) + '</a></p>';
     });
-    ipc.on('has_select_form', function(result) {
+    ipc.on('has_select_form', function(evt, result) {
       ipc.send('form_list');
     });
-    ipc.on('has_form_delete', function(result) {
+    ipc.on('has_form_delete', function(evt, result) {
       ipc.send('form_list');
     });
-    ipc.on('has_form_list', function(result) {
+    ipc.on('has_form_list', function(evt, result) {
       var forms = result.forms;
       if (forms.length > 0) {
         var content = '<h5>' + t('title.my_monitoring_forms') + '</h5><table class="table table-condensed">';
@@ -64,7 +64,7 @@
         document.getElementById('form_listing').innerHTML = "";
       }
     });
-    ipc.on('has_filter_list', function(result) {
+    ipc.on('has_filter_list', function(evt, result) {
       document.getElementById('saved-filters').innerHTML = "";
       var json = JSON.parse(result);
       if (!json.error) {
@@ -87,7 +87,7 @@
         }
       }
     });
-    ipc.on('has_community_lands_online', function(status) {
+    ipc.on('has_community_lands_online', function(evt, status) {
       if (status == true || status == 'true')
         ipc.send('community_lands_status');
       else {
@@ -95,7 +95,7 @@
         document.getElementById('community_lands_sync_date').innerHTML = t('text.unavailable');
       }
     });
-    ipc.on('has_community_lands_status', function(result) {
+    ipc.on('has_community_lands_status', function(evt, result) {
       document.getElementById('connection_status').innerHTML = t('text.online');
       if (result != null && result != "") {
         var json = JSON.parse(result);
@@ -106,7 +106,7 @@
       } else
         document.getElementById('community_lands_sync_date').innerHTML = t('text.unavailable');
     });
-    ipc.on('has_community_lands_backup', function(result) {
+    ipc.on('has_community_lands_backup', function(evt, result) {
       var json = JSON.parse(result);
       var html = "";
       if (json.error) {
@@ -126,7 +126,7 @@
       document.getElementById('community_lands_sync_status').innerHTML = html;
       ipc.send('community_lands_status');
     });
-    ipc.on('has_settings_list', function(settings) {
+    ipc.on('has_settings_list', function(evt, settings) {
       var sections = {
         general: '',
         mapfilter: '',
@@ -200,7 +200,7 @@
       document.getElementById('settings_form').innerHTML = html;
       ipc.send('list_map_layers');
     });
-    ipc.on('has_list_map_layers', function(layers) {
+    ipc.on('has_list_map_layers', function(evt, layers) {
       var el = document.getElementById('settings-form-mapLayer')
       var defaultLayer = el.getAttribute('data-value')
       if (layers.length > 0) {
@@ -218,7 +218,7 @@
         el.innerHTML = html
       }
     });
-    ipc.on('has_configuration', function(configuration) {
+    ipc.on('has_configuration', function(evt, configuration) {
       config = configuration;
       document.getElementById('baseUrl').innerHTML = configuration.baseUrl
       document.getElementById('shared_secret').innerHTML = configuration.shared_secret
@@ -232,17 +232,17 @@
         shell.openExternal(this.getAttribute('href'));
       };
     });
-    ipc.on('has_select_data_directory', function(folder) {
+    ipc.on('has_select_data_directory', function(evt, folder) {
       document.getElementById('settings-form-data_directory').value = folder;
     });
-    ipc.on('has_settings_save', function(result) {
+    ipc.on('has_settings_save', function(evt, result) {
       var json = JSON.parse(result);
       if (json.error)
         alert(t('error.'+json.code));
       else
         alert(t('message.settings_saved'));
     });
-    ipc.on('has_import_files', function(result) {
+    ipc.on('has_import_files', function(evt, result) {
       if (result.error)
         document.getElementById('import_status').innerHTML = t('error.' + result.code);
       else
