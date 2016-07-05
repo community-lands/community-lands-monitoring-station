@@ -3,6 +3,10 @@
     <title>Community Lands Monitoring Station</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+      window.$ = window.jQuery = require('./bootstrap/js/jquery-2.2.4.min.js');
+    </script>
+    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="application/locale.js"></script>
     <script>
     window.locale.en = require('./application/data/en')
@@ -21,8 +25,8 @@
       if (json.error) {
         alert(t('error.'+json.code));
       } else {
-        document.getElementById('backup_status').innerHTML = t('text.backup_complete') + 
-          '<br/>' + t('prompt.open') + '<a id="backup_file" href="javascript:openBackupFile();" ' + 
+        document.getElementById('backup_status').innerHTML = t('text.backup_complete') +
+          '<br/>' + t('prompt.open') + '<a id="backup_file" href="javascript:openBackupFile();" ' +
           'data-location="' + json.location + '">' + json.location + '</a>';
         ipc.send('check_last_backup');
       }
@@ -30,7 +34,7 @@
     ipc.on('has_last_backup', function(evt, result) {
       var json = JSON.parse(result);
       if (json.date)
-        document.getElementById('last_backup').innerHTML = '<p>' + 
+        document.getElementById('last_backup').innerHTML = '<p>' +
           t('prompt.last_backup') + '<a href="javascript:openBackupFolder();">' + new Date(json.date) + '</a></p>';
     });
     ipc.on('has_select_form', function(evt, result) {
@@ -44,8 +48,8 @@
       if (forms.length > 0) {
         var content = '<h5>' + t('title.my_monitoring_forms') + '</h5><table class="table table-condensed">';
         for (var index in forms) {
-          content += '<tr>' + 
-            '<td>' + forms[index] + '</td>' + 
+          content += '<tr>' +
+            '<td>' + forms[index] + '</td>' +
             '<td align="right"><div data-form="' + forms[index] + '" class="delete-form btn btn-small"><i class="glyphicon glyphicon-remove"/></div></td>' +
             '</tr>';
         }
@@ -222,8 +226,8 @@
       config = configuration;
       document.getElementById('baseUrl').innerHTML = configuration.baseUrl
       document.getElementById('shared_secret').innerHTML = configuration.shared_secret
-      document.getElementById('mapUrl').innerHTML = '<a id="mapUrlLink" href="' + configuration.baseUrl + '/mapfilter?locale=' + 
-        configuration.locale + '">' + configuration.baseUrl + '/mapfilter</a>'; 
+      document.getElementById('mapUrl').innerHTML = '<a id="mapUrlLink" href="' + configuration.baseUrl + '/mapfilter?locale=' +
+        configuration.locale + '">' + configuration.baseUrl + '/mapfilter</a>';
       document.getElementById('form_folder').innerHTML = configuration.directory + "/Monitoring/" + configuration.station + "/Forms"
       if (configuration.community_lands == true)
         document.getElementById('community_lands_content').className = "";
@@ -334,7 +338,8 @@
     </script>
   </head>
   <body><div class="container-fluid"><div class="row"><div class="col-xs-12">
-    <div class="alert alert-info" style='margin-top: 10px'>
+    <div class="alert alert-info alert-dismissible" style='margin-top: 10px'>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       <b data-translate="alert.running">The monitoring station will run as long as this window is open.</b>
     </div>
     <h4 data-translate="title.odk_collect">ODK Collect settings</h4>
