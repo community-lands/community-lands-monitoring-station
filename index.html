@@ -355,7 +355,7 @@
       <!-- Tab panes -->
       <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="mapping-monitoring">
-          <h4 data-translate="title.odk_collect">ODK Collect settings</h4>
+          <h4><i class="fa fa-map-marker fa-lg" aria-hidden="true"></i> <span data-translate="title.odk_collect">ODK Collect settings</span></h4>
           <div class="well">
             <div data-translate="prompt.baseurl">
               Base URL:
@@ -369,7 +369,7 @@
             </div>
             <div><b id="shared_secret"></b></div>
           </div>
-          <h4 data-translate="title.browser_settings">Browser settings</h4>
+          <h4><i class="fa fa-globe fa-lg" aria-hidden="true"></i> <span data-translate="title.browser_settings">Browser settings</span></h4>
           <div class="well">
             <div data-translate="prompt.map_url">
               URL for viewing maps in your browser:
@@ -378,7 +378,7 @@
             <div id="saved-filters">
             </div>
           </div>
-          <h4 data-translate="title.monitoring_forms">Monitoring Forms</h4>
+          <h4><i class="fa fa-files-o fa-lg" aria-hidden="true"></i> <span data-translate="title.monitoring_forms">Monitoring Forms</span></h4>
           <div class="well">
             <div data-translate="prompt.monitoring_forms_folder">
               Folder for blank monitoring forms:
@@ -387,7 +387,7 @@
             <div id="form_listing" style='margin-top:20px'>
             </div>
             <h5 data-translate="title.new_form">Add New Form</h5>
-            <button onclick="javascript:selectForm();" class="btn btn-small btn-primary" data-translate="button.select_file">Select from File</button>
+            <button onclick="javascript:selectForm();" class="btn btn-small btn-primary"><span style='margin-right:5px' data-translate="button.select_file">Select from File</span><i class="fa fa-file-o" aria-hidden="true"></i></button>
           </div>
         </div>
         <div role="tabpanel" class="tab-pane" id="web">
@@ -395,7 +395,7 @@
         </div>
         <div role="tabpanel" class="tab-pane" id="imports-exports">
           <div class="hidden" id="community_lands_content">
-            <h4 data-translate="title.community_lands">Community Lands</h4>
+            <h4><i class="fa fa-leaf fa-lg" aria-hidden="true"></i> <span data-translate="title.community_lands">Community Lands</span></h4>
             <div class="well">
               <div>
                 <span data-translate="prompt.connection_status">Connection Status: </span>
@@ -405,20 +405,20 @@
                 <span data-translate="prompt.last_synchronized">Last Synchronized: </span>
                 <span id="community_lands_sync_date" style="font-weight: bold">Unavailable</span>
               </div>
-              <div data-translate="button.upload" class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:communityLandsUpload()">Upload</div>
+              <div class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:communityLandsUpload()"><span style='margin-right:5px' data-translate="button.upload">Upload</span><i class="fa fa-cloud-upload" aria-hidden="true"></i></div>
               <div style="margin-top: 10px" id="community_lands_sync_status"></div>
             </div>
-            <h4 data-translate="title.data_backup">Data Backup</h4>
+            <h4><i class="fa fa-cloud-upload fa-lg" aria-hidden="true"></i> <span data-translate="title.data_backup">Data Backup</span></h4>
             <div class="well">
               <div id="last_backup"></div>
-              <div data-translate="button.backup_data" class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:backupFiles()">Backup Data</div>
+              <div class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:backupFiles()"><span style='margin-right:5px' data-translate="button.backup_data">Backup Data</span><i class="fa fa-cloud-upload" aria-hidden="true"></i></div>
               <div style="margin-top: 10px" id="backup_status"></div>
             </div>
-            <h4 data-translate="title.data_import">Data Import</h4>
+            <h4><i class="fa fa-cloud-download fa-lg" aria-hidden="true"></i> <span data-translate="title.data_import">Data Import</span></h4>
             <div class="well">
-              <div data-translate="button.import_data_merge" class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:importFilesMerge()">Import and Merge Data</div>
+              <div class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:importFilesMerge()"><span style='margin-right:5px' data-translate="button.import_data_merge">Import and Merge Data</span><i class="fa fa-cloud-download" aria-hidden="true"></i></div>
               <div data-translate="help.import.merge" class="help-block"></div>
-              <div data-translate="button.import_data_overwrite" class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:importFilesOverwrite()">Import and Overwrite Data</div>
+              <div class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:importFilesOverwrite()"><span style='margin-right:5px' data-translate="button.import_data_overwrite">Import and Overwrite Data</span><i class="fa fa-cloud-download" aria-hidden="true"></i></div>
               <div data-translate="help.import.overwrite" class="help-block"></div>
               <div style="margin-top: 10px" id="import_status"></div>
             </div>
@@ -426,12 +426,12 @@
         </div>
 
         <div role="tabpanel" class="tab-pane" id="advanced-settings">
-          <h4 data-translate="title.settings">Settings</h4>
+          <h4><i class="fa fa-gears fa-lg" aria-hidden="true"></i> <span data-translate="title.settings">Settings</span></h4>
           <div class="well">
             <div id="settings_form">
 
             </div>
-            <button onclick="javascript:saveSettings();" class="btn btn-small btn-primary" data-translate="button.update_settings">Update Settings</button>
+            <button onclick="javascript:saveSettings();" class="btn btn-small btn-primary"><span style='margin-right:5px' data-translate="button.update_settings">Update Settings</span><i class="fa fa-gear" aria-hidden="true"></i></button>
             <div id="settings_status"></div>
           </div>
         </div>
