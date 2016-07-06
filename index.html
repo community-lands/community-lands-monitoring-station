@@ -346,11 +346,11 @@
     <div>
 
       <!-- Nav tabs -->
-      <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#mapping-monitoring" aria-controls="mapping-monitoring" role="tab" data-toggle="tab">Mapping & Monitoring</a></li>
-        <li role="presentation"><a href="#web" aria-controls="web" role="tab" data-toggle="tab">Web</a></li>
-        <li role="presentation"><a href="#imports-exports" aria-controls="imports-exports" role="tab" data-toggle="tab">Imports & Exports</a></li>
-        <li role="presentation"><a href="#advanced-settings" aria-controls="settings" role="tab" data-toggle="tab">Advanced Settings</a></li>
+      <ul class="nav nav-tabs" role="tablist" style='margin-top: 5px'>
+        <li role="presentation" class="active"><a href="#mapping-monitoring" aria-controls="mapping-monitoring" role="tab" data-toggle="tab"><i class="fa fa-map-marker fa-lg" aria-hidden="true"></i> Mapping & Monitoring</a></li>
+        <li role="presentation"><a href="#web" aria-controls="web" role="tab" data-toggle="tab"><i class="fa fa-globe fa-lg" aria-hidden="true"></i> Web</a></li>
+        <li role="presentation"><a href="#imports-exports" aria-controls="imports-exports" role="tab" data-toggle="tab"><i class="fa fa-cloud-upload fa-lg" aria-hidden="true"></i> Imports & Exports</a></li>
+        <li role="presentation"><a href="#advanced-settings" aria-controls="settings" role="tab" data-toggle="tab"><i class="fa fa-gears fa-lg" aria-hidden="true"></i> Advanced Settings</a></li>
       </ul>
       <!-- Tab panes -->
       <div class="tab-content">
@@ -361,10 +361,10 @@
               Base URL:
             </div>
             <div><b id="baseUrl"></b></div>
-            <div style='margin-top: 5px' data-translate="prompt.username">
+            <div style='margin-top: 10px' data-translate="prompt.username">
               Use your agent number as the username.
             </div>
-            <div style='margin-top: 5px' data-translate="prompt.password">
+            <div style='margin-top: 10px' data-translate="prompt.password">
               Password:
             </div>
             <div><b id="shared_secret"></b></div>
@@ -384,7 +384,7 @@
               Folder for blank monitoring forms:
             </div>
             <div><b id="form_folder"></b></div>
-            <div id="form_listing">
+            <div id="form_listing" style='margin-top:20px'>
             </div>
             <h5 data-translate="title.new_form">Add New Form</h5>
             <button onclick="javascript:selectForm();" class="btn btn-small btn-primary" data-translate="button.select_file">Select from File</button>

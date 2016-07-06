@@ -1,7 +1,7 @@
 {
     "prompt": {
         "baseurl": "URL: ",
-        "username": "Utilizar tu identificación personal para el nombre de usuario.",
+        "username": "Utilizar tu <b>identificación personal</b> para el nombre de usuario.",
         "password": "Contraseña: ",
         "map_url": "URL para ver mapas en su navegador:",
         "monitoring_forms_folder": "Carpeta para formularios de monitoreo:",
