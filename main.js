@@ -7,6 +7,25 @@ const dialog = electron.dialog
 
 require('./server')
 var settings = require('./helpers/settings')
+var ServerEvents = require('./helpers/server-events')
+ServerEvents.on('cl_upload_progress', function(done, bytes) {
+  if (done)
+    mainWindow.send('cl_upload_progress', { status: 'waiting' });
+  else {
+    var value = bytes, units = 'B';
+    if (bytes < 1024) {
+      //Do nothing
+    } else if (bytes < (1024 * 1024)) {
+      value = bytes / 1024;
+      units = 'KB';
+    } else {
+      value = bytes / (1024 * 1024);
+      units = 'MB';
+    }
+    value = +value.toFixed(2);
+    mainWindow.send('cl_upload_progress', { status: 'uploading', progress: value + ' ' + units });
+  }
+});
 
 var http = require('http')
 var fs = require('fs-extra')

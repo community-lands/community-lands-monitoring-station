@@ -1,4 +1,5 @@
 var settings = require('../helpers/settings')
+var ServerEvents = require('../helpers/server-events')
 
 var archiver = require('archiver')
 var moment = require('moment')
@@ -62,11 +63,30 @@ function uploadSubmissionsSince (req, res, next, since) {
     }
   }
 
+  var interval;
+
   var clReq = http.request(getCLRequestOpts('POST', '/submissions'), clCallback(res))
   clReq.on('error', function (e) {
     res.json({error: true, code: 'community_lands_not_configured', message: 'Could not make connection to Community Lands'})
   })
   var archive = archiver.create('zip', {})
+  archive.on('end', function() { 
+    if (interval) {
+      clearInterval(interval);
+      interval = null;
+      ServerEvents.emit('cl_upload_progress', true);
+    }
+  });
+
+  interval = setInterval(function() {
+    try {
+      if (clReq.connection) {
+        ServerEvents.emit('cl_upload_progress', false, clReq.connection._bytesDispatched);
+      }
+    } catch (e) {
+      console.log("Not ready to report upload status: " + e);
+    }
+  }, 250);
 
   archive.pipe(clReq)
   archive.bulk(opts)

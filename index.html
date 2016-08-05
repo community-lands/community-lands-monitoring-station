@@ -253,6 +253,14 @@
       else
         document.getElementById('import_status').innerHTML = t('text.import_success');
     });
+    ipc.on('cl_upload_progress', function(evt, result) {
+      if (result.status == "uploading")
+        document.getElementById('community_lands_sync_status').innerHTML = t('progress.importing') + " -- " + result.progress + "...";
+      else
+        document.getElementById('community_lands_sync_status').innerHTML = t('progress.importing') + " -- " + t('progress.' + result.status) +
+          ' <i class="fa fa-spinner fa-pulse fa-fw"></i>'
+    });
+
     ipc.send('show_configuration');
     ipc.send('check_last_backup');
     ipc.send('form_list');
