@@ -85,7 +85,8 @@
         "uploading": "Uploading, please wait...",
         "saving": "Saving files, please wait...",
         "importing": "Importing files, please wait...",
-        "waiting": "Upload complete, processing files"
+        "waiting": "Upload complete, processing files",
+        "loading": "Please wait..."
     },
     "alert": {
         "no_internet": "No internet connection detected",

@@ -9,6 +9,7 @@
     </script>
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="application/locale.js"></script>
+    <script type="text/javascript" src="application/loading.js"></script>
     <script>
     window.locale.en = require('./application/data/en')
     window.locale.es = require('./application/data/es')
@@ -21,14 +22,14 @@
       ipc.send('community_lands_online', navigator.onLine);
     };
     ipc.on('backup_submissions_complete', function(evt, result) {
-      document.getElementById("backup_status").innerHTML = "";
+      hideLoadingScreen();
       var json = JSON.parse(result);
       if (json.error) {
         alert(t('error.'+json.code));
       } else {
-        document.getElementById('backup_status').innerHTML = t('text.backup_complete') +
+        showStatus(t('text.backup_complete') +
           '<br/>' + t('prompt.open') + '<a id="backup_file" href="javascript:openBackupFile();" ' +
-          'data-location="' + json.location + '">' + json.location + '</a>';
+          'data-location="' + json.location + '">' + json.location + '</a>', { timeout: false });
         ipc.send('check_last_backup');
       }
     });
@@ -112,6 +113,7 @@
         document.getElementById('community_lands_sync_date').innerHTML = t('text.unavailable');
     });
     ipc.on('has_community_lands_backup', function(evt, result) {
+      hideLoadingScreen();
       var json = JSON.parse(result);
       var html = "";
       if (json.error) {
@@ -128,7 +130,7 @@
         html += " ";
         html += json.entity.files_uploaded;
       }
-      document.getElementById('community_lands_sync_status').innerHTML = html;
+      showStatus(html, { type: json.error ? 'error' : 'success', timeout: 10000 });
       ipc.send('community_lands_status');
     });
     ipc.on('has_settings_list', function(evt, settings) {
@@ -242,24 +244,26 @@
       document.getElementById('settings-form-data_directory').value = folder;
     });
     ipc.on('has_settings_save', function(evt, result) {
+      hideLoadingScreen();
       var json = JSON.parse(result);
       if (json.error)
-        alert(t('error.'+json.code));
+        showStatus(t('error.'+json.code), { type: 'error' });
       else
-        alert(t('message.settings_saved'));
+        showStatus(t('message.settings_saved'), { timeout: false, type: 'warning' });
     });
     ipc.on('has_import_files', function(evt, result) {
+      hideLoadingScreen();
       if (result.error)
-        document.getElementById('import_status').innerHTML = t('error.' + result.code);
+        showStatus(t('error.' + result.code), { type: 'error' });
       else
-        document.getElementById('import_status').innerHTML = t('text.import_success');
+        showStatus(t('text.import_success'), { timeout: 5000 });
     });
     ipc.on('cl_upload_progress', function(evt, result) {
       if (result.status == "uploading")
-        document.getElementById('community_lands_sync_status').innerHTML = t('progress.importing') + " -- " + result.progress + "...";
+        updateLoadingScreen(t('progress.importing') + " <br/> &gt; " + result.progress + "...");
       else
-        document.getElementById('community_lands_sync_status').innerHTML = t('progress.importing') + " -- " + t('progress.' + result.status) +
-          ' <i class="fa fa-spinner fa-pulse fa-fw"></i>'
+        updateLoadingScreen(t('progress.importing') + " <br/> &gt; " + t('progress.' + result.status) +
+          ' <i class="fa fa-spinner fa-pulse fa-fw"></i>');
     });
 
     ipc.send('show_configuration');
@@ -275,7 +279,7 @@
 
     function communityLandsUpload() {
       if (navigator.onLine) {
-        document.getElementById('community_lands_sync_status').innerHTML = t('progress.uploading');
+        showLoadingScreen(t('progress.uploading'));
         ipc.send('community_lands_backup');
       } else {
         alert(t('alert.no_internet'));
@@ -283,17 +287,17 @@
     }
 
     function backupFiles() {
-      document.getElementById('backup_status').innerHTML = t('progress.saving');
+      showLoadingScreen(t('progress.saving'));
       ipc.send('backup_submissions');
     }
 
     function importFilesOverwrite() {
-      document.getElementById('import_status').innerHTML = t('progress.importing');
+      showLoadingScreen(t('progress.importing'));
       ipc.send('import_files', { mode: 'overwrite' });
     }
 
     function importFilesMerge() {
-      document.getElementById('import_status').innerHTML = t('progress.importing');
+      showLoadingScreen(t('progress.importing'));
       ipc.send('import_files', { mode: 'merge' });
     }
 
@@ -327,6 +331,7 @@
     }
 
     function saveSettings() {
+      showLoadingScreen(t('progress.saving'));
       var els = document.getElementsByClassName('key-value');
       var object = {};
       for (var i = 0; i < els.length; i++) {
@@ -352,8 +357,28 @@
       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       <i class="fa fa-info-circle" aria-hidden="true"></i> <b data-translate="alert.running">The monitoring station will run as long as this window is open.</b>
     </div>
-    <div>
 
+    <div id="status" style="display: none;"></div>
+
+    <div id="loading" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title"></h3>
+          </div>
+          <div class="modal-body">
+            <div id="loading-status" style="margin-bottom:5px"></div>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 100%">
+                <span class="sr-only" data-translate="progress.loading"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
       <!-- Nav tabs -->
       <ul class="nav nav-tabs" role="tablist" style='margin-top: 5px'>
         <li role="presentation" class="active"><a href="#mapping-monitoring" aria-controls="mapping-monitoring" role="tab" data-toggle="tab"><i class="fa fa-map-marker fa-lg" aria-hidden="true"></i> Mapping & Monitoring</a></li>
@@ -444,7 +469,6 @@
           <div class="clearfix">&nbsp;</div>
         </div>
       </div>
-    </div>
     </div>
   </div></div></div></body>
 </html>
