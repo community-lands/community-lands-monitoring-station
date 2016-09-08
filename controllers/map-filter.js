@@ -1,4 +1,5 @@
 var settings = require('../helpers/settings')
+var storage = require('../helpers/community-storage')
 
 var fs = require('fs')
 var path = require('path')
@@ -82,6 +83,7 @@ function config (req, res, next) {
             data['mapCenterLat'] = filterJson.latitude
           if (filterJson.longitude)
             data['mapCenterLong'] = filterJson.longitude
+          data['dataUrl'] = '/mapfilter/json/mapfilter-locations.geojson?filter=' + filter
           res.json(data)
         })
       }
@@ -89,6 +91,73 @@ function config (req, res, next) {
   } else {
     res.json(data)
   }
+}
+
+function locations(req, res, next) {
+  var filter = req.query.filter;
+  if (filter) {
+    var file = path.join(settings.getFiltersDirectory(), filter)
+    fs.access(file, fs.F_OK | fs.R_OK, function (err) {
+      if (err) {
+        filterGeoJSON([], res);
+      } else {
+        fs.readFile(file, 'utf8', function (err2, contents) {
+          if (err2)
+            filterGeoJSON([], res);
+          else {
+            var filterJson = JSON.parse(contents)
+            filterGeoJSON(filterJson.locations || [], res);
+          }
+        })
+      }
+    });
+  } else
+    filterGeoJSON([], res);
+}
+
+function filterGeoJSON(locations, res) {
+  storage.getMap('Monitoring.geojson', function (err, data) {
+    if (err) {
+      res.status(500);
+      res.render('error', {
+        message: err.message,
+        error: err
+      });
+    } else if (locations.length == 0) {
+      res.json(JSON.parse(data).features);
+    } else {
+      res.json(JSON.parse(data).features.filter(function (value) {
+        var allowed = true;
+        if (value["type"] == 'Feature') {
+          /*var coords = null; //lat, long
+          if (value["geometry"] && value["geometry"]["type"] == 'Point') {
+            //Transpose, as these are long/lat
+            coords = [value.geometry.coordinates[1], value.geometry.coordinates[0]];
+          } else if (value["properties"] && value["properties"]["location"]) {
+            coords = [value.properties.location.latitude, value.properties.location.longitude];
+          }
+
+          allowed = hasLocation(locations, coords);*/
+
+          if (value["properties"] && value["properties"]["meta"]) {
+            allowed = locations.indexOf(value.properties.meta["instanceId"]) > -1;
+          }
+        }
+        return allowed;
+      }));
+    }
+  });
+}
+
+function hasLocation(locations, coords) {
+  if (coords == null || coords.length != 2)
+    return false;
+  for (var i = 0; i < locations.length; i++) {
+    var current = locations[i];
+    if (current[0] == coords[0] && current[1] == coords[1])
+      return true;
+  }
+  return false;
 }
 
 function exists(path) {
@@ -103,6 +172,6 @@ function exists(path) {
 module.exports = {
   listFilters: listFilters,
   saveFilter: saveFilter,
-  config: config
-
+  config: config,
+  locations: locations
 }
