@@ -13,14 +13,11 @@ $ cd community-lands-monitoring-station
 $ npm install
 ```
 
-Start the server.
+This is an Electron app; you can run it with
 
 ```bash
-$ npm start
+$ electron .
 ```
 
-Read the output to see the default settings for your server and, if needed,
-adjust them using environment variables and restart.
-
-This branch is tested from a Node command line install on both Windows and
-Mac.
+The project can be built to an installable Windows or Mac version via
+electron-packager; do this with build.sh or build-mac.sh.
