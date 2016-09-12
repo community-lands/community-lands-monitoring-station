@@ -84,7 +84,8 @@
     "progress": {
         "uploading": "Subiendo datos, espera por favor...",
         "saving": "Guardando archivos, espera por favor...",
-        "importing": "Importando archivos, espera por favor..."
+        "importing": "Importando archivos, espera por favor...",
+        "loading": "Espera por favor..."
     },
     "alert": {
         "no_internet": "Conexión al internet no detectada",
