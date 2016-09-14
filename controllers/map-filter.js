@@ -23,10 +23,23 @@ function listFilters (req, res, next) {
   fs.readdir(FILTERS_FOLDER, function (err, files) {
     var names = []
     for (var index in files) {
-      names.push({id: files[index], name: JSON.parse(fs.readFileSync(path.join(FILTERS_FOLDER, files[index]), 'utf8')).name})
+      var location = path.join(FILTERS_FOLDER, files[index]);
+      file = JSON.parse(fs.readFileSync(location, 'utf8'));
+      date = fs.statSync(location).mtime;
+      names.push({id: files[index], name: file.name, date: date});
     }
+    names.sort(function(a, b) { return a.date.getTime() == b.date.getTime() ? 0 : a.date.getTime() < b.date.getTime() ? 1 : -1 });
     res.json({filters: names})
   })
+}
+
+function deleteFilter (req, res, next) {
+  fs.unlink(path.join(FILTERS_FOLDER, req.params.id), function (err) {
+    if (err)
+      res.json({error: true, code: 'save_failed', message: 'File did not delete'});
+    else
+      res.json({error: false, message: 'Delete successful'});
+  });
 }
 
 function config (req, res, next) {
@@ -172,6 +185,7 @@ function exists(path) {
 module.exports = {
   listFilters: listFilters,
   saveFilter: saveFilter,
+  deleteFilter: deleteFilter,
   config: config,
   locations: locations
 }

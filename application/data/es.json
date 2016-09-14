@@ -33,7 +33,8 @@
         }
     },
     "confirm": {
-        "delete_form": "Estas seguro que quieres borrar este formulario"
+        "delete_form": "Estas seguro que quieres borrar este formulario",
+        "delete_filter": "Estas seguro que quieres borrar este mapa"
     },
     "message": {
         "settings_saved": "Configuración guardada: Cerrar y iniciar programa de nuevo para actualizarla"

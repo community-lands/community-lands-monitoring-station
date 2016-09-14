@@ -58,6 +58,7 @@ app.get('/mapfilter/json/mapfilter-config.json', MapFilter.config)
 app.get('/mapfilter/json/mapfilter-locations.geojson', MapFilter.locations);
 app.get('/mapfilter/filters', MapFilter.listFilters)
 app.post('/mapfilter/filters/local', bodyParser.json(), MapFilter.saveFilter)
+app.delete('/mapfilter/filters/local/:id', MapFilter.deleteFilter);
 
 app.get('/bing-metadata/:url', Bing.metadata)
 
