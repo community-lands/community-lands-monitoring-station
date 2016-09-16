@@ -23,6 +23,12 @@
             "mapCenterLong": "MapFilter Starting Longitude"
         }
     },
+    "menu": {
+      "cut": "Cut",
+      "copy": "Copy",
+      "paste": "Paste",
+      "select": "Select All"
+    },
     "help": {
         "settings": {
             "mapZoom": "Value must be between 1 (closest) and 18 (farthest)"
