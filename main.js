@@ -192,10 +192,10 @@ ipc.on('filter_delete', function (event, arg) {
       data += chunk
     })
     res.on('end', function() {
-      event.sender.send('has_filter_delete', data);
+      event.sender.send('filter_list_changed', data);
     })
   }).on('error', function (e) {
-    event.sender.send('has_filter_delete');
+    event.sender.send('filter_list_changed');
   }).end()
 })
 
@@ -335,9 +335,12 @@ try {
   fs.mkdirpSync(FiltersDir)
 } catch (e) { // It's ok
 }
-fs.watch(FiltersDir, function (evt, filename) {
-  mainWindow.reload()
-})
+try {
+  fs.watch(FiltersDir, function (evt, filename) {
+    mainWindow.send('filter_list_changed');
+  })
+} catch (e) { // It's ok
+}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

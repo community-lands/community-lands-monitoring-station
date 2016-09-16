@@ -105,7 +105,7 @@
         }
       }
     });
-    ipc.on('has_filter_delete', function(evt, result) {
+    ipc.on('filter_list_changed', function(evt, result) {
       ipc.send('filter_list');
     });
     ipc.on('has_community_lands_online', function(evt, status) {
