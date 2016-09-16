@@ -30,6 +30,10 @@
         "import": {
             "merge": "Import new data, and updates existing files with contents of the backup. Nothing will be deleted.",
             "overwrite": "Deletes all Submission data, replacing it with contents of the backup. You may want to backup your Submissions first, as this process can not be undone."
+        },
+        "backup": {
+            "simple": "Store a ZIP file backup of monitoring data to the application folder",
+            "usb": "Create a backup and save it to your location of choice, like a USB drive"
         }
     },
     "confirm": {
@@ -61,6 +65,7 @@
     "button": {
         "select_file": "Select from File",
         "backup_data": "Backup Data",
+        "backup_data_usb": "Backup and Save To...",
         "upload": "Upload",
         "choose": "Choose",
         "update_settings": "Update Settings",
@@ -96,6 +101,7 @@
         "could_not_connect": "Could not connect to server",
         "community_lands_not_configured": "Community Lands connection not configured",
         "import_delete_failed": "Could not overwrite files",
-        "import_unzip_failed": "Could not unzip import file"
+        "import_unzip_failed": "Could not unzip import file",
+        "backup_failed": "Could not backup data"
     }
 }

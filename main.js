@@ -64,10 +64,35 @@ ipc.on('backup_submissions', function (event, arg) {
       data += chunk
     })
     res.on('end', function () {
-      event.sender.send('backup_submissions_complete', data)
+      result = JSON.parse(data);
+      result['cb'] = arg;
+      result['cancelled'] = false;
+      if (arg) {
+        options = {
+          defaultPath: result.location
+        }
+        dialog.showSaveDialog(mainWindow, options, function(filename) {
+          if (filename && result.location != filename) {
+            fs.copy(result.location, filename, function(err) {
+              if (err) {
+                result['error'] = true;
+                result['code'] = 'backup_failed';
+              } else {
+                result.location = filename;
+              }
+              event.sender.send('backup_submissions_complete', result);
+            });
+          } else {
+            result['cancelled'] = result.location == filename;
+            event.sender.send('backup_submissions_complete', result);
+          }
+        });
+      } else {
+        event.sender.send('backup_submissions_complete', result)
+      }
     })
   }).on('error', function (e) {
-    event.sender.send('backup_submissions_complete', '{"error":true, "code":"could_not_connect", "message":"Could not connect to server"}')
+    event.sender.send('backup_submissions_complete',{"error":true, "code":"could_not_connect", "message":"Could not connect to server"})
   }).end()
 })
 
