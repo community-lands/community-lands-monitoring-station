@@ -55,6 +55,7 @@ app.use(morgan('dev'))
 
 app.use('/mapfilter', express.static(__dirname + '/mapfilter'))
 app.get('/mapfilter/json/mapfilter-config.json', MapFilter.config)
+app.get('/mapfilter/json/mapfilter-locations.geojson', MapFilter.locations);
 app.get('/mapfilter/filters', MapFilter.listFilters)
 app.post('/mapfilter/filters/local', bodyParser.json(), MapFilter.saveFilter)
 
