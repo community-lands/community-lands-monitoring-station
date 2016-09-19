@@ -179,6 +179,26 @@ ipc.on('filter_list', function (event, arg) {
   }).end()
 })
 
+ipc.on('filter_delete', function (event, arg) {
+  var options = {
+    hostname: 'localhost',
+    port: settings.getPort() || 3000,
+    path: '/mapfilter/filters/local/' + arg,
+    method: 'DELETE'
+  }
+  http.request(options, function (res) {
+    var data = ''
+    res.on('data', function (chunk) {
+      data += chunk
+    })
+    res.on('end', function() {
+      event.sender.send('filter_list_changed', data);
+    })
+  }).on('error', function (e) {
+    event.sender.send('filter_list_changed');
+  }).end()
+})
+
 ipc.on('settings_list', function (event, arg) {
   settings.get(function(err, selected) {
     if (err) {
@@ -315,9 +335,12 @@ try {
   fs.mkdirpSync(FiltersDir)
 } catch (e) { // It's ok
 }
-fs.watch(FiltersDir, function (evt, filename) {
-  mainWindow.reload()
-})
+try {
+  fs.watch(FiltersDir, function (evt, filename) {
+    mainWindow.send('filter_list_changed');
+  })
+} catch (e) { // It's ok
+}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

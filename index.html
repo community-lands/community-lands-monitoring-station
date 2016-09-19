@@ -52,7 +52,7 @@
         for (var index in forms) {
           content += '<tr>' +
             '<td>' + forms[index] + '</td>' +
-            '<td align="right"><div data-form="' + forms[index] + '" class="delete-form btn btn-small"><i class="glyphicon glyphicon-remove"/></div></td>' +
+            '<td align="right"><div data-form="' + forms[index] + '" class="delete-form btn btn-small"><i class="fa fa-remove"/></div></td>' +
             '</tr>';
         }
         content += "</table>";
@@ -76,12 +76,16 @@
       if (!json.error) {
         var filters = json.filters;
         if (filters.length > 0) {
-          var content = '<h5>' + t('title.saved_filters') + '</h5><ul>';
+          var content = '<h5>' + t('title.saved_filters') + '</h5>';
+          content += '<table class="table table-condensed">';
           for (var index in filters) {
-            content += '<li><a class="map-link" href="' + config.baseUrl + '/mapfilter?locale=' + config.locale + '&filter=' + filters[index].id + '">' +
-              filters[index].name + '</a></li>';
+            content += '<tr>';
+            content += '<td><a class="map-link" href="' + config.baseUrl + '/mapfilter?locale=' + config.locale + '&filter=' + filters[index].id + '">' + 
+              filters[index].name + '</a></td>';
+            content += '<td align="right"><div data-filter="' + filters[index].id + '" class="delete-filter btn btn-small"><i class="fa fa-remove"/></div></td>';
+            content += '</tr>';
           }
-          content += "</ul>"
+          content += "</table>";
           document.getElementById('saved-filters').innerHTML = content;
           var els = document.getElementsByClassName('map-link');
           for (var i in els) {
@@ -90,8 +94,19 @@
               shell.openExternal(this.getAttribute('href'));
             };
           }
+          var dels = document.getElementsByClassName('delete-filter');
+          for (var i in dels) {
+            dels[i].onclick = function() {
+              var filter = this.getAttribute('data-filter');
+              if (confirm(t('confirm.delete_filter')))
+                ipc.send('filter_delete', filter);
+            }
+          }
         }
       }
+    });
+    ipc.on('filter_list_changed', function(evt, result) {
+      ipc.send('filter_list');
     });
     ipc.on('has_community_lands_online', function(evt, status) {
       if (status == true || status == 'true')

@@ -33,7 +33,8 @@
         }
     },
     "confirm": {
-        "delete_form": "Are you sure you want to delete this form?"
+        "delete_form": "Are you sure you want to delete this form?",
+        "delete_filter": "Are you sure you want to delete this map?"
     },
     "message": {
         "settings_saved": "Settings saved. Restart your app for settings to take effect."
