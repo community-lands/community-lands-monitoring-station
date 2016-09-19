@@ -4,6 +4,7 @@ process.env.directory = process.env.directory || app.getAppPath()
 const BrowserWindow = electron.BrowserWindow // Module to create native browser window.
 const ipc = electron.ipcMain
 const dialog = electron.dialog
+const Menu = electron.Menu
 
 require('./server')
 var settings = require('./helpers/settings')
@@ -395,4 +396,53 @@ app.on('ready', function () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
+  // Create the Application's main menu
+  var template = [{
+    label: "Application",
+    submenu: [
+        { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
+        { type: "separator" },
+        { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
+    ]}, {
+    label: "Edit",
+    submenu: [
+        { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+        { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+        { type: "separator" },
+        { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+        { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+        { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+        { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+    ]}
+  ];
+  if (settings.isDevMode()) {
+    template.push({
+      label: 'View',
+      submenu: [
+        {
+          label: 'Reload',
+          accelerator: 'CmdOrCtrl+R',
+          click (item, focusedWindow) {
+            if (focusedWindow) focusedWindow.reload()
+          }
+        },
+        {
+          label: 'Toggle Developer Tools',
+          accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+          click (item, focusedWindow) {
+            if (focusedWindow) focusedWindow.webContents.toggleDevTools()
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          role: 'togglefullscreen'
+        }
+      ]
+    });
+  }
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 })
