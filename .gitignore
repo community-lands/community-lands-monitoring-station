@@ -7,3 +7,4 @@ node_modules/
 npm-debug.log
 builds/
 Monitoring/Maps/Bing/
+application/data/version.json

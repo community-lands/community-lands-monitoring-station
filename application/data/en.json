@@ -91,7 +91,8 @@
         "upload_success": "Upload Succeeded.",
         "files_uploaded": "Files Uploaded:",
         "backup_complete": "Backup of file complete.",
-        "import_complete": "Import of file complete."
+        "import_complete": "Import of file complete.",
+        "version": "Version"
     },
     "progress": {
         "uploading": "Uploading, please wait...",
