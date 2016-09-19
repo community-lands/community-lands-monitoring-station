@@ -15,8 +15,20 @@
     window.locale.es = require('./application/data/es')
     window.locale.init();
 
-    const ipc = require('electron').ipcRenderer;
-    const shell = require('electron').shell;
+    const electron = require('electron');
+
+    const ipc = electron.ipcRenderer;
+    const shell = electron.shell;
+
+    const remote = electron.remote;
+    const {Menu, MenuItem} = remote;
+
+    const menu = new Menu();
+    menu.append(new MenuItem({label: t('menu.cut'), role: 'cut', accelerator: "CmdOrCtrl+X"}));
+    menu.append(new MenuItem({label: t('menu.copy'), role: 'copy', accelerator: "CmdOrCtrl+C"}));
+    menu.append(new MenuItem({label: t('menu.paste'), role: 'paste', accelerator: "CmdOrCtrl+V"}));
+    menu.append(new MenuItem({label: t('menu.select'), role: 'selectall', accelerator: "CmdOrCtrl+A"}));
+
     var config = null;
     var updateOnlineStatus = function() {
       ipc.send('community_lands_online', navigator.onLine);
@@ -220,6 +232,7 @@
       }
       html += "</form>";
       document.getElementById('settings_form').innerHTML = html;
+      enableCopyPaste('#settings_form input[type="text"]');
       ipc.send('list_map_layers');
     });
     ipc.on('has_list_map_layers', function(evt, layers) {
@@ -355,6 +368,16 @@
           object[key] = el.value;
       }
       ipc.send('settings_save', object);
+    }
+
+    function enableCopyPaste(selection) {
+      $(selection).each(function(index, el) {
+        el.addEventListener('contextmenu', function (e) {
+          e.preventDefault();
+          menu.popup(remote.getCurrentWindow());
+          return false;
+        }, false);
+      });
     }
 
     </script>
