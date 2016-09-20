@@ -178,6 +178,10 @@ function getLocale() {
   return process.env.locale;
 }
 
+function isDevMode() {
+  return process.env.dev_mode == 'true'
+}
+
 module.exports = {
 
   load: load,
@@ -203,6 +207,7 @@ module.exports = {
   getSharedUsername: getSharedUsername,
   getRootPath: getRootPath,
   getPort: getPort,
-  getLocale: getLocale
+  getLocale: getLocale,
+  isDevMode: isDevMode
 
 }
