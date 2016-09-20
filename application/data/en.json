@@ -76,7 +76,7 @@
         "upload": "Upload",
         "choose": "Choose",
         "update_settings": "Update Settings",
-        "import_data_merge": "Import and Merge Data",
+        "import_data_merge": "Import New Data",
         "import_data_overwrite": "Import and Overwrite Data"
     },
     "language": {
