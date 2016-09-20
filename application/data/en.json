@@ -9,6 +9,7 @@
         "last_synchronized": "Last Synchronized: ",
         "last_backup": "Last Backup: ",
         "open": "Open: ",
+        "tiles_folder": "Folder for local Map Tiles:",
         "settings": {
             "data_directory": "Data Directory",
             "shared_secret": "Shared Secret",
@@ -40,6 +41,9 @@
         "backup": {
             "simple": "Store a ZIP file backup of monitoring data to the application folder",
             "usb": "Create a backup and save it to your location of choice, like a USB drive"
+        },
+        "tiles": {
+            "usage": "To add new sets of tiles, create a subfolder in this directory with a name of your choosing, and copy tiles into this new folder. The folder name will be displayed in MapFilter as a map layer."
         }
     },
     "confirm": {
@@ -59,6 +63,7 @@
         "community_lands": "Community Lands",
         "my_monitoring_forms": "My Monitoring Forms",
         "saved_filters": "Saved Maps",
+        "saved_tiles": "Local Map Tiles",
         "settings": "Application Settings"
     },
     "subtitle": {
@@ -110,6 +115,8 @@
         "community_lands_not_configured": "Community Lands connection not configured",
         "import_delete_failed": "Could not overwrite files",
         "import_unzip_failed": "Could not unzip import file",
-        "backup_failed": "Could not backup data"
+        "backup_failed": "Could not backup data",
+        "files_in_tiles_folder": "There are files in the Tiles folder; only subfolders should exist here.",
+        "numeric_folder_in_tiles_folder": "Some subfolders appear to be misplaced; perhaps you forgot to create a subfolder under Tiles?"
     }
 }

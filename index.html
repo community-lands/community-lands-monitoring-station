@@ -87,6 +87,32 @@
         document.getElementById('form_listing').innerHTML = "";
       }
     });
+    ipc.on('has_tiles_list', function(evt, result) {
+      document.getElementById('tiles_listing').innerHTML = "";
+      if (!result.error) {
+        var content = '';
+        var tiles = result.tiles;
+        if (tiles.length > 0) {
+          var content = '<h5>' + t('title.saved_tiles') + '</h5>';
+          content += '<table class="table table-condensed">';
+          for (var i in tiles) {
+            content += '<tr>';
+            content += '<td>' + tiles[i] + '</td>';
+            content += '</tr>';
+          }
+          content += '</table>';
+        }
+        if (result.warnings && result.warnings.length > 0) {
+          content += '<div style="margin-top: 10px">';
+          for (var i in result.warnings) {
+            var warning = result.warnings[i];
+            content += '<div class="text-warning"><i class="fa fa-warning"></i> <span>' + t(warning) + '</span></div>';
+          }
+          content += '</div>';
+        }
+        document.getElementById('tiles_listing').innerHTML = content;
+      }
+    });
     ipc.on('has_filter_list', function(evt, result) {
       document.getElementById('saved-filters').innerHTML = "";
       var json = JSON.parse(result);
@@ -266,6 +292,8 @@
       document.getElementById('mapUrl').innerHTML = '<a id="mapUrlLink" href="' + configuration.baseUrl + '/mapfilter?locale=' +
         configuration.locale + '">' + configuration.baseUrl + '/mapfilter</a>';
       document.getElementById('form_folder').innerHTML = configuration.directory + "/Monitoring/" + configuration.station + "/Forms"
+      document.getElementById('track_folder').innerHTML = configuration.tracks;
+      document.getElementById('tiles_folder').innerHTML = configuration.tiles;
       if (configuration.community_lands == true)
         document.getElementById('community_lands_content').className = "";
       document.getElementById('mapUrlLink').onclick = function(evt) {
@@ -304,6 +332,7 @@
     ipc.send('form_list');
     ipc.send('filter_list');
     ipc.send('settings_list');
+    ipc.send('tiles_list');
 
     window.addEventListener('online',  updateOnlineStatus);
     window.addEventListener('offline',  updateOnlineStatus);
@@ -466,6 +495,16 @@
             </div>
             <h5 data-translate="title.new_form">Add New Form</h5>
             <button onclick="javascript:selectForm();" class="btn btn-small btn-primary"><span style='margin-right:5px' data-translate="button.select_file">Select from File</span><i class="fa fa-file-o" aria-hidden="true"></i></button>
+          </div>
+          <h4><i class="fa fa-map fa-lg" aria-hidden="true"></i> &#160; <span data-translate="title.tiles"></span></h4>
+          <div class="well">
+            <div data-translate="prompt.tiles_folder">
+              Folder for custom Map Tiles:
+            </div>
+            <div><b id="tiles_folder"></b></div>
+            <div data-translate="help.tiles.usage" class="help-block"></div>
+            <div id="tiles_listing" style="margin-top:20px">
+            </div>
           </div>
           <h4><i class="fa fa-map-marker fa-lg" aria-hidden="true"></i> &#160; <span data-translate="title.GPS_track_data">GPS Track Data</span></h4>
           <div class="well">

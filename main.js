@@ -45,7 +45,9 @@ ipc.on('show_configuration', function (event, arg) {
       'baseUrl': settings.getBaseUrl(),
       'shared_secret': settings.getSharedSecret(),
       'locale': settings.getLocale() || _defaults.locale,
-      'community_lands': !(settings.getCommunityLandsServer() === undefined || settings.getCommunityLandsToken() === undefined)
+      'community_lands': !(settings.getCommunityLandsServer() === undefined || settings.getCommunityLandsToken() === undefined),
+      'tiles': settings.getTilesDirectory(),
+      'tracks': settings.getTracksDirectory()
     }
     console.log(_results)
     event.sender.send('has_configuration', _results)
@@ -192,6 +194,31 @@ ipc.on('form_list', function (event, arg) {
     }
   })
 })
+
+ipc.on('tiles_list', function (event, arg) {
+  var folder = settings.getTilesDirectory();
+  fs.readdir(folder, function (err, files) {
+    if (!err) {
+      var warnFiles = warnFolders = false;
+      var result = { error: false, tiles: [], warnings: [] };
+      for (var i in files) {
+        var file = files[i];
+        var stats = fs.statSync(path.join(folder, file));
+        if (!stats.isDirectory())
+          warnFiles = true;
+        else if (isInt(file))
+          warnFolders = true;
+        else
+          result.tiles.push(file);
+      }
+      if (warnFiles)
+        result.warnings.push("error.files_in_tiles_folder")
+      if (warnFolders)
+        result.warnings.push("error.numeric_folder_in_tiles_folder")
+      event.sender.send('has_tiles_list', result);
+    }
+  });
+});
 
 ipc.on('select_data_directory', function (event, arg) {
   var options = {
@@ -410,6 +437,11 @@ try {
     mainWindow.send('filter_list_changed');
   })
 } catch (e) { // It's ok
+}
+
+function isInt(value) {
+  var check = parseInt(value)
+  return (!isNaN(value) && (check | 0) === check)
 }
 
 // Keep a global reference of the window object, if you don't, the window will
