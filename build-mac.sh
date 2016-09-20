@@ -5,6 +5,6 @@ electron-packager `pwd` MonitoringStation --platform=darwin --arch=x64 --out bui
 cd builds
 # zip -r MonitoringStation-darwin-x64-1.0.0.zip MonitoringStation-darwin-x64
 cd MonitoringStation-darwin-x64
-zip -r MonitoringStation.zip .
+zip -q -r --exclude=*.git* --exclude=*.DS_Store* --exclude=*.env* --exclude=*build*.sh* MonitoringStation.zip .
 cd ..
 cd ..
