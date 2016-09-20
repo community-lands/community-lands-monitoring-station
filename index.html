@@ -68,8 +68,8 @@
         var content = '<h5>' + t('title.my_monitoring_forms') + '</h5><table class="table table-condensed">';
         for (var index in forms) {
           content += '<tr>' +
-            '<td>' + forms[index] + '</td>' +
-            '<td align="right"><div data-form="' + forms[index] + '" class="delete-form btn btn-small"><i class="fa fa-remove"/></div></td>' +
+            '<td><span>' + forms[index].name + '</span> <span style="color:#999">(' + forms[index].file + ')</span></td>' +
+            '<td align="right"><div data-form="' + forms[index].file + '" class="delete-form btn btn-small"><i class="fa fa-remove"/></div></td>' +
             '</tr>';
         }
         content += "</table>";

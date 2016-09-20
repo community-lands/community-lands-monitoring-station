@@ -30,9 +30,11 @@ ServerEvents.on('cl_upload_progress', function(done, bytes) {
 
 var http = require('http')
 var fs = require('fs-extra')
+var readline = require('readline')
 var path = require('path')
 var unzip = require('unzip2');
 var GeoJson = require('./helpers/rebuild-geojson')
+var async = require('async');
 
 ipc.on('show_configuration', function (event, arg) {
   try {
@@ -136,6 +138,36 @@ ipc.on('form_delete', function (event, arg) {
   })
 })
 
+/*
+ * Cheating a bit here -- instead of reading the entire file and parsing the 
+ * XML, going to read line-by-line instead until I find the interesting line, 
+ * then break early if possible.
+ */
+function createFormReader(key) {
+  return function(cb) {
+    var reader = readline.createInterface({
+      input: fs.createReadStream(path.join(settings.getUserFormsDirectory(), key)),
+      terminal: true
+    });
+    var item = { file: key, name: key };
+    reader.on('line', function (input) {
+      var line = input.trim();
+      if (line.startsWith("<h:title")) {
+        item.name = line.substring("<h:title>".length, line.indexOf("</h:title>"));
+        /*
+         * FIXME: Hack to close the input stream early and stop reading extra 
+         * information. Would like a better solution. For now, simulate terminal 
+         * input of Ctrl+C/D
+         */
+        reader.write(null, { ctrl: true, name: require('os').platform() == 'win32' ? 'd' : 'c' })
+      }
+    });
+    reader.on('close', function () {
+      cb(null, item);
+    });
+  }
+}
+
 ipc.on('form_list', function (event, arg) {
   var folder = settings.getUserFormsDirectory();
   fs.readdir(folder, function (err, files) {
@@ -143,8 +175,20 @@ ipc.on('form_list', function (event, arg) {
     if (err) {
       event.sender.send('has_form_list', data)
     } else {
-      data.forms = files
-      event.sender.send('has_form_list', data)
+      var parallels = files.map(createFormReader);
+      async.parallel(parallels, function(a_err, results) {
+        var data = { forms: [] }
+        if (!a_err) {
+          for (var key in results)
+            data.forms.push(results[key])
+          data.forms.sort(function(a, b) {
+            var l = a.name.toLowerCase();
+            var r = b.name.toLowerCase();
+            return l < r ? -1 : l > r ? 1 : 0;
+          });
+        }
+        event.sender.send('has_form_list', data);
+      });
     }
   })
 })
