@@ -23,6 +23,12 @@
             "mapCenterLong": "Longitud inicial de Mapfilter"
         }
     },
+    "menu": {
+      "cut": "Cortar",
+      "copy": "Copiar",
+      "paste": "Pegar",
+      "select": "Selecciona todo"
+    },
     "help": {
         "settings": {
             "mapZoom": "Valor debe ser entre 1 (mas cercana) y 18 (mas lejos)"
@@ -30,6 +36,10 @@
         "import": {
             "merge": "Importar datos nuevos y actualiza archivos actuales con el contenido de las copias de seguridad. Ningun dato será eliminado.",
             "overwrite": "Esto borrara todo sus datos subidas remplazandolos con el contenido de la copia de seguridad. Se sugiere hacer una copia de sus datos antes de iniciarlo porque no este proceso es irreversible"
+        },
+        "backup": {
+            "simple": "Guardar una copia de seguridad de los datos de monitoreo en un carpeta ZIP en la carpeta de Programas",
+            "usb": "Crear una copia de seguridad y guardarlo en la ubicación preferida como una unidad USB"
         }
     },
     "confirm": {
@@ -62,6 +72,7 @@
     "button": {
         "select_file": "Selecciona archivo",
         "backup_data": "Copia segura de sus datos",
+        "backup_data_usb": "Hacer copia de seguridad y guardar",
         "upload": "Subir datos",
         "choose": "Selecionar",
         "update_settings": "Actualizar configuración",
@@ -96,6 +107,7 @@
         "could_not_connect": "No puede conectar al servidor",
         "community_lands_not_configured": "Conexión al community lands no configurada",
         "import_delete_failed": "No pudo sobrescribir archivos",
-        "import_unzip_failed": "No pudo descomprimir archivo"
+        "import_unzip_failed": "No pudo descomprimir archivo",
+        "backup_failed": "No podía realizar copia de seguridad de los datos"
     }
 }
