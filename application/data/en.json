@@ -24,6 +24,12 @@
         }
     },
     "menu": {
+      "application": "Application",
+      "about": "About Application",
+      "quit": "Quit",
+      "edit": "Edit",
+      "undo": "Undo",
+      "redo": "Redo",
       "cut": "Cut",
       "copy": "Copy",
       "paste": "Paste",
