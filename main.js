@@ -195,10 +195,12 @@ ipc.on('form_list', function (event, arg) {
   })
 })
 
-ipc.on('tiles_list', function (event, arg) {
+function listTiles(cb) {
   var folder = settings.getTilesDirectory();
   fs.readdir(folder, function (err, files) {
-    if (!err) {
+    if (err)
+      cb(err)
+    else {
       var warnFiles = warnFolders = false;
       var result = { error: false, tiles: [], warnings: [] };
       for (var i in files) {
@@ -215,8 +217,16 @@ ipc.on('tiles_list', function (event, arg) {
         result.warnings.push("error.files_in_tiles_folder")
       if (warnFolders)
         result.warnings.push("error.numeric_folder_in_tiles_folder")
-      event.sender.send('has_tiles_list', result);
+      result.tiles.sort(function(a, b) { return a < b ? -1 : a > b ? 1 : 0 });
+      cb(null, result);
     }
+  });
+}
+
+ipc.on('tiles_list', function (event, arg) {
+  listTiles(function(err, result) {
+    if (!err)
+      event.sender.send('has_tiles_list', result);
   });
 });
 
@@ -320,14 +330,11 @@ ipc.on('settings_save', function (event, arg) {
 })
 
 ipc.on('list_map_layers', function (event, arg) {
-  fs.readdir(settings.getTilesDirectory(), function(err, files) {
+  listTiles(function(err, result) {
     if (err)
       event.sender.send('has_list_map_layers', [])
     else {
-      var arr = []
-      for (var i = 0; i < files.length; i++)
-        arr.push({name: files[i], value: files[i]});
-      event.sender.send('has_list_map_layers', arr);
+      event.sender.send('has_list_map_layers', result.tiles.map(function(value) { return {name: value, value: value} }));
     }
   });
 });
