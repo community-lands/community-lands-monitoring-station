@@ -35,6 +35,7 @@ var path = require('path')
 var unzip = require('unzip2');
 var GeoJson = require('./helpers/rebuild-geojson')
 var async = require('async');
+var i18n = require('./helpers/locale.js');
 
 ipc.on('show_configuration', function (event, arg) {
   try {
@@ -482,21 +483,21 @@ app.on('ready', function () {
 
   // Create the Application's main menu
   var template = [{
-    label: "Application",
+    label: i18n.t('menu.application'),
     submenu: [
-        { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
+        { label: i18n.t('menu.about'), selector: "orderFrontStandardAboutPanel:" },
         { type: "separator" },
-        { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
+        { label: i18n.t('menu.quit'), accelerator: "Command+Q", click: function() { app.quit(); }}
     ]}, {
-    label: "Edit",
+    label: i18n.t('menu.edit'),
     submenu: [
-        { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-        { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+        { label: i18n.t('menu.undo'), accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+        { label: i18n.t('menu.redo'), accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
         { type: "separator" },
-        { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-        { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-        { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-        { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+        { label: i18n.t('menu.cut'), accelerator: "CmdOrCtrl+X", selector: "cut:" },
+        { label: i18n.t('menu.copy'), accelerator: "CmdOrCtrl+C", selector: "copy:" },
+        { label: i18n.t('menu.paste'), accelerator: "CmdOrCtrl+V", selector: "paste:" },
+        { label: i18n.t('menu.select_all'), accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
     ]}
   ];
   if (settings.isDevMode()) {
