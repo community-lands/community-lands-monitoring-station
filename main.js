@@ -45,7 +45,9 @@ ipc.on('show_configuration', function (event, arg) {
       'baseUrl': settings.getBaseUrl(),
       'shared_secret': settings.getSharedSecret(),
       'locale': settings.getLocale() || _defaults.locale,
-      'community_lands': !(settings.getCommunityLandsServer() === undefined || settings.getCommunityLandsToken() === undefined)
+      'community_lands': !(settings.getCommunityLandsServer() === undefined || settings.getCommunityLandsToken() === undefined),
+      'tiles': settings.getTilesDirectory(),
+      'tracks': settings.getTracksDirectory()
     }
     console.log(_results)
     event.sender.send('has_configuration', _results)
@@ -193,6 +195,41 @@ ipc.on('form_list', function (event, arg) {
   })
 })
 
+function listTiles(cb) {
+  var folder = settings.getTilesDirectory();
+  fs.readdir(folder, function (err, files) {
+    if (err)
+      cb(err)
+    else {
+      var warnFiles = warnFolders = false;
+      var result = { error: false, tiles: [], warnings: [] };
+      for (var i in files) {
+        var file = files[i];
+        var stats = fs.statSync(path.join(folder, file));
+        if (!stats.isDirectory())
+          warnFiles = true;
+        else if (isInt(file))
+          warnFolders = true;
+        else
+          result.tiles.push(file);
+      }
+      if (warnFiles)
+        result.warnings.push("error.files_in_tiles_folder")
+      if (warnFolders)
+        result.warnings.push("error.numeric_folder_in_tiles_folder")
+      result.tiles.sort(function(a, b) { return a < b ? -1 : a > b ? 1 : 0 });
+      cb(null, result);
+    }
+  });
+}
+
+ipc.on('tiles_list', function (event, arg) {
+  listTiles(function(err, result) {
+    if (!err)
+      event.sender.send('has_tiles_list', result);
+  });
+});
+
 ipc.on('select_data_directory', function (event, arg) {
   var options = {
     properties: ['openDirectory'],
@@ -293,14 +330,11 @@ ipc.on('settings_save', function (event, arg) {
 })
 
 ipc.on('list_map_layers', function (event, arg) {
-  fs.readdir(settings.getTilesDirectory(), function(err, files) {
+  listTiles(function(err, result) {
     if (err)
       event.sender.send('has_list_map_layers', [])
     else {
-      var arr = []
-      for (var i = 0; i < files.length; i++)
-        arr.push({name: files[i], value: files[i]});
-      event.sender.send('has_list_map_layers', arr);
+      event.sender.send('has_list_map_layers', result.tiles.map(function(value) { return {name: value, value: value} }));
     }
   });
 });
@@ -410,6 +444,11 @@ try {
     mainWindow.send('filter_list_changed');
   })
 } catch (e) { // It's ok
+}
+
+function isInt(value) {
+  var check = parseInt(value)
+  return (!isNaN(value) && (check | 0) === check)
 }
 
 // Keep a global reference of the window object, if you don't, the window will
