@@ -60,6 +60,7 @@
         "new_form": "Add New Form",
         "data_backup": "Data Backup",
         "data_import": "Data Import",
+        "data_reset": "Data Reset",
         "community_lands": "Community Lands",
         "my_monitoring_forms": "My Monitoring Forms",
         "saved_filters": "Saved Maps",
@@ -81,7 +82,7 @@
         "upload": "Upload",
         "choose": "Choose",
         "update_settings": "Update Settings",
-        "import_data_merge": "Import and Merge Data",
+        "import_data_merge": "Import New Data",
         "import_data_overwrite": "Import and Overwrite Data"
     },
     "language": {

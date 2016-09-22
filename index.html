@@ -555,9 +555,6 @@
             <div class="well">
               <div class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:importFilesMerge()"><span style='margin-right:5px' data-translate="button.import_data_merge">Import and Merge Data</span><i class="fa fa-cloud-download" aria-hidden="true"></i></div>
               <div data-translate="help.import.merge" class="help-block"></div>
-              <div class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:importFilesOverwrite()"><span style='margin-right:5px' data-translate="button.import_data_overwrite">Import and Overwrite Data</span><i class="fa fa-cloud-download" aria-hidden="true"></i></div>
-              <div data-translate="help.import.overwrite" class="help-block"></div>
-              <div style="margin-top: 10px" id="import_status"></div>
             </div>
           </div>
         </div>
@@ -570,6 +567,12 @@
           <button onclick="javascript:saveSettings();" class="btn btn-small btn-primary"><span style='margin-right:5px' data-translate="button.update_settings">Update Settings</span><i class="fa fa-gear" aria-hidden="true"></i></button>
           <div id="settings_status"></div>
           <div class="clearfix">&nbsp;</div>
+          <h4><span data-translate="title.data_reset">Data Reset</span></h4>
+          <div class="well">
+            <div class="btn btn-small btn-danger" style="margin-top: 10px" onclick="javascript:importFilesOverwrite()"><span style='margin-right:5px' data-translate="button.import_data_overwrite">Import and Overwrite Data</span><i class="fa fa-cloud-download" aria-hidden="true"></i></div>
+            <div data-translate="help.import.overwrite" class="help-block"></div>
+          </div>
+
         </div>
       </div>
     </div>
