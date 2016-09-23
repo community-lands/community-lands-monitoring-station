@@ -42,5 +42,8 @@
     "xtend": "^4.0.1",
     "unzip2": "^0.2.5",
     "jsdom": "^9.4.0"
+  },
+  "devDependencies": {
+    "pug": "^2.0.0-beta6"
   }
 }
