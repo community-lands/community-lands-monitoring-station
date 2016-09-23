@@ -4,6 +4,7 @@
         "username": "Use your <b>agent number</b> as the username.",
         "password": "Password: ",
         "map_url": "URL for viewing maps in your browser:",
+        "web_url": "URL for editing the web site in your browser:",
         "monitoring_forms_folder": "Folder for blank monitoring forms:",
         "connection_status": "Connection Status: ",
         "last_synchronized": "Last Synchronized: ",
