@@ -39,7 +39,7 @@
     },
     "help": {
         "settings": {
-            "mapZoom": "Value must be between 1 (closest) and 18 (farthest)"
+            "mapZoom": "Usually a value between 10 and 15. Higher numbers are more zoomed in."
         },
         "import": {
             "merge": "Import new data, and updates existing files with contents of the backup. Nothing will be deleted.",

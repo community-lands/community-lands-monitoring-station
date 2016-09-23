@@ -38,7 +38,7 @@
     },
     "help": {
         "settings": {
-            "mapZoom": "Valor debe ser entre 1 (mas cercana) y 18 (mas lejos)"
+            "mapZoom": "Por lo general, un valor entre 10 y 15. Superior números son más ampliado."
         },
         "import": {
             "merge": "Importar datos nuevos y actualiza archivos actuales con el contenido de las copias de seguridad. Ningun dato será eliminado.",
