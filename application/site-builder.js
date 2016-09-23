@@ -39,6 +39,7 @@ exports.build_website_with_template = (
   content,
   template,
   target,
+  params,
   callback
   ) => {
   console.log('Fetching template')
@@ -50,6 +51,7 @@ exports.build_website_with_template = (
   const template_json = fetch_template_json(
     path.join(template, 'template.json')
   )
+  Object.assign(template_json.parameters, params)
 
   console.log('Cleaning target directory')
   fs.removeSync('target')
@@ -67,7 +69,7 @@ exports.build_website_with_template = (
     template_json,
     function () {
       walk_source_tree(
-        'src/content',
+        content,
         target,
         template_pug,
         template_json,

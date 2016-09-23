@@ -54,6 +54,7 @@ var path = require('path')
 app.use(morgan('dev'))
 
 app.use('/mapfilter', express.static(__dirname + '/mapfilter'))
+app.use('/website', express.static(__dirname + '/website'))
 app.get('/mapfilter/json/mapfilter-config.json', MapFilter.config)
 app.get('/mapfilter/json/mapfilter-locations.geojson', MapFilter.locations);
 app.get('/mapfilter/filters', MapFilter.listFilters)

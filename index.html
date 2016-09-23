@@ -191,6 +191,9 @@
       showStatus(html, { type: json.error ? 'error' : 'success', timeout: 10000 });
       ipc.send('community_lands_status');
     });
+    ipc.on('has_saved_template', function(evt, result){
+      hideLoadingScreen()
+    });
     ipc.on('has_settings_list', function(evt, settings) {
       var sections = {
         general: '',
@@ -369,6 +372,15 @@
       ipc.send('import_files', { mode: 'merge' });
     }
 
+    function saveTemplate() {
+      showLoadingScreen(t('progress.saving_template'));
+      ipc.send('save_template', {
+        template: document.getElementById('select_website_template').value,
+        community: document.getElementById('website_community').value,
+        year: document.getElementById('website_year').value
+      });
+    }
+
     function openBackupFile() {
       var file = document.getElementById('backup_file').getAttribute('data-location');
       shell.showItemInFolder(file);
@@ -536,10 +548,10 @@
           <div class="well">
             <div>
               Select a website template:
-              <select>
+              <select id="select_website_template">
                 <option value="basic-english">Basic English</option>
                 <option value="advanced-english">Advanced English</option>
-                <option value="wapichan">Wapichan</option>
+                <option value="wapichanao">Wapichanao</option>
               </select>
             </div>
             <div>
@@ -547,11 +559,11 @@
               <table>
                 <tr>
                   <th>Community</th>
-                  <td style='padding-left: 10px'><input type='text' name='community'/></td>
+                  <td style='padding-left: 10px'><input type='text' id='website_community' name='community'/></td>
                 </tr>
                 <tr>
                   <th>Copyright Year</th>
-                  <td style='padding-left: 10px'><input type='text' name='year'/></td>
+                  <td style='padding-left: 10px'><input type='text' id='website_year' name='year'/></td>
                 </tr>
               </table>
             </div>

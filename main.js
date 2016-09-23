@@ -36,6 +36,7 @@ var unzip = require('unzip2');
 var GeoJson = require('./helpers/rebuild-geojson')
 var async = require('async');
 var i18n = require('./helpers/locale.js');
+const site_builder = require('./application/site-builder.js')
 
 ipc.on('show_configuration', function (event, arg) {
   try {
@@ -142,8 +143,8 @@ ipc.on('form_delete', function (event, arg) {
 })
 
 /*
- * Cheating a bit here -- instead of reading the entire file and parsing the 
- * XML, going to read line-by-line instead until I find the interesting line, 
+ * Cheating a bit here -- instead of reading the entire file and parsing the
+ * XML, going to read line-by-line instead until I find the interesting line,
  * then break early if possible.
  */
 function createFormReader(key) {
@@ -158,8 +159,8 @@ function createFormReader(key) {
       if (line.startsWith("<h:title")) {
         item.name = line.substring("<h:title>".length, line.indexOf("</h:title>"));
         /*
-         * FIXME: Hack to close the input stream early and stop reading extra 
-         * information. Would like a better solution. For now, simulate terminal 
+         * FIXME: Hack to close the input stream early and stop reading extra
+         * information. Would like a better solution. For now, simulate terminal
          * input of Ctrl+C/D
          */
         reader.write(null, { ctrl: true, name: require('os').platform() == 'win32' ? 'd' : 'c' })
@@ -328,6 +329,20 @@ ipc.on('settings_save', function (event, arg) {
       event.sender.send('has_settings_save', '{"error":false}')
     }
   })
+})
+
+ipc.on('save_template', function (event, arg) {
+  var content_dir = path.join(path.dirname(settings.getSubmissionsDirectory()), 'content')
+  fs.mkdirpSync(content_dir)
+  site_builder.build_website_with_template(
+    content_dir,
+    path.join('templates', arg.template),
+    'website',
+    arg,
+    function () {
+      event.sender.send('has_saved_template', '{"error":false}')
+    }
+  )
 })
 
 ipc.on('list_map_layers', function (event, arg) {
