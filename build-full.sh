@@ -37,6 +37,12 @@ while [[ "$1" != "" ]]; do
   shift
 done
 
+echo "# Cleaning out tiles"
+rm Monitoring/Maps/Bing/*.jpeg
+
+echo "# Installing dependencies if needed"
+npm install
+
 echo "# Building Community Lands Monitoring Station from $dir"
 
 if [ $step -ge $start -a $step -le $end ]
@@ -79,6 +85,7 @@ if [ $step -ge $start -a $step -le $end ]
 then
   echo "3) Building MapFilter..."
   cd ../mapfilter
+  sh install-dependencies.sh
   npm run build:web && cp dist/* $dir/mapfilter/
   cd $dir
 fi
