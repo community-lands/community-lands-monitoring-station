@@ -123,7 +123,7 @@
           content += '<table class="table table-condensed">';
           for (var index in filters) {
             content += '<tr>';
-            content += '<td><a class="map-link" href="' + config.baseUrl + '/mapfilter?locale=' + config.locale + '&filter=' + filters[index].id + '">' + 
+            content += '<td><a class="map-link" href="' + config.baseUrl + '/mapfilter?locale=' + config.locale + '&filter=' + filters[index].id + '">' +
               filters[index].name + '</a></td>';
             content += '<td align="right"><div data-filter="' + filters[index].id + '" class="delete-filter btn btn-small"><i class="fa fa-remove"/></div></td>';
             content += '</tr>';
@@ -291,12 +291,18 @@
       document.getElementById('shared_secret').innerHTML = configuration.shared_secret
       document.getElementById('mapUrl').innerHTML = '<a id="mapUrlLink" href="' + configuration.baseUrl + '/mapfilter?locale=' +
         configuration.locale + '">' + configuration.baseUrl + '/mapfilter</a>';
+      document.getElementById('webUrl').innerHTML = '<a id="webUrlLink" href="' + configuration.baseUrl + '/website' +
+        '">' + configuration.baseUrl + '/website</a>';
       document.getElementById('form_folder').innerHTML = configuration.directory + "/Monitoring/" + configuration.station + "/Forms"
       document.getElementById('track_folder').innerHTML = configuration.tracks;
       document.getElementById('tiles_folder').innerHTML = configuration.tiles;
       if (configuration.community_lands == true)
         document.getElementById('community_lands_content').className = "";
       document.getElementById('mapUrlLink').onclick = function(evt) {
+        evt.preventDefault();
+        shell.openExternal(this.getAttribute('href'));
+      };
+      document.getElementById('webUrlLink').onclick = function(evt) {
         evt.preventDefault();
         shell.openExternal(this.getAttribute('href'));
       };
@@ -525,6 +531,31 @@
               URL for editing the web site in your browser:
             </div>
             <div><b id="webUrl"></b></div>
+          </div>
+          <h4><i class="fa fa-wrench fa-lg" aria-hidden="true"></i> &#160; <span data-translate="title.template_settings">Template Settings</span></h4>
+          <div class="well">
+            <div>
+              Select a website template:
+              <select>
+                <option value="basic-english">Basic English</option>
+                <option value="advanced-english">Advanced English</option>
+                <option value="wapichan">Wapichan</option>
+              </select>
+            </div>
+            <div>
+              <h4>Template settings</h4>
+              <table>
+                <tr>
+                  <th>Community</th>
+                  <td style='padding-left: 10px'><input type='text' name='community'/></td>
+                </tr>
+                <tr>
+                  <th>Copyright Year</th>
+                  <td style='padding-left: 10px'><input type='text' name='year'/></td>
+                </tr>
+              </table>
+            </div>
+            <div class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:saveTemplate()"><span style='margin-right:5px' data-translate="button.save_template_settings">Save Template Settings</span><i class="fa fa-save" aria-hidden="true"></i></div>
           </div>
         </div>
         <div role="tabpanel" class="tab-pane" id="imports-exports">
