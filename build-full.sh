@@ -47,7 +47,7 @@ echo "# Building Community Lands Monitoring Station from $dir"
 
 if [ $step -ge $start -a $step -le $end ]
 then
-  echo "1) Updating MapFilter..."
+  echo "$step) Updating MapFilter..."
   cd ../mapfilter
   git checkout fileodk
   if [[ "$?" != 0 ]]
@@ -69,7 +69,7 @@ fi
 
 if [ $step -ge $start -a $step -le $end ]
 then
-  echo "2) Updating Monitoring Station"
+  echo "$step) Updating Monitoring Station"
   git checkout master
   git pull
   if [ "$?" != 0 ]
@@ -83,13 +83,25 @@ fi
 
 if [ $step -ge $start -a $step -le $end ]
 then
-  echo "3) Building MapFilter..."
+  echo "$step) Importing templates and latest site builder library..."
+  cd ../private-website-templates
+  git pull
+  cd $dir
+  cp -rp ../private-website-templates/src/templates/* templates/
+  cp -rp ../private-website-templates/lib/* application/
+fi
+
+((step++))
+
+if [ $step -ge $start -a $step -le $end ]
+then
+  echo "$step) Building MapFilter..."
   cd ../mapfilter
+  git pull
   sh install-dependencies.sh
   npm run build:web && cp dist/* $dir/mapfilter/
   cd $dir
 fi
-
 
 ((step++))
 
@@ -97,7 +109,7 @@ if [ $step -ge $start -a $step -le $end ]
 then
   git log -n 1 --format='{ "version": "%h" }' > application/data/version.json
 
-  echo "4) Creating builds for:"
+  echo "$step) Creating builds for:"
   rm -rf builds
   if [ $win == 0 ]
   then
@@ -115,7 +127,7 @@ fi
 
 if [ $step -ge $start -a $step -le $end ]
 then
-  echo "5) Packaging assets..."
+  echo "$step) Packaging assets..."
   cd builds
 
   d=$(date "+%Y%m%d")
@@ -139,7 +151,7 @@ fi
 
 if [ $step -ge $start -a $step -le $end ]
 then
-  echo "6) Uploading to server..."
+  echo "$step) Uploading to server..."
   cd builds
 
   if [ $win == 0 ]

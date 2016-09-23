@@ -2670,6 +2670,7 @@ body {
   z-index: 20;
   text-align: center;
   margin: 0px auto;
+  overflow-y: scroll;
 }
 
 #save-filter-pane .save-filter-container {
@@ -2677,6 +2678,25 @@ body {
   padding: 10px;
   width: 100%;
   height: 100%;
+}
+
+#save-filter-pane dl {
+  font-size: 80%;
+}
+
+#save-filter-pane dt {
+  float: left;
+  width: 70px;
+  overflow: hidden;
+  clear: left;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#save-filter-pane dd {
+  margin-left: 90px;
+  text-align: left;
 }
 
 #graph-pane {
