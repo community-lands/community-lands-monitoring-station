@@ -8,8 +8,6 @@
       window.$ = window.jQuery = require('./bootstrap/js/jquery-2.2.4.min.js');
     </script>
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="application/locale.js"></script>
-    <script type="text/javascript" src="application/loading.js"></script>
     <script type="text/javascript" src="application/actions.js"></script>
     <script type="text/javascript" src="application/dotranslate.js"></script>
   </head>
@@ -137,7 +135,15 @@
                 </tr>
               </table>
             </div>
-            <div class="btn btn-small btn-primary" style="margin-top: 10px" onclick="javascript:saveTemplate()"><span style='margin-right:5px' data-translate="button.save_template_settings">Save Template Settings</span><i class="fa fa-save" aria-hidden="true"></i></div>
+            <div id="cmsSaveTemplateButton"
+              class="btn btn-small btn-primary"
+              style="margin-top: 10px">
+              <span style='margin-right:5px'
+                data-translate="button.save_template_settings">
+                  Save Template Settings
+              </span>
+              <i class="fa fa-save" aria-hidden="true"></i>
+            </div>
           </div>
         </div>
         <div role="tabpanel" class="tab-pane" id="imports-exports">

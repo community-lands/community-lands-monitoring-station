@@ -1,12 +1,10 @@
 /* eslint-env browser, jquery */
-/* FIXME: these globals can and should be done with requires */
-/* global t, t_exists */
-/* global showStatus */
-/* global showLoadingScreen, updateLoadingScreen, hideLoadingScreen */
 
-window.locale.en = require('./application/data/en')
-window.locale.es = require('./application/data/es')
-window.locale.init()
+const locale = require('./application/locale')
+const t = locale.t
+const t_exists = locale.t_exists
+
+const loading = require('./application/loading')
 
 try {
   window.appVersion = require('./application/data/version')
@@ -15,12 +13,12 @@ try {
 }
 
 const electron = require('electron')
-
 const ipc = electron.ipcRenderer
 const shell = electron.shell
-
 const remote = electron.remote
 const {Menu, MenuItem} = remote
+
+require('./application/cms')
 
 const menu = new Menu()
 menu.append(new MenuItem({
@@ -48,11 +46,11 @@ var updateOnlineStatus = function () {
   ipc.send('community_lands_online', navigator.onLine)
 }
 ipc.on('backup_submissions_complete', function (evt, json) {
-  hideLoadingScreen()
+  loading.hideLoadingScreen()
   if (json.error) {
     alert(t('error.' + json.code))
   } else if (!json.cancelled) {
-    showStatus(t('text.backup_complete') +
+    loading.showStatus(t('text.backup_complete') +
       '<br/>' + t('prompt.open') +
       '<a id="backup_file" href="javascript:openBackupFile();" ' +
       'data-location="' + json.location + '">' + json.location +
@@ -201,7 +199,7 @@ ipc.on('has_community_lands_status', function (evt, result) {
   }
 })
 ipc.on('has_community_lands_backup', function (evt, result) {
-  hideLoadingScreen()
+  loading.hideLoadingScreen()
   var json = JSON.parse(result)
   var html = ''
   if (json.error) {
@@ -218,11 +216,10 @@ ipc.on('has_community_lands_backup', function (evt, result) {
     html += ' '
     html += json.entity.files_uploaded
   }
-  showStatus(html, { type: json.error ? 'error' : 'success', timeout: 10000 })
+  loading.showStatus(html, {
+    type: json.error ? 'error' : 'success', timeout: 10000
+  })
   ipc.send('community_lands_status')
-})
-ipc.on('has_saved_template', function (evt, result) {
-  hideLoadingScreen()
 })
 ipc.on('has_settings_list', function (evt, settings) {
   var sections = {
@@ -368,31 +365,31 @@ ipc.on('has_select_data_directory', function (evt, folder) {
   document.getElementById('settings-form-data_directory').value = folder
 })
 ipc.on('has_settings_save', function (evt, result) {
-  hideLoadingScreen()
+  loading.hideLoadingScreen()
   var json = JSON.parse(result)
   if (json.error) {
-    showStatus(t('error.' + json.code), { type: 'error' })
+    loading.showStatus(t('error.' + json.code), { type: 'error' })
   } else {
-    showStatus(
+    loading.showStatus(
       t('message.settings_saved'),
       { timeout: false, type: 'warning' }
     )
   }
 })
 ipc.on('has_import_files', function (evt, result) {
-  hideLoadingScreen()
+  loading.hideLoadingScreen()
   if (result.error) {
-    showStatus(t('error.' + result.code), { type: 'error' })
+    loading.showStatus(t('error.' + result.code), { type: 'error' })
   } else {
-    showStatus(t('text.import_success'), { timeout: 5000 })
+    loading.showStatus(t('text.import_success'), { timeout: 5000 })
   }
 })
 ipc.on('cl_upload_progress', function (evt, result) {
   if (result.status === 'uploading') {
-    updateLoadingScreen(t('progress.importing') + ' <br/> &gt; ' +
+    loading.updateLoadingScreen(t('progress.importing') + ' <br/> &gt; ' +
       result.progress + '...')
   } else {
-    updateLoadingScreen(t('progress.importing') + ' <br/> &gt; ' +
+    loading.updateLoadingScreen(t('progress.importing') + ' <br/> &gt; ' +
       t('progress.' + result.status) +
       ' <i class="fa fa-spinner fa-pulse fa-fw"></i>')
   }
@@ -410,46 +407,45 @@ window.addEventListener('offline', updateOnlineStatus)
 
 updateOnlineStatus()
 
-/* FIXME: convert this to a module and export this functionality */
+/* FIXME: convert this to a module and export this functionality. The
+   window.foo = foo declarations here are redundant, but make the linter
+   happy so it's easier to see brokenness.
+ */
 
 function communityLandsUpload () {
   if (navigator.onLine) {
-    showLoadingScreen(t('progress.uploading'))
+    loading.showLoadingScreen(t('progress.uploading'))
     ipc.send('community_lands_backup')
   } else {
     alert(t('alert.no_internet'))
   }
 }
+window.communityLandsUpload = communityLandsUpload
 
 function backupFiles (cb) {
-  showLoadingScreen(t('progress.saving'))
+  loading.showLoadingScreen(t('progress.saving'))
   ipc.send('backup_submissions', cb)
 }
+window.backupFiles = backupFiles
 
 function importFilesOverwrite () {
-  showLoadingScreen(t('progress.importing'))
+  loading.showLoadingScreen(t('progress.importing'))
   ipc.send('import_files', { mode: 'overwrite' })
 }
+window.importFilesOverwrite = importFilesOverwrite
 
 function importFilesMerge () {
-  showLoadingScreen(t('progress.importing'))
+  loading.showLoadingScreen(t('progress.importing'))
   ipc.send('import_files', { mode: 'merge' })
 }
-
-function saveTemplate () {
-  showLoadingScreen(t('progress.saving_template'))
-  ipc.send('save_template', {
-    template: document.getElementById('select_website_template').value,
-    community: document.getElementById('website_community').value,
-    year: document.getElementById('website_year').value
-  })
-}
+window.importFilesMerge = importFilesMerge
 
 function openBackupFile () {
   var file = document.getElementById('backup_file')
     .getAttribute('data-location')
   shell.showItemInFolder(file)
 }
+window.openBackupFile = openBackupFile
 
 function openBackupFolder () {
   if (config) {
@@ -457,10 +453,12 @@ function openBackupFolder () {
       '/Backup')
   }
 }
+window.openBackupFolder = openBackupFolder
 
 function selectForm () {
   ipc.send('select_form')
 }
+window.selectForm = selectForm
 
 function translatePage () {
   var tags = ['h4', 'h5', 'div', 'span', 'b', 'button']
@@ -473,13 +471,15 @@ function translatePage () {
     }
   }
 }
+window.translatePage = translatePage
 
 function chooseDataDirectory () {
   ipc.send('select_data_directory')
 }
+window.chooseDataDirectory = chooseDataDirectory
 
 function saveSettings () {
-  showLoadingScreen(t('progress.saving'))
+  loading.showLoadingScreen(t('progress.saving'))
   var els = document.getElementsByClassName('key-value')
   var object = {}
   for (var i = 0; i < els.length; i++) {
@@ -491,6 +491,7 @@ function saveSettings () {
   }
   ipc.send('settings_save', object)
 }
+window.saveSettings = saveSettings
 
 function enableCopyPaste (selection) {
   $(selection).each(function (index, el) {
@@ -501,3 +502,4 @@ function enableCopyPaste (selection) {
     }, false)
   })
 }
+window.enableCopyPaste = enableCopyPaste
