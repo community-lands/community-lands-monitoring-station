@@ -15,12 +15,12 @@ try {
 }
 
 const electron = require('electron')
-
 const ipc = electron.ipcRenderer
 const shell = electron.shell
-
 const remote = electron.remote
 const {Menu, MenuItem} = remote
+
+require('./application/cms')
 
 const menu = new Menu()
 menu.append(new MenuItem({
@@ -221,9 +221,6 @@ ipc.on('has_community_lands_backup', function (evt, result) {
   showStatus(html, { type: json.error ? 'error' : 'success', timeout: 10000 })
   ipc.send('community_lands_status')
 })
-ipc.on('has_saved_template', function (evt, result) {
-  hideLoadingScreen()
-})
 ipc.on('has_settings_list', function (evt, settings) {
   var sections = {
     general: '',
@@ -410,7 +407,10 @@ window.addEventListener('offline', updateOnlineStatus)
 
 updateOnlineStatus()
 
-/* FIXME: convert this to a module and export this functionality */
+/* FIXME: convert this to a module and export this functionality. The
+   window.foo = foo declarations here are redundant, but make the linter
+   happy so it's easier to see brokenness.
+ */
 
 function communityLandsUpload () {
   if (navigator.onLine) {
@@ -420,36 +420,32 @@ function communityLandsUpload () {
     alert(t('alert.no_internet'))
   }
 }
+window.communityLandsUpload = communityLandsUpload
 
 function backupFiles (cb) {
   showLoadingScreen(t('progress.saving'))
   ipc.send('backup_submissions', cb)
 }
+window.backupFiles = backupFiles
 
 function importFilesOverwrite () {
   showLoadingScreen(t('progress.importing'))
   ipc.send('import_files', { mode: 'overwrite' })
 }
+window.importFilesOverwrite = importFilesOverwrite
 
 function importFilesMerge () {
   showLoadingScreen(t('progress.importing'))
   ipc.send('import_files', { mode: 'merge' })
 }
-
-function saveTemplate () {
-  showLoadingScreen(t('progress.saving_template'))
-  ipc.send('save_template', {
-    template: document.getElementById('select_website_template').value,
-    community: document.getElementById('website_community').value,
-    year: document.getElementById('website_year').value
-  })
-}
+window.importFilesMerge = importFilesMerge
 
 function openBackupFile () {
   var file = document.getElementById('backup_file')
     .getAttribute('data-location')
   shell.showItemInFolder(file)
 }
+window.openBackupFile = openBackupFile
 
 function openBackupFolder () {
   if (config) {
@@ -457,10 +453,12 @@ function openBackupFolder () {
       '/Backup')
   }
 }
+window.openBackupFolder = openBackupFolder
 
 function selectForm () {
   ipc.send('select_form')
 }
+window.selectForm = selectForm
 
 function translatePage () {
   var tags = ['h4', 'h5', 'div', 'span', 'b', 'button']
@@ -473,10 +471,12 @@ function translatePage () {
     }
   }
 }
+window.selectForm = translatePage
 
 function chooseDataDirectory () {
   ipc.send('select_data_directory')
 }
+window.chooseDataDirectory = chooseDataDirectory
 
 function saveSettings () {
   showLoadingScreen(t('progress.saving'))
@@ -491,6 +491,7 @@ function saveSettings () {
   }
   ipc.send('settings_save', object)
 }
+window.saveSettings = saveSettings
 
 function enableCopyPaste (selection) {
   $(selection).each(function (index, el) {
@@ -501,3 +502,4 @@ function enableCopyPaste (selection) {
     }, false)
   })
 }
+window.enableCopyPaste = enableCopyPaste
