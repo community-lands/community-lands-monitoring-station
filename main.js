@@ -334,15 +334,19 @@ ipc.on('settings_save', function (event, arg) {
 ipc.on('save_template', function (event, arg) {
   var content_dir = path.join(path.dirname(settings.getSubmissionsDirectory()), 'content')
   fs.mkdirpSync(content_dir)
-  site_builder.build_website_with_template(
-    content_dir,
-    path.join('templates', arg.template),
-    'website',
-    arg,
-    function () {
+  arg.context = {
+    'editable': true,
+    'environment': 'monitoring-station'
+  }
+  site_builder.build_website({
+    content: content_dir,
+    target: 'website',
+    template: path.join('templates', arg.template),
+    parameters: arg,
+    callback: function () {
       event.sender.send('has_saved_template', '{"error":false}')
     }
-  )
+  })
 })
 
 ipc.on('list_map_layers', function (event, arg) {
