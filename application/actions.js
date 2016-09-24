@@ -1,11 +1,10 @@
 /* eslint-env browser, jquery */
-/* FIXME: these globals can and should be done with requires */
-/* global t, t_exists */
-/* global showStatus */
-/* global showLoadingScreen, updateLoadingScreen, hideLoadingScreen */
 
-require('./application/locale')
-require('./application/loading')
+const locale = require('./application/locale')
+const t = locale.t
+const t_exists = locale.t_exists
+
+const loading = require('./application/loading')
 
 try {
   window.appVersion = require('./application/data/version')
@@ -47,11 +46,11 @@ var updateOnlineStatus = function () {
   ipc.send('community_lands_online', navigator.onLine)
 }
 ipc.on('backup_submissions_complete', function (evt, json) {
-  hideLoadingScreen()
+  loading.hideLoadingScreen()
   if (json.error) {
     alert(t('error.' + json.code))
   } else if (!json.cancelled) {
-    showStatus(t('text.backup_complete') +
+    loading.showStatus(t('text.backup_complete') +
       '<br/>' + t('prompt.open') +
       '<a id="backup_file" href="javascript:openBackupFile();" ' +
       'data-location="' + json.location + '">' + json.location +
@@ -200,7 +199,7 @@ ipc.on('has_community_lands_status', function (evt, result) {
   }
 })
 ipc.on('has_community_lands_backup', function (evt, result) {
-  hideLoadingScreen()
+  loading.hideLoadingScreen()
   var json = JSON.parse(result)
   var html = ''
   if (json.error) {
@@ -217,7 +216,9 @@ ipc.on('has_community_lands_backup', function (evt, result) {
     html += ' '
     html += json.entity.files_uploaded
   }
-  showStatus(html, { type: json.error ? 'error' : 'success', timeout: 10000 })
+  loading.showStatus(html, {
+    type: json.error ? 'error' : 'success', timeout: 10000
+  })
   ipc.send('community_lands_status')
 })
 ipc.on('has_settings_list', function (evt, settings) {
@@ -364,31 +365,31 @@ ipc.on('has_select_data_directory', function (evt, folder) {
   document.getElementById('settings-form-data_directory').value = folder
 })
 ipc.on('has_settings_save', function (evt, result) {
-  hideLoadingScreen()
+  loading.hideLoadingScreen()
   var json = JSON.parse(result)
   if (json.error) {
-    showStatus(t('error.' + json.code), { type: 'error' })
+    loading.showStatus(t('error.' + json.code), { type: 'error' })
   } else {
-    showStatus(
+    loading.showStatus(
       t('message.settings_saved'),
       { timeout: false, type: 'warning' }
     )
   }
 })
 ipc.on('has_import_files', function (evt, result) {
-  hideLoadingScreen()
+  loading.hideLoadingScreen()
   if (result.error) {
-    showStatus(t('error.' + result.code), { type: 'error' })
+    loading.showStatus(t('error.' + result.code), { type: 'error' })
   } else {
-    showStatus(t('text.import_success'), { timeout: 5000 })
+    loading.showStatus(t('text.import_success'), { timeout: 5000 })
   }
 })
 ipc.on('cl_upload_progress', function (evt, result) {
   if (result.status === 'uploading') {
-    updateLoadingScreen(t('progress.importing') + ' <br/> &gt; ' +
+    loading.updateLoadingScreen(t('progress.importing') + ' <br/> &gt; ' +
       result.progress + '...')
   } else {
-    updateLoadingScreen(t('progress.importing') + ' <br/> &gt; ' +
+    loading.updateLoadingScreen(t('progress.importing') + ' <br/> &gt; ' +
       t('progress.' + result.status) +
       ' <i class="fa fa-spinner fa-pulse fa-fw"></i>')
   }
@@ -413,7 +414,7 @@ updateOnlineStatus()
 
 function communityLandsUpload () {
   if (navigator.onLine) {
-    showLoadingScreen(t('progress.uploading'))
+    loading.showLoadingScreen(t('progress.uploading'))
     ipc.send('community_lands_backup')
   } else {
     alert(t('alert.no_internet'))
@@ -422,19 +423,19 @@ function communityLandsUpload () {
 window.communityLandsUpload = communityLandsUpload
 
 function backupFiles (cb) {
-  showLoadingScreen(t('progress.saving'))
+  loading.showLoadingScreen(t('progress.saving'))
   ipc.send('backup_submissions', cb)
 }
 window.backupFiles = backupFiles
 
 function importFilesOverwrite () {
-  showLoadingScreen(t('progress.importing'))
+  loading.showLoadingScreen(t('progress.importing'))
   ipc.send('import_files', { mode: 'overwrite' })
 }
 window.importFilesOverwrite = importFilesOverwrite
 
 function importFilesMerge () {
-  showLoadingScreen(t('progress.importing'))
+  loading.showLoadingScreen(t('progress.importing'))
   ipc.send('import_files', { mode: 'merge' })
 }
 window.importFilesMerge = importFilesMerge
@@ -478,7 +479,7 @@ function chooseDataDirectory () {
 window.chooseDataDirectory = chooseDataDirectory
 
 function saveSettings () {
-  showLoadingScreen(t('progress.saving'))
+  loading.showLoadingScreen(t('progress.saving'))
   var els = document.getElementsByClassName('key-value')
   var object = {}
   for (var i = 0; i < els.length; i++) {

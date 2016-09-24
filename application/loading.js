@@ -18,7 +18,7 @@ var statusIcons = {
  * - status: change the status message
  *
  */
-function updateLoadingScreen (opts) {
+exports.updateLoadingScreen = (opts) => {
   var options
   if (typeof opts === 'string') {
     options = { status: opts }
@@ -34,13 +34,6 @@ function updateLoadingScreen (opts) {
     jQuery('#loading-status').html(options.status)
   }
 }
-/* TODO: for backwards compatibility, we still define these functions
-   in the global namespace ("function foo(){}") -- but also expose them
-   as exports so code going forward can use these features as a module.
-   Eventually, take away the global usages. */
-if (typeof exports !== 'undefined') {
-  exports.updateLoadingScreen = updateLoadingScreen
-}
 
 /**
  * Display the loading screen
@@ -49,7 +42,7 @@ if (typeof exports !== 'undefined') {
  * - heading: the heading message (default t('progress.loading'))
  * - status: the status message (default blank)
  */
-function showLoadingScreen (opts) {
+exports.showLoadingScreen = (opts) => {
   var options
 
   if (opts !== undefined && typeof opts === 'string') {
@@ -60,20 +53,14 @@ function showLoadingScreen (opts) {
     options['status'] = options['status'] || null
   }
 
-  updateLoadingScreen(options)
+  exports.updateLoadingScreen(options)
 
   $('#loading-status').html('')
   $('#loading').modal('show')
 }
-if (typeof exports !== 'undefined') {
-  exports.showLoadingScreen = showLoadingScreen
-}
 
-function hideLoadingScreen () {
+exports.hideLoadingScreen = () => {
   $('#loading').modal('hide')
-}
-if (typeof exports !== 'undefined') {
-  exports.hideLoadingScreen = hideLoadingScreen
 }
 
 /**
@@ -82,7 +69,7 @@ if (typeof exports !== 'undefined') {
  * - timeout: when dismissable is true, true to auto-dismiss the alert, false otherwise (default true)
  * - type: One of "success", "info", "warning" or "danger" (defaults to "success")
  */
-function showStatus (message, opts) {
+exports.showStatus = (message, opts) => {
   var options = opts || {}
   options['type'] = options['type'] || 'success'
   if (options.type === 'error') {
@@ -126,6 +113,10 @@ function showStatus (message, opts) {
     }, timeout)
   }
 }
-if (typeof exports !== 'undefined') {
-  exports.showStatus = showStatus
-}
+
+/* FIXME: for backwards compatibility, we copy these exports onto
+   the window object. Remove this when this is no longer needed. */
+window.updateLoadingScreen = exports.updateLoadingScreen
+window.showLoadingScreen = exports.showLoadingScreen
+window.hideLoadingScreen = exports.hideLoadingScreen
+window.showStatus = exports.showStatus
