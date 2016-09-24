@@ -471,7 +471,7 @@ function translatePage () {
     }
   }
 }
-window.selectForm = translatePage
+window.translatePage = translatePage
 
 function chooseDataDirectory () {
   ipc.send('select_data_directory')
