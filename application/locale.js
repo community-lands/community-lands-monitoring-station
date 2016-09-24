@@ -1,6 +1,7 @@
 /* eslint-env browser, jquery */
-
-var QueryString = (
+/* FIXME: This module still pollutes global namespace for backwards
+   compatibility. */
+const QueryString = (
   function () {
     var query_string = {}
     var query = window.location.search.substring(1)
@@ -20,8 +21,7 @@ var QueryString = (
   }()
 )
 
-var locale = { _current: 'en' }
-window.locale = locale
+const locale = { _current: 'en' }
 
 window.QueryString = QueryString
 
@@ -120,3 +120,9 @@ window.t = function (s, o, loc) {
   }
 }
 if (typeof exports !== 'undefined') { exports.t = window.t }
+
+locale.en = require('./data/en')
+locale.es = require('./data/es')
+locale.init()
+
+window.locale = locale

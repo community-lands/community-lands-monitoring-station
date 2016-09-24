@@ -4,9 +4,8 @@
 /* global showStatus */
 /* global showLoadingScreen, updateLoadingScreen, hideLoadingScreen */
 
-window.locale.en = require('./application/data/en')
-window.locale.es = require('./application/data/es')
-window.locale.init()
+require('./application/locale')
+require('./application/loading')
 
 try {
   window.appVersion = require('./application/data/version')
