@@ -1,6 +1,6 @@
-/* eslint-env browser */
+/* eslint-env browser, jquery */
 /* FIXME: these globals can and should be done with requires */
-/* global $, t, t_exists */
+/* global t, t_exists */
 /* global showStatus */
 /* global showLoadingScreen, updateLoadingScreen, hideLoadingScreen */
 
