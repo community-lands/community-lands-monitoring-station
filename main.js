@@ -334,14 +334,14 @@ ipc.on('settings_save', function (event, arg) {
 ipc.on('save_template', function (event, arg) {
   var content_dir = path.join(path.dirname(settings.getSubmissionsDirectory()), 'content')
   fs.mkdirpSync(content_dir)
-  arg.context = {
-    'editable': true,
-    'environment': 'monitoring-station'
-  }
   site_builder.build_website({
     content: content_dir,
     target: 'website',
     template: path.join('templates', arg.template),
+    context: {
+      'editable': true,
+      'environment': 'monitoring-station'
+    },
     parameters: arg,
     callback: function () {
       event.sender.send('has_saved_template', '{"error":false}')
