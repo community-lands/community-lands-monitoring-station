@@ -21,8 +21,10 @@ function walk_source_tree (options) {
       if (typeof (relative) !== 'undefined' && relative.endsWith('.html')) {
         console.log('  + compiling: ' + relative)
         let target_file = path.join(options.target, relative)
-        options.template_json['yield'] = fs.readFileSync(item.path)
-        fs.writeFileSync(target_file, options.template_pug(options.template_json))
+        let template_context = options.template_json
+        template_context['yield'] = fs.readFileSync(item.path)
+        template_context['src'] = relative
+        fs.writeFileSync(target_file, options.template_pug(template_context))
       }
     })
     .on('end', function () {
