@@ -23,6 +23,7 @@ var forms = require('./controllers/forms')
 var error = require('./controllers/error-handler')
 var CommunityLands = require('./controllers/community-lands')
 var MapFilter = require('./controllers/map-filter')
+var Cms = require('./controllers/cms')
 
 var TileLayers = require('./controllers/tile-layers')
 var Bing = require('./controllers/bing-proxy')
@@ -55,6 +56,7 @@ app.use(morgan('dev'))
 
 app.use('/mapfilter', express.static(__dirname + '/mapfilter'))
 app.use('/website', express.static(__dirname + '/website'))
+app.post('/website/save', bodyParser.urlencoded({extended: true}), Cms.save)
 app.get('/mapfilter/json/mapfilter-config.json', MapFilter.config)
 app.get('/mapfilter/json/mapfilter-locations.geojson', MapFilter.locations);
 app.get('/mapfilter/filters', MapFilter.listFilters)
