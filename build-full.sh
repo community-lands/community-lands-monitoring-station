@@ -114,12 +114,12 @@ then
   if [ $win == 0 ]
   then
     echo " ----- Windows -----"
-    electron-packager `pwd` MonitoringStation --platform=win32 --arch=x64 --out builds --version=1.4.0
+    electron-packager `pwd` MonitoringStation --icon community-lands.ico --platform=win32 --arch=x64 --out builds --version=1.4.0
   fi
   if [ $mac == 0 ]
   then
     echo " -----   Mac   -----"
-    electron-packager `pwd` MonitoringStation --platform=darwin --arch=x64 --out builds --version=1.4.0
+    electron-packager `pwd` MonitoringStation --icon community-lands.icns --platform=darwin --arch=x64 --out builds --version=1.4.0
   fi
 fi
 
