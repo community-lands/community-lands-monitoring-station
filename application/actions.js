@@ -66,6 +66,9 @@ ipc.on('has_last_backup', function (evt, result) {
       new Date(json.date) + '</a></p>'
   }
 })
+ipc.on('has_select_track_data', function (evt, result) {
+  loading.showStatus(t('text.upload_success'));
+})
 ipc.on('has_select_form', function (evt, result) {
   ipc.send('form_list')
 })
@@ -459,6 +462,11 @@ function selectForm () {
   ipc.send('select_form')
 }
 window.selectForm = selectForm
+
+function selectTrackData() {
+  ipc.send('select_track_data')
+}
+window.selectTrackData = selectTrackData
 
 function translatePage () {
   var tags = ['h4', 'h5', 'div', 'span', 'b', 'button']
