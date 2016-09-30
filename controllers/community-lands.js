@@ -19,7 +19,23 @@ function ensureConfigured (req, res, next, cont) {
 function lastSubmission (req, res, next) {
   ensureConfigured(req, res, next, function () {
     getLastSubmissionDate(function (date) {
-      res.json({date: date})
+      res.json({date: date.submissions})
+    })
+  })
+}
+
+function lastWebsite (req, res, next) {
+  ensureConfigured(req, res, next, function () {
+    getLastSubmissionDate(function (date) {
+      res.json({date: date.website})
+    })
+  })
+}
+
+function uploadStatus (req, res, next) {
+  ensureConfigured(req, res, next, function () {
+    getLastSubmissionDate(function (date) {
+      res.json(date)
     })
   })
 }
@@ -37,10 +53,86 @@ function saveFilter (req, res, next) {
   })
 }
 
+
+function uploadContent (req, res, next) {
+  ensureConfigured(req, res, next, function () {
+    getLastSubmissionDate(function (date) {
+      uploadContentSince(req, res, next, date)
+    })
+  })
+}
+
+function uploadAllContent (req, res, next) {
+  uploadContentSince(req, res, next, null)
+}
+
+function uploadContentSince(req, res, next, since) {
+  var dir = settings.getWebsiteContentDirectory()
+
+  var content = []
+  if (req.query.website && req.query.website != 'false') {
+    var opts = { expand: true, src: ['**/*'], dest: '/Website', cwd: dir }
+    if (since && since.website) {
+      opts['filter'] = function (path) {
+        var stats = fs.statSync(path)
+        if (stats.isFile())
+          return stats.mtime >= since.website
+        else
+          return true
+      }
+    }
+    content.push(opts)
+  }
+  if (content.length == 0 || (req.query.submissions && req.query.submissions != 'false')) {
+    var opts = { expand: true, src: ['**/*'], dest: '/Submissions', cwd: dir }
+    if (since && since.submissions) {
+      opts['filter'] = function (path) {
+        var stats = fs.statSync(path)
+        if (stats.isFile())
+          return stats.mtime >= since.submissions
+        else
+          return true
+      }
+    }
+    content.push(opts)
+  }
+
+  var interval;
+
+  var clReq = http.request(getCLRequestOpts('POST', '/upload'), clCallback(res))
+  clReq.on('error', function (e) {
+    res.json({error: true, code: 'community_lands_not_configured', message: 'Could not make connection to Community Lands'})
+  })
+  var archive = archiver.create('zip', {})
+  archive.on('end', function() {
+    if (interval) {
+      clearInterval(interval);
+      interval = null;
+      ServerEvents.emit('cl_upload_progress', true)
+    }
+  });
+
+  interval = setInterval(function() {
+    try {
+      if (clReq.connection) {
+        ServerEvents.emit('cl_upload_progress', false, clReq.connection._bytesDispatched);
+      }
+    } catch (e) {
+      console.log("Not ready to report upload status: " + e);
+    }
+  }, 250);
+
+  archive.pipe(clReq)
+  for (var i in content)
+    archive.bulk(content[i])
+  archive.finalize()
+}
+
+
 function uploadSubmissions (req, res, next) {
   ensureConfigured(req, res, next, function () {
     getLastSubmissionDate(function (date) {
-      uploadSubmissionsSince(req, res, next, date)
+      uploadSubmissionsSince(req, res, next, date.submissions)
     })
   })
 }
@@ -130,25 +222,37 @@ function getLastSubmissionDate (callback) {
     var jsonStr = ''
     statusRes.on('data', function (d) {
       jsonStr += d
-    })
-    statusRes.on('end', function () {
+    }).on('end', function () {
+      var status = { submissions: null, website: null }
       if (statusRes.statusCode == 200) {
         var json = JSON.parse(jsonStr)
-        if (json.error == false && json.entity.found)
-          callback(moment(json.entity.last_modified))
-        else
-          callback(null)
-      }
+
+        if (json.error == false) {
+          if (json.entity.submissions) {
+            if (json.entity.submissions && json.entity.submissions.found)
+              status.submissions = moment(json.entity.submissions.last_modified)
+            else if (json.entity.last_modified)
+              status.submissions = moment(json.entity.last_modified)
+
+            if (json.entity.website && json.entity.website.found)
+              status.website = moment(json.entity.website.last_modified)
+
+            callback(status)
+          } else
+            callback(status)
+        }
+      } else
+        callback(status)
     })
   }).on('error', function (e) {
-    callback(null)
+    callback({ submissions: null, website: null })
   }).end()
 }
 
 function getCLRequestOpts (method, path, headers) {
   var opts = {
     host: settings.getCommunityLandsServer(),
-    path: '/api/v1/' + settings.getCommunityLandsToken() + path,
+    path: '/api/v2/' + settings.getCommunityLandsToken() + path,
     method: method
   }
   if (headers) {
@@ -161,9 +265,15 @@ function getCLRequestOpts (method, path, headers) {
 }
 
 module.exports = {
-  backup: uploadSubmissions,
-  resync: uploadAllSubmissions,
-  lastBackup: lastSubmission,
-  saveFilter: saveFilter
-
+  saveFilter: saveFilter,
+  Content: {
+    backup: uploadContent,
+    resync: uploadAllContent,
+    lastBackup: uploadStatus
+  },
+  Submissions: {
+    backup: uploadSubmissions,
+    resync: uploadAllSubmissions,
+    lastBackup: lastSubmission
+  }
 }
