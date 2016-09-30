@@ -268,6 +268,35 @@ ipc.on('select_form', function (event, arg) {
   })
 })
 
+ipc.on('select_track_data', function (event, arg) {
+  var options = {
+    properties: ['openFile', 'multiSelections'],
+    filters: [ { name: 'ZIP', extensions: ['zip'] } ]
+  }
+  dialog.showOpenDialog(mainWindow, options, function (arr) {
+    if (arr !== undefined) {
+      var destDir = settings.getTracksDirectory()
+      var parallels = arr.map(function (value) {
+        return unzipTrackData(value, destDir);
+      });
+      async.parallel(parallels, function (err, result) {
+        event.sender.send('has_select_track_data', { errors: false })
+      });
+    }
+  })
+})
+
+function unzipTrackData(source, target) {
+  return function (cb) {
+    fs.createReadStream(source)
+      .pipe(unzip.Extract({ path: target }))
+      .on('close', function() {
+        cb()
+      });
+  }
+}
+
+
 ipc.on('filter_list', function (event, arg) {
   var options = {
     hostname: 'localhost',
