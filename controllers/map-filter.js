@@ -24,9 +24,12 @@ function listFilters (req, res, next) {
     var names = []
     for (var index in files) {
       var location = path.join(FILTERS_FOLDER, files[index]);
-      file = JSON.parse(fs.readFileSync(location, 'utf8'));
-      date = fs.statSync(location).mtime;
-      names.push({id: files[index], name: file.name, date: date});
+      if (files[index].indexOf('.') < 0)
+        try {
+          file = JSON.parse(fs.readFileSync(location, 'utf8'));
+          date = fs.statSync(location).mtime;
+          names.push({id: files[index], name: file.name, date: date});
+        } catch (e) { }
     }
     names.sort(function(a, b) { return a.date.getTime() == b.date.getTime() ? 0 : a.date.getTime() < b.date.getTime() ? 1 : -1 });
     res.json({filters: names})
