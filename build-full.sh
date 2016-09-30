@@ -17,7 +17,7 @@ while [[ "$1" != "" ]]; do
       end=$1
       ;;
     --no-upload )
-      end=5
+      end=6
       ;;
     -t | --target )
       shift
