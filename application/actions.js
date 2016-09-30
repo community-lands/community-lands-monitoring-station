@@ -189,9 +189,16 @@ ipc.on('has_community_lands_status', function (evt, result) {
   document.getElementById('connection_status').innerHTML = t('text.online')
   if (result !== null && result !== '') {
     var json = JSON.parse(result)
-    if (json.date) {
+    if (json.submissions && json.website) {
+      var date = json.submissions > json.website ? json.submissions : json.website
       document.getElementById('community_lands_sync_date').innerHTML =
-        new Date(json.date)
+        new Date(date)
+    } else if (json.submissions) {
+      document.getElementById('community_lands_sync_date').innerHTML =
+        new Date(json.submissions)
+    } else if (json.website) {
+      document.getElementById('community_lands_sync_date').innerHTML =
+        new Date(json.website)
     } else {
       document.getElementById('community_lands_sync_date').innerHTML =
         t('text.unavailable')
@@ -217,7 +224,7 @@ ipc.on('has_community_lands_backup', function (evt, result) {
     html += ' '
     html += t('text.files_uploaded')
     html += ' '
-    html += json.entity.files_uploaded
+    html += json.entity.submissions_uploaded + json.entity.website_uploaded
   }
   loading.showStatus(html, {
     type: json.error ? 'error' : 'success', timeout: 10000
@@ -418,7 +425,7 @@ updateOnlineStatus()
 function communityLandsUpload () {
   if (navigator.onLine) {
     loading.showLoadingScreen(t('progress.uploading'))
-    ipc.send('community_lands_backup')
+    ipc.send('community_lands_backup', { submissions: true, website: true })
   } else {
     alert(t('alert.no_internet'))
   }

@@ -110,9 +110,13 @@ app.get('/formList', forms.index)
 app.get('/forms', forms.index)
 app.get('/forms/:id', forms.show)
 
-app.get('/backup/latest', CommunityLands.backup)
-app.get('/backup/all', CommunityLands.resync)
-app.get('/backup/status', CommunityLands.lastBackup)
+app.get('/backup/latest', CommunityLands.Submissions.backup)
+app.get('/backup/all', CommunityLands.Submissions.resync)
+app.get('/backup/status', CommunityLands.Submissions.lastBackup)
+
+app.get('/communitylands/latest', CommunityLands.Content.backup)
+app.get('/communitylands/all', CommunityLands.Content.resync)
+app.get('/communitylands/status', CommunityLands.Content.lastBackup)
 
 app.get('/save/all', Backup.backup)
 app.get('/save/status', Backup.lastBackup)

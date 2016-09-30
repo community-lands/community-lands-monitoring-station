@@ -162,6 +162,10 @@ function getUserFormsDirectory() {
   return path.join(getRootPath(), getStation(), 'Forms');
 }
 
+function getWebsiteContentDirectory() {
+  return path.join(getRootPath(), getStation(), 'content')
+}
+
 function getSharedSecret() {
   return process.env.shared_secret;
 }
@@ -203,6 +207,7 @@ module.exports = {
   getGlobalFormsDirectory: getGlobalFormsDirectory,
   getTracksDirectory: getTracksDirectory,
   getUserFormsDirectory: getUserFormsDirectory,
+  getWebsiteContentDirectory: getWebsiteContentDirectory,
   getSharedSecret: getSharedSecret,
   getSharedUsername: getSharedUsername,
   getRootPath: getRootPath,

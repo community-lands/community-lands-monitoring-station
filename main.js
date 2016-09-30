@@ -436,7 +436,7 @@ ipc.on('community_lands_backup', function(event, arg) {
     var options = {
       hostname: 'localhost',
       port: settings.getPort() || 3000,
-      path: '/backup/latest',
+      path: '/communitylands/latest?submissions=true&website=true',
       method: 'GET'
     }
     http.request(options, function (res) {
@@ -460,7 +460,7 @@ ipc.on('community_lands_status', function (event, arg) {
     var options = {
       hostname: 'localhost',
       port: settings.getPort() || 3000,
-      path: '/backup/status',
+      path: '/communitylands/status',
       method: 'GET'
     }
     http.request(options, function (res) {
