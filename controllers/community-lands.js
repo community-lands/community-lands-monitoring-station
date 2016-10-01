@@ -67,11 +67,9 @@ function uploadAllContent (req, res, next) {
 }
 
 function uploadContentSince(req, res, next, since) {
-  var dir = settings.getWebsiteContentDirectory()
-
   var content = []
   if (req.query.website && req.query.website != 'false') {
-    var opts = { expand: true, src: ['**/*'], dest: '/Website', cwd: dir }
+    var opts = { expand: true, src: ['**/*'], dest: '/Website', cwd: settings.getWebsiteContentDirectory() }
     if (since && since.website) {
       opts['filter'] = function (path) {
         var stats = fs.statSync(path)
@@ -84,7 +82,7 @@ function uploadContentSince(req, res, next, since) {
     content.push(opts)
   }
   if (content.length == 0 || (req.query.submissions && req.query.submissions != 'false')) {
-    var opts = { expand: true, src: ['**/*'], dest: '/Submissions', cwd: dir }
+    var opts = { expand: true, src: ['**/*'], dest: '/Submissions', cwd: settings.getSubmissionsDirectory() }
     if (since && since.submissions) {
       opts['filter'] = function (path) {
         var stats = fs.statSync(path)
@@ -123,8 +121,7 @@ function uploadContentSince(req, res, next, since) {
   }, 250);
 
   archive.pipe(clReq)
-  for (var i in content)
-    archive.bulk(content[i])
+  archive.bulk(content)
   archive.finalize()
 }
 
