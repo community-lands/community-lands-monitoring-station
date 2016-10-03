@@ -114,9 +114,3 @@ exports.showStatus = (message, opts) => {
   }
 }
 
-/* FIXME: for backwards compatibility, we copy these exports onto
-   the window object. Remove this when this is no longer needed. */
-window.updateLoadingScreen = exports.updateLoadingScreen
-window.showLoadingScreen = exports.showLoadingScreen
-window.hideLoadingScreen = exports.hideLoadingScreen
-window.showStatus = exports.showStatus
