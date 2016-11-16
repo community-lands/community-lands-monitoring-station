@@ -123,6 +123,7 @@ if (typeof exports !== 'undefined') { exports.t = window.t }
 
 locale.en = require('./data/en')
 locale.es = require('./data/es')
+locale.fr = require('./data/fr')
 locale.init()
 
 window.locale = locale
