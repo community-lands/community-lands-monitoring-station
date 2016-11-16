@@ -259,7 +259,8 @@ ipc.on('has_settings_list', function (evt, settings) {
     if (key === 'locale') {
       options = [
         { name: t('language.en'), value: 'en' },
-        { name: t('language.es'), value: 'es' }
+        { name: t('language.es'), value: 'es' },
+        { name: t('language.fr'), value: 'fr' }
       ]
       html += '<select id="' + item_id +
         '" class="form-control key-value" data-key="' + key + '">'
