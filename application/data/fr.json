@@ -1,0 +1,131 @@
+{
+    "prompt": {
+        "baseurl": "URL de Base: ",
+        "username": "Utilisez votre <b>numéro d'agent</ b> comme nom d'utilisateur.",
+        "password": "Mot de passe: ",
+        "map_url": "URL pour visualiser les cartes dans votre navigateur:",
+        "web_url": "URL pour modifier le site Web dans votre navigateur:",
+        "monitoring_forms_folder": "Dossier pour les formulaires de surveillance vierges:",
+        "connection_status": "Statut de Connexion: ",
+        "last_synchronized": "Dernière Synchronisation: ",
+        "last_backup": "Dernière Sauvegarde: ",
+        "open": "Ouvert: ",
+        "tiles_folder": "Dossier pour les carreaux de carte locaux:",
+        "settings": {
+            "data_directory": "Répertoire des données",
+            "shared_secret": "Secret partagé",
+            "station": "Gare",
+            "locale": "Lieu",
+            "port": "Port",
+            "community_lands_server": "Hôte des terres communautaires",
+            "community_lands_port": "Port des terres communautaires",
+            "community_lands_token": "Tâches des terres communautaires",
+            "mapZoom": "MapFilter Zoom",
+            "mapCenterLat": "Latitude de départ MapFilter",
+            "mapCenterLong": "MapFilter Longitude de départ"
+        }
+    },
+    "menu": {
+      "application": "Application",
+      "about": "À propos de l'application",
+      "quit": "Quitter",
+      "edit": "Modifier",
+      "undo": "Annuler",
+      "redo": "Refaire",
+      "cut": "Coupe",
+      "copy": "Copie",
+      "paste": "Pâte",
+      "select": "Sélectionner tout"
+    },
+    "help": {
+        "settings": {
+            "mapZoom": "Habituellement, une valeur entre 10 et 15. Les nombres plus élevés sont plus zoomés."
+        },
+        "import": {
+            "merge": "Importer de nouvelles données et mettre à jour les fichiers existants avec le contenu de la sauvegarde. Rien ne sera supprimé.",
+            "overwrite": "Supprime toutes les données de soumission, en les remplaçant par le contenu de la sauvegarde. Vous pouvez sauvegarder vos soumissions d'abord, car ce processus ne peut pas être annulé."
+        },
+        "backup": {
+            "simple": "Stocker une sauvegarde de fichier ZIP des données de surveillance dans le dossier de l'application",
+            "usb": "Créez une sauvegarde et enregistrez-la à votre emplacement de choix, comme une clé USB"
+        },
+        "tiles": {
+            "usage": "Pour ajouter de nouveaux ensembles de tuiles, créez un sous-dossier dans ce répertoire avec le nom de votre choix et copiez les tuiles dans ce nouveau dossier. Le nom du dossier sera affiché dans MapFilter comme une couche de carte."
+        }
+    },
+    "confirm": {
+        "delete_form": "Voulez-vous vraiment supprimer ce formulaire?",
+        "delete_filter": "Voulez-vous vraiment supprimer cette carte?"
+    },
+    "message": {
+        "settings_saved": "Paramètres sauvegardés. Redémarrez votre application pour que les paramètres prennent effet."
+    },
+    "title": {
+        "odk_collect": "Récupérer les paramètres ODK",
+        "browser_settings": "Paramètres du navigateur",
+        "monitoring_forms": "Formulaires de suivi",
+        "new_form": "Ajouter un nouveau formulaire",
+        "data_backup": "Sauvegarde de données",
+        "data_import": "Importation de données",
+        "data_reset": "Réinitialisation des données",
+        "community_lands": "Terres Communautaires",
+        "my_monitoring_forms": "Mes formulaires de suivi",
+        "saved_filters": "Cartes enregistrées",
+        "saved_tiles": "Carreaux de carte locale",
+        "settings": "Paramètres de l'application"
+    },
+    "subtitle": {
+        "settings": {
+          "general": "Général",
+          "advanced": "Avancée",
+          "mapfilter": "MapFilter",
+          "communitylands": "Terres Communautaires"
+        }
+    },
+    "button": {
+        "select_file": "Sélectionner à partir du fichier",
+        "backup_data": "Données de sauvegarde",
+        "backup_data_usb": "Sauvegarder et sauvegarder ...",
+        "upload": "Télécharger",
+        "choose": "Choisir",
+        "update_settings": "Mettre à jour les paramètres",
+        "import_data_merge": "Importer de nouvelles données",
+        "import_data_overwrite": "Importation et écrasement de données"
+    },
+    "language": {
+        "en": "English",
+        "es": "Español",
+        "fr": "Français"
+    },
+    "text": {
+        "online": "En ligne",
+        "offline": "Hors ligne",
+        "unavailable": "Indisponible",
+        "upload_failed": "Échec du téléchargement.",
+        "upload_success": "Le téléchargement a réussi.",
+        "files_uploaded": "Fichiers téléchargés:",
+        "backup_complete": "Sauvegarde du fichier complet.",
+        "import_complete": "Importation du fichier complet.",
+        "version": "Version"
+    },
+    "progress": {
+        "uploading": "Téléchargement, veuillez patienter ...",
+        "saving": "Enregistrement des fichiers, veuillez patienter ...",
+        "importing": "Importation de fichiers, veuillez patienter ...",
+        "waiting": "Importer des fichiers de traitement complets",
+        "loading": "S'il vous plaît, attendez..."
+    },
+    "alert": {
+        "no_internet": "Aucune connexion Internet détectée",
+        "running": "La station de surveillance fonctionnera tant que cette fenêtre sera ouverte."
+    },
+    "error": {
+        "could_not_connect": "N'a pas pu se connecter au serveur",
+        "community_lands_not_configured": "Connexion des terres communautaires non configurée",
+        "import_delete_failed": "Impossible d'écraser des fichiers",
+        "import_unzip_failed": "Impossible de décompresser le fichier d'importation.",
+        "backup_failed": "Impossible de sauvegarder les données",
+        "files_in_tiles_folder": "Il ya des fichiers dans le dossier Tiles; Seuls les sous-dossiers doivent exister ici.",
+        "numeric_folder_in_tiles_folder": "Certains sous-dossiers semblent mal placés; Peut-être vous avez oublié de créer un sous-dossier sous Tuiles?"
+    }
+}
