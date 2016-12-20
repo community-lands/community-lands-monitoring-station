@@ -18,7 +18,21 @@
     loading.hideLoadingScreen()
   })
 
-  $(function () {
+  ipc.on('has_templates_list', function(evt, result) {
+    var options = ''
+    for (var idx in result) {
+      var template = result[idx]
+      options += '<option value="' + template.id + '">' + template.properties.template_name + '</option>'
+    }
+    if (options == '')
+      $('#web_template_section').hide()
+    else
+      $('#select_website_template').html(options)
+  })
+
+  ipc.send('templates_list')
+
+  $(document).ready(function () {
     $('#cmsSaveTemplateButton').on('click', saveTemplate)
   })
 })(window.app)
