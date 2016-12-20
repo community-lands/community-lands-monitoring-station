@@ -40,10 +40,30 @@
     <div>
       <!-- Nav tabs -->
       <ul class="nav nav-tabs" role="tablist" style='margin-top: 5px'>
-        <li role="presentation" class="active"><a href="#mapping-monitoring" aria-controls="mapping-monitoring" role="tab" data-toggle="tab"><i class="fa fa-map-marker fa-lg" aria-hidden="true"></i> Mapping & Monitoring</a></li>
-        <li role="presentation"><a href="#web" aria-controls="web" role="tab" data-toggle="tab"><i class="fa fa-globe fa-lg" aria-hidden="true"></i> Web</a></li>
-        <li role="presentation"><a href="#imports-exports" aria-controls="imports-exports" role="tab" data-toggle="tab"><i class="fa fa-cloud-upload fa-lg" aria-hidden="true"></i> Imports & Exports</a></li>
-        <li role="presentation"><a href="#advanced-settings" aria-controls="settings" role="tab" data-toggle="tab"><i class="fa fa-gears fa-lg" aria-hidden="true"></i> Advanced Settings</a></li>
+        <li role="presentation" class="active">
+          <a href="#mapping-monitoring" aria-controls="mapping-monitoring" role="tab" data-toggle="tab">
+            <i class="fa fa-map-marker fa-lg" aria-hidden="true"></i>
+            <span data-translate="tab.mapping_and_monitoring">Mapping & Monitoring</span>
+          </a>
+        </li>
+        <li role="presentation">
+          <a href="#web" aria-controls="web" role="tab" data-toggle="tab">
+            <i class="fa fa-globe fa-lg" aria-hidden="true"></i>
+            <span data-translate="tab.web">Web</span>
+          </a>
+        </li>
+        <li role="presentation">
+          <a href="#imports-exports" aria-controls="imports-exports" role="tab" data-toggle="tab">
+            <i class="fa fa-cloud-upload fa-lg" aria-hidden="true"></i>
+            <span data-translate="tab.imports_and_exports">Imports & Exports</span>
+          </a>
+        </li>
+        <li role="presentation">
+          <a href="#advanced-settings" aria-controls="settings" role="tab" data-toggle="tab">
+            <i class="fa fa-gears fa-lg" aria-hidden="true"></i>
+            <span data-translate="tab.advanced_settings">Advanced Settings</span>
+          </a>
+        </li>
       </ul>
       <!-- Tab panes -->
       <div class="tab-content">
@@ -82,7 +102,7 @@
             <h5 data-translate="title.new_form">Add New Form</h5>
             <button id="formChooserBtn" class="btn btn-small btn-primary"><span style='margin-right:5px' data-translate="button.select_file">Select from File</span><i class="fa fa-file-o" aria-hidden="true"></i></button>
           </div>
-          <h4><i class="fa fa-map fa-lg" aria-hidden="true"></i> &#160; <span data-translate="title.tiles"></span></h4>
+          <h4><i class="fa fa-map fa-lg" aria-hidden="true"></i> &#160; <span data-translate="title.saved_tiles"></span></h4>
           <div class="well">
             <div data-translate="prompt.tiles_folder">
               Folder for custom Map Tiles:
@@ -92,7 +112,7 @@
             <div id="tiles_listing" style="margin-top:20px">
             </div>
           </div>
-          <h4><i class="fa fa-map-marker fa-lg" aria-hidden="true"></i> &#160; <span data-translate="title.GPS_track_data">GPS Track Data</span></h4>
+          <h4><i class="fa fa-map-marker fa-lg" aria-hidden="true"></i> &#160; <span data-translate="title.gps_track_data">GPS Track Data</span></h4>
           <div class="well">
             <div data-translate="prompt.track_folder">
               Folder for GPS track data (Columbus/GPX):

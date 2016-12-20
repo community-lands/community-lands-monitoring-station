@@ -10,7 +10,9 @@
         "last_synchronized": "Last Synchronized: ",
         "last_backup": "Last Backup: ",
         "open": "Open: ",
-        "tiles_folder": "Folder for local Map Tiles:",
+        "tiles_folder": "Folder for custom Map Tiles:",
+        "track_folder": "Folder for GPS track data (Columbus/GPX):",
+        "select_template": "Select a website template:",
         "settings": {
             "data_directory": "Data Directory",
             "shared_secret": "Shared Secret",
@@ -23,6 +25,10 @@
             "mapZoom": "MapFilter Zoom",
             "mapCenterLat": "MapFilter Starting Latitude",
             "mapCenterLong": "MapFilter Starting Longitude"
+        },
+        "template": {
+            "community": "Community",
+            "copyright_year": "Copyright Year"
         }
     },
     "menu": {
@@ -60,6 +66,12 @@
     "message": {
         "settings_saved": "Settings saved. Restart your app for settings to take effect."
     },
+    "tab": {
+        "mapping_and_monitoring": "Mapping & Monitoring",
+        "web": "Web",
+        "imports_and_exports": "Imports & Exports",
+        "advanced_settings": "Advanced Settings"
+    },
     "title": {
         "odk_collect": "ODK Collect settings",
         "browser_settings": "Browser settings",
@@ -72,7 +84,10 @@
         "my_monitoring_forms": "My Monitoring Forms",
         "saved_filters": "Saved Maps",
         "saved_tiles": "Local Map Tiles",
-        "settings": "Application Settings"
+        "settings": "Application Settings",
+        "gps_track_data": "GPS Track Data",
+        "new_track": "Add New Track",
+        "template_settings": "Template Settings"
     },
     "subtitle": {
         "settings": {
@@ -90,7 +105,8 @@
         "choose": "Choose",
         "update_settings": "Update Settings",
         "import_data_merge": "Import New Data",
-        "import_data_overwrite": "Import and Overwrite Data"
+        "import_data_overwrite": "Import and Overwrite Data",
+        "save_template_settings": "Save Template Settings"
     },
     "language": {
         "en": "English",
