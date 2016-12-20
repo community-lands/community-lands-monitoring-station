@@ -4,6 +4,7 @@
         "username": "Utilizar tu <b>identificación personal</b> para el nombre de usuario.",
         "password": "Contraseña: ",
         "map_url": "URL para ver mapas en su navegador:",
+        "web_url": "URL para editar la pagina web en su navegador",
         "monitoring_forms_folder": "Carpeta para formularios de monitoreo:",
         "connection_status": "El estado de conexión: ",
         "last_synchronized": "Última sincronización: ",
