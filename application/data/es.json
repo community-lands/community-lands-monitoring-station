@@ -11,6 +11,8 @@
         "last_backup": "Última copia de respaldo: ",
         "open": "Abierto: ",
         "tiles_folder": "Carpeta para mosaicos del mapa local",
+        "track_folder": "Carpeta para rastro de GPS (Colombus/GPX)",
+        "select_template": "Selecciona el modelo de la pagina web",
         "settings": {
             "data_directory": "Datos del Directorio",
             "shared_secret": "Clave compartida",
@@ -23,6 +25,10 @@
             "mapZoom": "MapFilter Zoom",
             "mapCenterLat": "Latitud inicial de MapFilter",
             "mapCenterLong": "Longitud inicial de Mapfilter"
+        },
+        "template": {
+            "community": "Comunidad",
+            "copyright_year": "Año de Copyright"
         }
     },
     "menu": {
@@ -60,6 +66,12 @@
     "message": {
         "settings_saved": "Configuración guardada: Cerrar y iniciar programa de nuevo para actualizarla"
     },
+    "tab": {
+        "mapping_and_monitoring": "mapeo y monitoreo",
+        "web": "Internet",
+        "imports_and_exports": "Importación y Exportación",
+        "advanced_settings": "Ajustes avanzados"
+    },
     "title": {
         "odk_collect": "Configuración del ODK Collect",
         "browser_settings": "Configuración del navegador",
@@ -72,7 +84,10 @@
         "my_monitoring_forms": "Mis formularios de monitoreo",
         "saved_filters": "Mapas guardadas",
         "saved_tiles": "Mosaicos del mapa local",
-        "settings": "Configuración de aplicación"
+        "settings": "Configuración de aplicación",
+        "gps_track_data": "Rastro de GPS",
+        "new_track": "Agregar nuevo rastro",
+        "template_settings": "Ajustes de modelo"
     },
     "subtitle": {
         "settings": {
@@ -90,7 +105,8 @@
         "choose": "Selecionar",
         "update_settings": "Actualizar configuración",
         "import_data_merge": "Importar nuevos datos",
-        "import_data_overwrite": "Importar y sobrescribir datos"
+        "import_data_overwrite": "Importar y sobrescribir datos",
+        "save_template_settings": "Guardar ajustes para modelo"
     },
     "language": {
         "en": "English",
