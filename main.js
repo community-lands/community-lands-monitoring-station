@@ -30,6 +30,7 @@ ServerEvents.on('cl_upload_progress', function(done, bytes) {
 
 var http = require('http')
 var fs = require('fs-extra')
+var glob = require('glob')
 var readline = require('readline')
 var path = require('path')
 var unzip = require('unzip2');
@@ -359,6 +360,25 @@ ipc.on('settings_save', function (event, arg) {
     }
   })
 })
+
+ipc.on('templates_list', function (event, arg) {
+  var folder = path.join(__dirname, 'templates');
+  glob(path.join(folder, "**/template.json"), function(err, files) {
+    var list = [];
+    if (!err) {
+      for (var i in files) {
+        try {
+          var json = JSON.parse(fs.readFileSync(files[i], 'utf8'));
+          json["id"] = path.basename(path.dirname(files[i]));
+          list.push(json);
+        } catch (e) {
+          //continue;
+        }
+      }
+    }
+    event.sender.send('has_templates_list', list);
+  });
+});
 
 ipc.on('save_template', function (event, arg) {
   var content_dir = path.join(path.dirname(settings.getSubmissionsDirectory()), 'content')
