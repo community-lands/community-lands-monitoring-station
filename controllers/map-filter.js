@@ -54,8 +54,7 @@ function config (req, res, next) {
     bingProxy: '/bing-proxy',
     bingMetadata: '/bing-metadata',
     tiles: {
-      url: '/tileLayers',
-      tilesPath: '/monitoring-files/Maps/Tiles'
+      url: '/tileLayers'
     }
   };
   data['tracks'] = {

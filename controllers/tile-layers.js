@@ -16,7 +16,8 @@ function listTileLayers (req, res, next) {
         var file = files[index];
         var stats = fs.statSync(path.join(settings.getTilesDirectory(), file));
         if (stats.isDirectory() && !isInt(file))
-          names.push({name: file});
+          var uri = '/monitoring-files/Maps/Tiles/' + file
+          names.push({name: file, uri: uri});
       }
       names.sort(function(a, b) { return a < b ? -1 : a > b ? 1 : 0 });
       res.json(names)
