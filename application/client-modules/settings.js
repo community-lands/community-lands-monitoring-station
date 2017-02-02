@@ -4,7 +4,59 @@
   const t = app.t
   const t_exists = app.t_exists
 
-  ipc.on('has_settings_list', function (evt, settings) {
+  ipc.on('has_settings_list', function (evt, entity) {
+    //Initialize workspace form
+    var wslist = ''
+    for (var wki in entity.workspaces.workspaces) {
+      var cur_ws = entity.workspaces.workspaces[wki];
+      var selector, actions;
+      actions = '<div class="btn-workspace-open-folder btn btn-sm btn-link" data-directory="' + cur_ws.directory + '"><i class="fa fa-eye"></i></div>';
+      if (cur_ws.id == entity.workspaces.current.id) {
+        selector = '<div class="btn btn-sm btn-link"><i class="fa fa-check-circle text-success"></i></div>';
+
+      } else {
+        selector = '<div class="btn-workspace-choose btn btn-sm btn-link" data-name="' + cur_ws.name + '" data-id="' + cur_ws.id + '">';
+        selector += '<i class="fa fa-check-circle-o"></i>';
+        selector += '</div>';
+
+        actions += '<div class="btn-workspace-delete btn btn-sm btn-link" data-id="' + cur_ws.id + '"><i class="fa fa-times"></i></div>'
+      }
+      wslist += '<tr><td>' + selector + '</td><td>' + cur_ws.name + '</td>' + 
+        '<td>' + cur_ws.directory + '</td>' + 
+        '<td align="right" style="min-width:100px">' + actions + '</td></tr>';
+    }
+    document.getElementById("workspace-table-body").innerHTML = wslist;
+
+    var wsopts = document.getElementsByClassName("btn-workspace-choose")
+    for (var wki in wsopts) {
+      wsopts[wki].onclick = function() {
+        var el = this;
+        if (confirm(t('confirm.change_workspace') + ": " + el.getAttribute('data-name'))) {
+          loading.showLoadingScreen(t('progress.saving'))
+          ipc.send('workspace_change', { id: el.getAttribute('data-id') });
+        }
+      }
+    }
+    wsopts = document.getElementsByClassName("btn-workspace-delete")
+    for (var wki in wsopts) {
+      wsopts[wki].onclick = function() {
+        var el = this;
+        if (confirm(t('confirm.delete_workspace'))) {
+          loading.showLoadingScreen(t('progress.saving'))
+          ipc.send('workspace_delete', { id: el.getAttribute('data-id') });
+        }
+      };
+    }
+    wsopts = document.getElementsByClassName("btn-workspace-open-folder")
+    for (var wki in wsopts) {
+      wsopts[wki].onclick = function() {
+        var el = this;
+        app.electron.shell.openItem(el.getAttribute('data-directory'));
+      };
+    }
+
+    // Initialize settings form
+    var settings = entity.settings;
     var sections = {
       general: '',
       mapfilter: '',
@@ -55,13 +107,9 @@
         html += '</select>'
       } else if (key === 'data_directory') {
         html += '<div class="row">'
-        html += '<div class="col-xs-4">'
-        html += '<button id="dataDirectoryChooserBtn" ' +
-          'class="form-control btn btn-small btn-default">' +
-          t('button.choose') + '</button>'
-        html += '</div><div class="col-xs-8">'
+        html += '<div class="col-xs-12">'
         html += '<input id="' + item_id + '" type="text" data-key="' + key +
-          '" class="form-control key-value" value="' + settings[key] + '" />'
+          '" class="form-control" value="' + settings[key] + '" readonly />'
         html += '</div></div>'
       } else if (key === 'mapZoom') {
         html += '<input id="' + item_id + '" type="number" data-key="' + key +
@@ -85,7 +133,7 @@
       html += '</div>'
       sections[section_keys[key] || 'general'] = html
     }
-    html = '<form>'
+    html = '<form id="form-settings">'
     for (key in sections) {
       if (sections[key] !== '') {
         html += '<h4>'
@@ -99,15 +147,20 @@
 
     app.enableCopyPaste('#settings_form input[type="text"]')
 
-    $("#dataDirectoryChooserBtn").click(function() {
+    // Disabled, moved to workspace
+    /*$("#dataDirectoryChooserBtn").click(function() {
       ipc.send('select_data_directory')
-    })
+    })*/
+
+    $("#workspaceDirectoryChooserBtn").click(function() {
+      ipc.send('select_data_directory')
+    });
 
     ipc.send('list_map_layers')
   })
 
   ipc.on('has_select_data_directory', function (evt, folder) {
-    document.getElementById('settings-form-data_directory').value = folder
+    document.getElementById('workspace-form-directory').value = folder
   })
 
   ipc.on('has_settings_save', function (evt, result) {
@@ -119,9 +172,20 @@
       loading.showStatus(
         t('message.settings_saved'),
         { timeout: false, type: 'warning' }
-      )
+      );
+      loading.showRestart(t('message.settings_saved'));
     }
   })
+
+  ipc.on('on_workspace_changed', function (evt, json) {
+    loading.hideLoadingScreen();
+    if (json.error)
+      loading.showStatus(t('error.' + json.code), { type: 'error' })
+    else {
+      loading.showStatus(t('message.' + json.result_message), { type: 'warning', timeout: false });
+      loading.showRestart(t('message.' + json.result_message));
+    }
+  });
 
   ipc.on('has_list_map_layers', function (evt, layers) {
     var el = document.getElementById('settings-form-mapLayer')
@@ -145,19 +209,27 @@
 
   ipc.send('settings_list')
 
+  function getFormValues(formId) {
+    var object = {};
+    $("#" + formId + " .key-value").each(function() {
+      var el = $(this);
+      var key = $(this).data('key');
+      var value = $(this).val();
+      if (value !== 'null' && value !== '' && value !== null)
+        object[key] = value;
+    });
+    return object;
+  }
+
   $(document).ready(function() {
+    $("#saveNewWorkspaceBtn").on('click', function() {
+      loading.showLoadingScreen(t('progress.saving'));
+      ipc.send('workspace_create', getFormValues("form-new-workspace"));
+
+    });
     $("#saveSettingsBtn").on('click', function() {
       loading.showLoadingScreen(t('progress.saving'))
-      var els = document.getElementsByClassName('key-value')
-      var object = {}
-      for (var i = 0; i < els.length; i++) {
-        var el = els[i]
-        var key = el.getAttribute('data-key')
-        if (el.value !== 'null' && el.value !== '') {
-          object[key] = el.value
-        }
-      }
-      ipc.send('settings_save', object)
+      ipc.send('settings_save', getFormValues("form-settings"));
     })
   })
 

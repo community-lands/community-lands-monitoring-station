@@ -1,3 +1,14 @@
+# TARGETS
+#
+# 1: Update MapFilter
+# 2: Update Monitoring Station
+# 3: Update Private Website Templates
+# 4: Build MapFilter
+# 5: Update App Version
+# 6: Create Installers
+# 7: Packaging Assets
+# 8: Upload to Server
+
 dir=(`pwd`)
 step=1
 start=1
@@ -5,6 +16,7 @@ end=100
 build_target="rob_heittman_solertium_com@www.communitylands.org:/u/apps/communitylands/current/public/system/builds"
 win=0
 mac=0
+master_build=0
 
 while [[ "$1" != "" ]]; do
   case $1 in
@@ -17,7 +29,7 @@ while [[ "$1" != "" ]]; do
       end=$1
       ;;
     --no-upload )
-      end=6
+      end=7
       ;;
     -t | --target )
       shift
@@ -30,6 +42,9 @@ while [[ "$1" != "" ]]; do
     --win )
       win=0
       mac=1
+      ;;
+    --custom )
+      master_build=1
       ;;
     * )
       ;;
@@ -67,7 +82,7 @@ fi
 
 ((step++))
 
-if [ $step -ge $start -a $step -le $end ]
+if [ $step -ge $start -a $step -le $end -a $master_build == 0 ]
 then
   echo "$step) Updating Monitoring Station"
   git checkout master
@@ -107,19 +122,25 @@ fi
 
 if [ $step -ge $start -a $step -le $end ]
 then
+  echo "$step) Updating version..."
   git log -n 1 --format='{ "version": "%h" }' > application/data/version.json
+fi
 
+((step++))
+
+if [ $step -ge $start -a $step -le $end ]
+then
   echo "$step) Creating builds for:"
   rm -rf builds
   if [ $win == 0 ]
   then
     echo " ----- Windows -----"
-    electron-packager `pwd` MonitoringStation --icon community-lands.ico --platform=win32 --arch=x64 --out builds --version=1.4.0
+    npm run compile:win
   fi
   if [ $mac == 0 ]
   then
     echo " -----   Mac   -----"
-    electron-packager `pwd` MonitoringStation --icon community-lands.icns --platform=darwin --arch=x64 --out builds --version=1.4.0
+    npm run compile:mac
   fi
 fi
 
@@ -128,21 +149,21 @@ fi
 if [ $step -ge $start -a $step -le $end ]
 then
   echo "$step) Packaging assets..."
-  cd builds
+  cd dist
 
   d=$(date "+%Y%m%d")
 
   if [ $win == 0 ]
   then
-    cd MonitoringStation-win32-x64
-    zip -q -r --exclude=*.git* --exclude=*.DS_Store* --exclude=*.env* --exclude=*build*.sh* MonitoringStation-win-$d.zip .
+    cd installer-win-x64
+    zip -q -r MonitoringStation-win-$d.zip .
     cd ..
   fi
 
   if [ $mac == 0 ]
   then
-    cd MonitoringStation-darwin-x64
-    zip -q -r --exclude=*.git* --exclude=*.DS_Store* --exclude=*.env* --exclude=*build*.sh* MonitoringStation-macosx-$d.zip .
+    # cd MonitoringStation-darwin-x64
+    zip -q -r MonitoringStation-macosx-$d.zip *.dmg
   fi
   cd $dir
 fi

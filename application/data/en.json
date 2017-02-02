@@ -29,6 +29,10 @@
         "template": {
             "community": "Community",
             "copyright_year": "Copyright Year"
+        },
+        "workspace": {
+            "name": "Name",
+            "directory": "Directory"
         }
     },
     "menu": {
@@ -57,14 +61,22 @@
         },
         "tiles": {
             "usage": "To add new sets of tiles, create a subfolder in this directory with a name of your choosing, and copy tiles into this new folder. The folder name will be displayed in MapFilter as a map layer."
+        },
+        "workspace": {
+            "overview": "This is where your data lives. You can create more workspaces if you have additional data you wish to keep separate"
         }
     },
     "confirm": {
         "delete_form": "Are you sure you want to delete this form?",
-        "delete_filter": "Are you sure you want to delete this map?"
+        "delete_filter": "Are you sure you want to delete this map?",
+        "change_workspace": "Are you sure you want to change your workspace? Your new workspace will be",
+        "delete_workspace": "Are you sure you want to delete this workspace?"
     },
     "message": {
-        "settings_saved": "Settings saved. Restart your app for settings to take effect."
+        "settings_saved": "Settings saved. Restart your app for settings to take effect.",
+        "workspace_created": "New workspaced created. Restart your app for changes to take effect.",
+        "workspace_changed": "Workspace changed. Restart your app for changes to take effect.",
+        "workspace_deleted": "Workspace deleted. Restart your app for changes to take effect."
     },
     "tab": {
         "mapping_and_monitoring": "Mapping & Monitoring",
@@ -87,7 +99,9 @@
         "settings": "Application Settings",
         "gps_track_data": "GPS Track Data",
         "new_track": "Add New Track",
-        "template_settings": "Template Settings"
+        "template_settings": "Template Settings",
+        "workspace": "Workspace",
+        "restart_required": "Restart Required"
     },
     "subtitle": {
         "settings": {
@@ -106,7 +120,8 @@
         "update_settings": "Update Settings",
         "import_data_merge": "Import New Data",
         "import_data_overwrite": "Import and Overwrite Data",
-        "save_template_settings": "Save Template Settings"
+        "save_template_settings": "Save Template Settings",
+        "new_workspace": "New Workspace"
     },
     "language": {
         "en": "English",
@@ -142,6 +157,8 @@
         "import_unzip_failed": "Could not unzip import file",
         "backup_failed": "Could not backup data",
         "files_in_tiles_folder": "There are files in the Tiles folder; only subfolders should exist here.",
-        "numeric_folder_in_tiles_folder": "Some subfolders appear to be misplaced; perhaps you forgot to create a subfolder under Tiles?"
+        "numeric_folder_in_tiles_folder": "Some subfolders appear to be misplaced; perhaps you forgot to create a subfolder under Tiles?",
+        "workspace_conflict": "A workspace already exists for this directory",
+        "workspace_not_found": "This workspace could not be found; a restart may be required"
     }
 }

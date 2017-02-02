@@ -1,3 +1,5 @@
+if (require('electron-squirrel-startup')) return;
+
 const electron = require('electron')
 const app = electron.app // Module to control application life.
 process.env.directory = process.env.directory || app.getAppPath()
@@ -8,6 +10,7 @@ const Menu = electron.Menu
 
 require('./server')
 var settings = require('./helpers/settings')
+var workspaces = require('./helpers/workspaces')
 var ServerEvents = require('./helpers/server-events')
 ServerEvents.on('cl_upload_progress', function(done, bytes) {
   if (done)
@@ -41,7 +44,7 @@ const site_builder = require('./application/site-builder.js')
 
 ipc.on('show_configuration', function (event, arg) {
   try {
-    var _defaults = settings.defaults
+    var _defaults = settings.getDefaults()
     var _results = {
       'directory': settings.getDataDirectory() || _defaults.data_directory,
       'station': settings.getStation() || _defaults.station,
@@ -340,14 +343,14 @@ ipc.on('filter_delete', function (event, arg) {
 
 ipc.on('settings_list', function (event, arg) {
   settings.get(function(err, selected) {
-    if (err) {
-      event.sender.send('has_settings_list', settings.defaults)
-    } else {
-      var defaults = settings.defaults
+    var defaults = settings.getDefaults();
+    var workspaces = settings.getWorkspaces();
+    if (!err && selected) {
       for (var key in selected)
         defaults[key] = selected[key]
-      event.sender.send('has_settings_list', defaults)
     }
+    workspaces.current = settings.getWorkspace();
+    event.sender.send('has_settings_list', {settings: defaults, workspaces: workspaces});
   })
 })
 
@@ -360,6 +363,33 @@ ipc.on('settings_save', function (event, arg) {
     }
   })
 })
+
+ipc.on('workspace_create', function (event, arg) {
+  workspaces.create(arg, function(err, result) {
+    if (err)
+      event.sender.send('on_workspace_changed', err);
+    else
+      event.sender.send('on_workspace_changed', { error: false, result_message: 'workspace_created', workspace: result });
+  });
+});
+
+ipc.on('workspace_change', function (event, arg) {
+  workspaces.setCurrent(arg, function(err, result) {
+    if (err)
+      event.sender.send('on_workspace_changed', err);
+    else
+      event.sender.send('on_workspace_changed', { error: false, result_message: 'workspace_changed' });
+  });
+});
+
+ipc.on('workspace_delete', function (event, arg) {
+  workspaces.remove(arg, function(err, result) {
+    if (err)
+      event.sender.send('on_workspace_changed', err);
+    else
+      event.sender.send('on_workspace_changed', { error: false, result_message: 'workspace_deleted', workspace: arg });
+  });
+});
 
 ipc.on('templates_list', function (event, arg) {
   var folder = path.join(__dirname, 'templates');

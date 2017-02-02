@@ -1,5 +1,6 @@
 {
   "name": "community-lands-monitoring-station",
+  "productName": "Community Lands Monitoring Station",
   "version": "1.0.0",
   "main": "main.js",
   "description": "Community Lands Monitoring Station",
@@ -8,15 +9,27 @@
     "express",
     "passport"
   ],
-  "author": "Rob Heittman",
+  "scripts": {
+    "build:old": "sh build-full.sh --no-upload",
+    "build": "sh build-full.sh --mac --no-upload --custom",
+    "build:mac": "sh build-full.sh --mac",
+    "build:win": "sh build-full.sh --win",
+    "build:local": "sh build-full.sh --no-upload --custom --mac",
+    "rebuild:local": "sh build-full.sh --no-upload --custom --mac -s 6",
+    "compile:mac": "node bin/package.js macos && node bin/create_macos_installer.js",
+    "compile:win": "node bin/package.js windows && node bin/create_windows_installer.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "npmpd"
+  },
+  "author": "Solertium",
   "license": "Unlicense",
-  "homepage": "https://github.com/rfc2616/community-lands-monitoring-station",
+  "homepage": "https://github.com/community-lands/community-lands-monitoring-station",
   "repository": {
     "type": "git",
-    "url": "git://github.com/rfc2616/community-lands-monitoring-station.git"
+    "url": "git://github.com/community-lands/community-lands-monitoring-station.git"
   },
   "bugs": {
-    "url": "https://github.com/rfc2616/community-lands-monitoring-station/issues"
+    "url": "https://github.com/community-lands/community-lands-monitoring-station/issues"
   },
   "dependencies": {
     "archiver": "*",
@@ -24,6 +37,7 @@
     "body-parser": "^1.13.3",
     "csv-parse": "^1.0.4",
     "dotenv": "^2.0.0",
+    "electron-squirrel-startup": "^1.0.0",
     "express": "^4.13.3",
     "fs-extra": "^0.30.0",
     "glob": "^7.0.3",
@@ -44,6 +58,14 @@
     "xform-to-json": "^1.1.0",
     "xtend": "^4.0.1"
   },
+  "darwinDependencies": {
+    "appdmg": "0.4.5"
+  },
   "devDependencies": {
+    "electron": "1.4.10",
+    "electron-packager": "^8.3.0",
+    "electron-winstaller": "^2.4.1",
+    "npm-platform-dependencies": "0.0.12",
+    "rimraf": "^2.5.4"
   }
 }

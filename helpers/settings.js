@@ -2,11 +2,19 @@ const fs = require('fs-extra');
 const path = require('path');
 const dotenv = require('dotenv');
 
-var ENV = path.join(path.dirname(__dirname), '.env')
+const workspaces = require("./workspaces");
+
 var LOCATION = null;
+var WORKSPACE = null;
 
 function load() {
-  dotenv.load();
+  WORKSPACE = workspaces.getCurrent();
+  fs.ensureDirSync(WORKSPACE.directory);
+
+  // No longer needed, since we are using settings dir
+  /*console.log("Loading settings from " + workspace.directory);
+  process.chdir(workspace.directory);
+  dotenv.load();*/
 
   LOCATION = path.join(getDataDirectory(), 'Monitoring', '.settings');
 
@@ -36,12 +44,7 @@ function get(cb) {
   };
   fs.readFile(LOCATION, 'utf8', function (err, data) {
     if (err) {
-      fs.readFile(ENV, 'utf8', function(err, data) {
-        if (err) {
-          cb(err, null)
-        } else 
-          parser(data);
-      });
+      cb(err, null);
     } else {
       parser(data);
     }
@@ -62,7 +65,8 @@ function save(settings, cb) {
     fs.writeFile(LOCATION, properties, 'utf8', function(err) {
       if (err)
         cb({error: true, code: 'saved_failed', message: 'Could not save settings', ex: err})
-      else if (settings['data_directory']) {
+      /* FIXME: Modify workspace information */
+      /*else if (settings['data_directory']) {
         var key = 'data_directory';
         fs.writeFile(ENV, key + '=' + settings[key], 'utf8', function(err) {
           if (err)
@@ -70,7 +74,7 @@ function save(settings, cb) {
           else
             cb();
         });
-      } else
+      }*/ else
         cb();
     });
   } else
@@ -79,12 +83,12 @@ function save(settings, cb) {
 
 function getDefaultSettings() {
   return {
-    data_directory: path.dirname(ENV),
+    data_directory: WORKSPACE.directory,
     station: 'DEMO',
     locale: 'en',
     community_lands_server: 'www.communitylands.org',
     community_lands_port: 80,
-    community_lands_token: null,
+    community_lands_token: 'test_token',
     port: 3000,
     shared_secret: 'demo',
     mapLayer: null,
@@ -107,7 +111,7 @@ function getSubmissionsDirectory() {
 }
 
 function getDataDirectory() {
-  return process.env.data_directory || process.env.directory;
+  return process.env.data_directory || WORKSPACE.directory;
 }
 
 function getBaseUrl() {
@@ -186,12 +190,20 @@ function isDevMode() {
   return process.env.dev_mode == 'true'
 }
 
+function getWorkspace() {
+  return WORKSPACE;
+}
+
+function getWorkspaces() {
+  return workspaces.list();
+}
+
 module.exports = {
 
   load: load,
   get: get,
   save: save,
-  defaults: getDefaultSettings(),
+  getDefaults: getDefaultSettings,
   getDataDirectory: getDataDirectory,
   getBackupDirectory: getBackupDirectory,
   getSubmissionsDirectory: getSubmissionsDirectory,
@@ -213,6 +225,8 @@ module.exports = {
   getRootPath: getRootPath,
   getPort: getPort,
   getLocale: getLocale,
+  getWorkspace: getWorkspace,
+  getWorkspaces: getWorkspaces,
   isDevMode: isDevMode
 
 }

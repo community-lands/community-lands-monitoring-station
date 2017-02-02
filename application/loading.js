@@ -114,3 +114,9 @@ exports.showStatus = (message, opts) => {
   }
 }
 
+exports.showRestart = (message) => {
+  var status = $('#restartRequiredMessage')
+  status.html(message)
+
+  $('#restartRequiredModal').modal('show');
+}
