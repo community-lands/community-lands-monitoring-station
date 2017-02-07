@@ -16,8 +16,8 @@
     "build:win": "sh build-full.sh --win",
     "build:local": "sh build-full.sh --no-upload --custom --mac",
     "rebuild:local": "sh build-full.sh --no-upload --custom --mac -s 6",
-    "compile:mac": "node bin/package.js macos && node bin/create_macos_installer.js",
-    "compile:win": "node bin/package.js windows && node bin/create_windows_installer.js",
+    "compile:mac": "node bin/compile.js macos",
+    "compile:win": "node bin/compile.js windows",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "npmpd"
   },
@@ -35,6 +35,7 @@
     "archiver": "*",
     "async": "~0.2.5",
     "body-parser": "^1.13.3",
+    "community-lands-software-utils": "git+ssh://github.com/community-lands/community-lands-software-utils.git#master",
     "csv-parse": "^1.0.4",
     "dotenv": "^2.0.0",
     "electron-squirrel-startup": "^1.0.0",

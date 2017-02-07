@@ -6,6 +6,7 @@
 node_modules/
 npm-debug.log
 builds/
+dist/
 Monitoring/Maps/Bing/
 application/data/version.json
 templates/
