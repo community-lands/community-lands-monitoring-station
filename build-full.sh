@@ -18,6 +18,8 @@ win=0
 mac=0
 master_build=0
 
+
+
 while [[ "$1" != "" ]]; do
   case $1 in
     -s | --start )
@@ -155,8 +157,8 @@ then
 
   if [ $win == 0 ]
   then
-    cd installer-win-x64
-    zip -q -r MonitoringStation-win-$d.zip .
+    # cd installer-win-x64
+    zip -q -r MonitoringStation-win-$d.zip installer-win-x64/*.exe
     cd ..
   fi
 
@@ -173,15 +175,15 @@ fi
 if [ $step -ge $start -a $step -le $end ]
 then
   echo "$step) Uploading to server..."
-  cd builds
+  cd dist
 
   if [ $win == 0 ]
   then
-    rsync -avz -P MonitoringStation-win32-x64/MonitoringStation*.zip $build_target/win/
+    rsync -avz -P MonitoringStation-win*.zip $build_target/win/
   fi
   if [ $mac == 0 ]
   then
-    rsync -avz -P MonitoringStation-darwin-x64/MonitoringStation*.zip $build_target/mac/
+    rsync -avz -P MonitoringStation-mac*.zip $build_target/mac/
   fi
 
   echo "Copied files to $build_target"
