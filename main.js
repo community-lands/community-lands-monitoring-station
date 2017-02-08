@@ -40,7 +40,7 @@ var unzip = require('unzip2');
 var GeoJson = require('./helpers/rebuild-geojson')
 var async = require('async');
 var i18n = require('./helpers/locale.js');
-const site_builder = require('./application/site-builder.js')
+//const site_builder = require('./application/site-builder.js')
 
 ipc.on('show_configuration', function (event, arg) {
   try {
@@ -410,7 +410,7 @@ ipc.on('templates_list', function (event, arg) {
   });
 });
 
-ipc.on('save_template', function (event, arg) {
+/*ipc.on('save_template', function (event, arg) {
   var content_dir = path.join(path.dirname(settings.getSubmissionsDirectory()), 'content')
   fs.mkdirpSync(content_dir)
   site_builder.build_website({
@@ -426,7 +426,7 @@ ipc.on('save_template', function (event, arg) {
       event.sender.send('has_saved_template', '{"error":false}')
     }
   })
-})
+})*/
 
 ipc.on('list_map_layers', function (event, arg) {
   listTiles(function(err, result) {
