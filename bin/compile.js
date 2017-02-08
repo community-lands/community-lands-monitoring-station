@@ -5,8 +5,6 @@ utils.Builder.configure({
   APP_DISPLAY_NAME: 'Community Lands Monitoring Station'
 })
 
-console.log(process.argv);
-
 if (process.argv.length >= 3)
   if (process.argv[2] == 'all') {
     utils.Builder.dist('mac');

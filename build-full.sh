@@ -159,7 +159,6 @@ then
   then
     # cd installer-win-x64
     zip -q -r MonitoringStation-win-$d.zip installer-win-x64/*.exe
-    cd ..
   fi
 
   if [ $mac == 0 ]
