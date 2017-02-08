@@ -1,19 +1,19 @@
 /* eslint-env browser, jquery */
 
-const locale = require('./application/locale')
+const locale = require('./application/lib/locale')
 
 const electron = require('electron')
 const ipc = electron.ipcRenderer
 const shell = electron.shell
 
 window.app = {
-  loading: require('./application/loading'),
+  loading: require('./application/lib/loading'),
   version: getAppVersion().version,
   t: locale.t,
   t_exists: locale.t_exists,
   electron: electron,
   ipc: ipc,
-  enableCopyPaste: require('./application/client-modules/menu').enableCopyPaste
+  enableCopyPaste: require('./application/shared-modules/menu').enableCopyPaste
 }
 
 function getAppVersion() {
@@ -56,13 +56,12 @@ ipc.on('has_configuration', function (evt, configuration) {
 
   $('#software-version').text(app.version)
 
-  require('./application/client-modules/cms')
-  require('./application/client-modules/settings')
-  require('./application/client-modules/map-filters')
+  require('./application/shared-modules/settings')
+  require('./application/shared-modules/map-filters')
   require('./application/client-modules/forms')
-  require('./application/client-modules/backup')
-  require('./application/client-modules/community-lands')
-  require('./application/client-modules/import')
+  require('./application/shared-modules/backup')
+  require('./application/shared-modules/community-lands')
+  require('./application/shared-modules/import')
   require('./application/client-modules/tiles')
   require('./application/client-modules/tracks')
 })
