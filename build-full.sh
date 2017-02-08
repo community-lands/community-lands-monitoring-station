@@ -158,7 +158,7 @@ then
   if [ $win == 0 ]
   then
     # cd installer-win-x64
-    zip -q -r MonitoringStation-win-$d.zip installer-win-x64/*.exe
+    zip -q -r -j MonitoringStation-win-$d.zip installer-win-x64/*.exe
   fi
 
   if [ $mac == 0 ]
