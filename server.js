@@ -56,6 +56,7 @@ app.use(morgan('dev'))
 
 app.use('/mapfilter', express.static(__dirname + '/mapfilter'))
 app.use('/website', express.static(__dirname + '/website'))
+app.use(bodyParser.urlencoded({limit: '500mb'}))
 app.post('/website/save', bodyParser.urlencoded({extended: true}), Cms.save)
 app.get('/mapfilter/json/mapfilter-config.json', MapFilter.config)
 app.get('/mapfilter/json/mapfilter-locations.geojson', MapFilter.locations);
