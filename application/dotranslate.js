@@ -3,7 +3,7 @@
   const t = app.t
 
   function translatePage () {
-    var tags = ['h4', 'h5', 'div', 'span', 'b', 'button']
+    var tags = ['h4', 'h5', 'div', 'span', 'b', 'button', 'label']
     for (var i = 0; i < tags.length; i++) {
       var els = document.getElementsByTagName(tags[i])
       for (var k = 0; k < els.length; k++) {

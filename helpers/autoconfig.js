@@ -1,8 +1,5 @@
-// Required for Electron to find initial config
-process.env.directory = process.env.directory || '.'
-process.chdir(process.env.directory)
-
-require('./settings').load()
+var settings = require('./settings');
+settings.load()
 
 // Detect IP, set up defaults for configuration variables if not set
 var os = require('os')
@@ -11,17 +8,17 @@ var ifaces = os.networkInterfaces()
 console.log('CONFIGURATION SETTINGS')
 console.log('----------------------')
 
-process.env.port = process.env.port || '3000'
+process.env.port = settings.getPort() || '3000'
 console.log('Port number to use for the local web server')
 console.log('  port: ' + process.env.port)
-process.env.data_directory = process.env.data_directory || process.env.directory
+process.env.data_directory = settings.getDataDirectory();
 console.log('Where your Monitoring folder lives')
 console.log('  directory: ' + process.env.data_directory)
-process.env.station = process.env.station || 'DEMO'
+process.env.station = settings.getStation() || 'DEMO'
 console.log('Name of this monitoring station')
 console.log('(and its station-specific folder under Monitoring)')
 console.log('  station: ' + process.env.station)
-process.env.shared_secret = process.env.shared_secret || 'demo'
+process.env.shared_secret = settings.getSharedSecret() || 'demo'
 console.log('The secret password for ODK users who connect to this station')
 console.log('(User ID should be a pseudonymous agent or device number you make up)')
 console.log('  shared_secret: ' + process.env.shared_secret)
@@ -48,3 +45,4 @@ Object.keys(ifaces).forEach(function (ifname) {
 process.env.baseUrl = process.env.baseUrl || ('http://localhost:' + process.env.port)
 
 console.log('')
+
