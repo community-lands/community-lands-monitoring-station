@@ -212,9 +212,10 @@ function listTiles(cb) {
       for (var i in files) {
         var file = files[i];
         var stats = fs.statSync(path.join(folder, file));
-        if (!stats.isDirectory())
-          warnFiles = true;
-        else if (isInt(file))
+        if (!stats.isDirectory()) {
+          if (file[0] != '.')
+            warnFiles = true;
+        } else if (isInt(file))
           warnFolders = true;
         else
           result.tiles.push(file);
