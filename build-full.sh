@@ -13,11 +13,13 @@ dir=(`pwd`)
 step=1
 start=1
 end=100
-build_target="rob_heittman_solertium_com@www.communitylands.org:/u/apps/communitylands/current/public/system/builds"
+server_base="rob_heittman_solertium_com@www.communitylands.org:/u/apps/communitylands/current/public/system"
+build_target="$server_base/builds"
+mapfilter_target="$server_base/mapfilter"
 win=0
 mac=0
 master_build=0
-
+map_filter_upload=0
 
 
 while [[ "$1" != "" ]]; do
@@ -47,6 +49,9 @@ while [[ "$1" != "" ]]; do
       ;;
     --custom )
       master_build=1
+      ;;
+    --no-map-filter )
+      map_filter_upload=1
       ;;
     * )
       ;;
@@ -183,6 +188,11 @@ then
   if [ $mac == 0 ]
   then
     rsync -avz -P MonitoringStation-mac*.zip $build_target/mac/
+  fi
+  if [ $map_filter_upload == 0 ]
+  then
+    cd $dir
+    rsync -avz -P mapfilter/* $mapfilter_target/
   fi
 
   echo "Copied files to $build_target"
