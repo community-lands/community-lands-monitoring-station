@@ -48,7 +48,7 @@ function handleProxy (req, res) {
         })
         .on('error', function (fetch_err) {
           console.log(fetch_err)
-          res.status(500)
+          res.status(500).send(fetch_err.code)
         })
       try {
         var cachefile = fs.createWriteStream(pathName)
