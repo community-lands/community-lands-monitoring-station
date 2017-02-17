@@ -19,6 +19,7 @@
     "compile:mac": "node bin/compile.js macos",
     "compile:win": "node bin/compile.js windows",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "translate": "node bin/i18n.js",
     "postinstall": "npmpd"
   },
   "author": "Solertium",
