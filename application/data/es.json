@@ -29,6 +29,10 @@
         "template": {
             "community": "Comunidad",
             "copyright_year": "Año de Copyright"
+        },
+        "workspace": {
+            "name": "Nombre",
+            "directory": "Directorio"
         }
     },
     "menu": {
@@ -57,14 +61,22 @@
         },
         "tiles": {
             "usage": "Para agregar nuevos mosaicos crea una carpeta en este directorio con un nombre que eliges y copia los mosaicos a la nueva carpeta. El nombre de la carpeta sera visible en MapFilter como un capa del mapa"
+        },
+        "workspace": {
+            "overview": "Aqui es donde sus datos estan guardados. Pueden crear mas unidades de monitoreo si tienen mas datos que quieren guardar por separado"
         }
     },
     "confirm": {
         "delete_form": "Estas seguro que quieres borrar este formulario",
-        "delete_filter": "Estas seguro que quieres borrar este mapa"
+        "delete_filter": "Estas seguro que quieres borrar este mapa",
+        "change_workspace": "Estas seguro que quieren cambiar su unidad de monitoreo? Su nuevo unidad de monitoreo será",
+        "delete_workspace": "Estas seguro que quieren borrar este unidad de monitoreo"
     },
     "message": {
-        "settings_saved": "Configuración guardada: Cerrar y iniciar programa de nuevo para actualizarla"
+        "settings_saved": "Configuración guardada: Cerrar y iniciar programa de nuevo para actualizarla",
+        "workspace_created": "Nuevo unidad de monitoreo creado. Reinicie el programa para efectuar los cambios.",
+        "workspace_changed": "Unidad de monitoreo editado. Reinicie el programa para efectuar los cambios.",
+        "workspace_deleted": "Unidad de monitoreo eliminado. Reinicie el programa para efectuar los cambios."
     },
     "tab": {
         "mapping_and_monitoring": "mapeo y monitoreo",
@@ -87,7 +99,10 @@
         "settings": "Configuración de aplicación",
         "gps_track_data": "Rastro de GPS",
         "new_track": "Agregar nuevo rastro",
-        "template_settings": "Ajustes de modelo"
+        "template_settings": "Ajustes de modelo",
+        "workspace": "Unidad de monitoreo",
+        "new_workspace": "Nuevo unidad de monitoreo",
+        "restart_required": "Se debe reiniciar"
     },
     "subtitle": {
         "settings": {
@@ -106,7 +121,10 @@
         "update_settings": "Actualizar configuración",
         "import_data_merge": "Importar nuevos datos",
         "import_data_overwrite": "Importar y sobrescribir datos",
-        "save_template_settings": "Guardar ajustes para modelo"
+        "save_template_settings": "Guardar ajustes para modelo",
+        "new_workspace": "Nuevo unidad de monitoreo",
+        "save": "Guardar",
+        "cancel": "Anular"
     },
     "language": {
         "en": "English",
@@ -142,6 +160,8 @@
         "import_unzip_failed": "No pudo descomprimir archivo",
         "backup_failed": "No podía realizar copia de seguridad de los datos",
         "files_in_tiles_folder": "Hay archivos en la carpeta de mosaicos, solo debe contener sub-carpetas",
-        "numeric_folder_in_tiles_folder": "Algunas carpetas están en una ubicación equivocada. Es posible que has olvidado a crear un subdirectorio en la carpeta de Mosaicos"
+        "numeric_folder_in_tiles_folder": "Algunas carpetas están en una ubicación equivocada. Es posible que has olvidado a crear un subdirectorio en la carpeta de Mosaicos",
+        "workspace_conflict": "Una unidad de monitoreo ya existe para este directorio",
+        "workspace_not_found": "No se encuentra este unidad de monitoreo, es posible que se debe reiniciar el programá"
     }
 }

@@ -101,6 +101,7 @@
         "new_track": "Add New Track",
         "template_settings": "Template Settings",
         "workspace": "Workspace",
+        "new_workspace": "New Workspace",
         "restart_required": "Restart Required"
     },
     "subtitle": {
@@ -121,7 +122,9 @@
         "import_data_merge": "Import New Data",
         "import_data_overwrite": "Import and Overwrite Data",
         "save_template_settings": "Save Template Settings",
-        "new_workspace": "New Workspace"
+        "new_workspace": "New Workspace",
+        "save": "Save",
+        "cancel": "Cancel"
     },
     "language": {
         "en": "English",
