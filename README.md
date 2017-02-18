@@ -22,11 +22,12 @@ $ electron .
 Developing on a Mac workstation, the project can be built to an
 installable Windows or Mac version via electron-packager; do this
 with `build-full.sh`. You must have electron installed at the system level,
-and all the community-lands repositories checked out as siblings of your community-lands-monitoring-station. `wine` is required to build for Windows.
+and all the community-lands repositories checked out as siblings of your community-lands-monitoring-station. `wine` and `mono` are required to build for Windows.
 The build script will `git pull`, `npm install` and synchronize dependencies
 to make a consistent build. The final step will upload the build to the
 Community Lands download page; for this to work, you must have your public key
 installed on that system.
 
 `build-full.sh` supports running a single or a range of steps; see the
-code for options.
+code for options. There are also frequently-used configurations for
+`build-full.sh` that can be used with `npm run` declared in `package.json`.

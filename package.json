@@ -10,8 +10,7 @@
     "passport"
   ],
   "scripts": {
-    "build:old": "sh build-full.sh --no-upload",
-    "build": "sh build-full.sh --mac --no-upload --custom",
+    "build": "sh build-full.sh",
     "build:mac": "sh build-full.sh --mac",
     "build:win": "sh build-full.sh --win",
     "build:local": "sh build-full.sh --no-upload --custom --mac",
@@ -23,6 +22,7 @@
     "postinstall": "npmpd"
   },
   "author": "Solertium",
+  "authors": "Community Lands",
   "license": "Unlicense",
   "homepage": "https://github.com/community-lands/community-lands-monitoring-station",
   "repository": {
