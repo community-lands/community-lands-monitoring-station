@@ -9,14 +9,24 @@ var CACHED_JSON = null;
 
 var settings = require('./settings.js')
 
+var callbackQueue = {
+  loading: false,
+  queue: []
+};
+
 /**
  * Return a status of this tileset, whether it is in good condition 
  * or has problems. If problems, return error codes in a list
  */
 function inspect(cb) {
+  callbackQueue.queue.push(cb);
+  if (callbackQueue.loading)
+    return;
+
+  callbackQueue.loading = true;
   load(function(err, model) {
     if (model)
-      cb(null, model)
+      onInspectComplete(err, model)
     else {
       fs.readdir(settings.getTilesDirectory(), function(err, folders) {
         if (!err) {
@@ -37,14 +47,14 @@ function inspect(cb) {
 
           async.parallel(parallels, function(err2, metadata) {
             if (err2)
-              cb(err2)
+              onInspectComplete(err2)
             else {
               save(metadata);
-              cb(null, metadata);
+              onInspectComplete(null, metadata)
             }
           })
         } else
-          cb(err)
+          onInspectComplete(err)
       });
     }
   });
@@ -58,6 +68,13 @@ function reinspect(cb) {
   fs.unlink(getFileLocation(), function() {
     inspect(cb);
   });
+}
+
+function onInspectComplete(err, model) {
+  var cb = null;
+  while ((cb = callbackQueue.queue.shift()) != null)
+    cb.call(this, err, model);
+  callbackQueue.loading = false;
 }
 
 function getFormat(tileSet, cb) {

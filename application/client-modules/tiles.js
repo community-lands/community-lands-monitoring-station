@@ -48,6 +48,6 @@
     ipc.send('list_map_layers');
   });
 
-  // ipc.send('tiles_list')
+  ipc.send('tiles_list')
 
 })(window.app)

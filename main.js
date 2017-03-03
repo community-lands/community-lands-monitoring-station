@@ -581,6 +581,9 @@ app.on('window-all-closed', function () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on('ready', function () {
+  // Ensure tiles are ready for first use
+  Tiles.refresh(function() { });
+
   // Create the browser window.
   mainWindow = new BrowserWindow({minWidth: 400, minHeight: 400})
 
@@ -597,11 +600,6 @@ app.on('ready', function () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
-
-  // Emitted when the window is shown
-  mainWindow.on('show', function () {
-    refreshTiles();
-  });
 
   // Create the Application's main menu
   var template = [{
