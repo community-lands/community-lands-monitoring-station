@@ -40,7 +40,8 @@ var unzip = require('unzip2');
 var GeoJson = require('./helpers/rebuild-geojson')
 var async = require('async');
 var i18n = require('./helpers/locale.js');
-const site_builder = require('./application/site-builder.js')
+var Tiles = require('./helpers/tile-layers.js');
+//const site_builder = require('./application/site-builder.js')
 
 ipc.on('show_configuration', function (event, arg) {
   try {
@@ -202,29 +203,24 @@ ipc.on('form_list', function (event, arg) {
 })
 
 function listTiles(cb) {
-  var folder = settings.getTilesDirectory();
-  fs.readdir(folder, function (err, files) {
+  Tiles.get(function(err, md) {
     if (err)
       cb(err)
     else {
       var warnFiles = warnFolders = false;
       var result = { error: false, tiles: [], warnings: [] };
-      for (var i in files) {
-        var file = files[i];
-        var stats = fs.statSync(path.join(folder, file));
-        if (!stats.isDirectory()) {
-          if (file[0] != '.')
-            warnFiles = true;
-        } else if (isInt(file))
-          warnFolders = true;
-        else
-          result.tiles.push(file);
-      }
+      Object.keys(md).forEach(function(file) {
+        var stats = md[file];
+        if (!stats.eligible)
+          warnFiles = true;
+        else {
+          stats.name = file;
+          result.tiles.push(stats);
+        }
+      });
       if (warnFiles)
         result.warnings.push("error.files_in_tiles_folder")
-      if (warnFolders)
-        result.warnings.push("error.numeric_folder_in_tiles_folder")
-      result.tiles.sort(function(a, b) { return a < b ? -1 : a > b ? 1 : 0 });
+      result.tiles.sort(function(a, b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0 });
       cb(null, result);
     }
   });
@@ -411,7 +407,7 @@ ipc.on('templates_list', function (event, arg) {
   });
 });
 
-ipc.on('save_template', function (event, arg) {
+/*ipc.on('save_template', function (event, arg) {
   var content_dir = path.join(path.dirname(settings.getSubmissionsDirectory()), 'content')
   fs.mkdirpSync(content_dir)
   site_builder.build_website({
@@ -427,14 +423,18 @@ ipc.on('save_template', function (event, arg) {
       event.sender.send('has_saved_template', '{"error":false}')
     }
   })
-})
+})*/
 
 ipc.on('list_map_layers', function (event, arg) {
   listTiles(function(err, result) {
     if (err)
       event.sender.send('has_list_map_layers', [])
     else {
-      event.sender.send('has_list_map_layers', result.tiles.map(function(value) { return {name: value, value: value} }));
+      event.sender.send('has_list_map_layers', result.tiles.filter(function(value) {
+        return value.valid;
+      }).map(function(value) { 
+        return {name: value.name, value: value.name}
+      }));
     }
   });
 });
@@ -546,6 +546,24 @@ try {
 } catch (e) { // It's ok
 }
 
+var TilesDir = settings.getTilesDirectory()
+try {
+  fs.ensureDirSync(TilesDir)
+} catch (e) { // It's ok
+}
+try {
+  fs.watch(TilesDir, function (evt, filename) {
+    refreshTiles();
+  });
+} catch (e) { // It's ok
+}
+
+function refreshTiles() {
+  Tiles.refresh(function() {
+    mainWindow.send('tiles_list_changed');
+  });
+}
+
 function isInt(value) {
   var check = parseInt(value)
   return (!isNaN(value) && (check | 0) === check)
@@ -563,6 +581,9 @@ app.on('window-all-closed', function () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on('ready', function () {
+  // Ensure tiles are ready for first use
+  Tiles.refresh(function() { });
+
   // Create the browser window.
   mainWindow = new BrowserWindow({minWidth: 400, minHeight: 400})
 

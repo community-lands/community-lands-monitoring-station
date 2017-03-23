@@ -19,7 +19,7 @@
     "compile:win": "node bin/compile.js windows",
     "test": "echo \"Error: no test specified\" && exit 1",
     "translate": "node bin/i18n.js",
-    "postinstall": "npmpd"
+    "utils": "npm update community-lands-software-utils"
   },
   "author": "Solertium",
   "authors": "Community Lands",
@@ -60,14 +60,7 @@
     "xform-to-json": "^1.1.0",
     "xtend": "^4.0.1"
   },
-  "darwinDependencies": {
-    "appdmg": "0.4.5"
-  },
   "devDependencies": {
-    "electron": "1.4.10",
-    "electron-packager": "^8.3.0",
-    "electron-winstaller": "^2.4.1",
-    "npm-platform-dependencies": "0.0.12",
-    "rimraf": "^2.5.4"
+    "electron": "1.4.10"
   }
 }
