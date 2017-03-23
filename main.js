@@ -41,7 +41,6 @@ var GeoJson = require('./helpers/rebuild-geojson')
 var async = require('async');
 var i18n = require('./helpers/locale.js');
 var Tiles = require('./helpers/tile-layers.js');
-//const site_builder = require('./application/site-builder.js')
 
 ipc.on('show_configuration', function (event, arg) {
   try {
