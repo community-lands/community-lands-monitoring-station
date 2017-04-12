@@ -9,7 +9,8 @@ if (process.argv.length >= 3)
   if (process.argv[2] == 'all') {
     utils.Builder.dist('mac');
     utils.Builder.dist('windows');
+    utils.Builder.dist('linux');
   } else
     utils.Builder.dist(process.argv[2] || 'mac');
 else
-  console.log("USAGE: Pass platform windows|mac");
+  console.log("USAGE: Pass platform windows|mac|linux");
