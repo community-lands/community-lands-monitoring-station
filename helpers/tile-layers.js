@@ -3,6 +3,8 @@ const fs = require('fs-extra'),
   glob = require('glob'),
   async = require('async')
 
+const ServerEvents = require('../helpers/server-events')
+
 const CACHE_FILE = '.metadata-cache.json'
 
 var CACHED_JSON = null;
@@ -20,6 +22,10 @@ var callbackQueue = {
  */
 function inspect(cb) {
   callbackQueue.queue.push(cb);
+  process.nextTick(doInspect);
+}
+
+function doInspect() {
   if (callbackQueue.loading)
     return;
 
@@ -28,36 +34,76 @@ function inspect(cb) {
     if (model)
       onInspectComplete(err, model)
     else {
-      fs.readdir(settings.getTilesDirectory(), function(err, folders) {
-        if (!err) {
-          var parallels = {}
-          for (var i = 0; i < folders.length; i++) {
-            var dir = folders[i]
-            if (dir.indexOf('.') == 0)
-              continue;
+      var parallels = {};
+      var dirs = settings.getTilesDirectories();
+      for (var idx in dirs) {
+        var directory = dirs[idx];
+        parallels[directory] = inspectDirectory(directory);
+      }
 
-            var stat = fs.statSync(path.join(settings.getTilesDirectory(), dir));
-            if (!stat.isDirectory())
-              parallels[dir] = processInvalid(dir, false, 'files_in_tiles_folder')
-            else if (isInt(dir))
-              parallels[dir] = processInvalid(dir, true, 'numeric_folder_in_tiles_folder')
-            else
-              parallels[dir] = processResult(dir)
-          }
-
-          async.parallel(parallels, function(err2, metadata) {
-            if (err2)
-              onInspectComplete(err2)
-            else {
-              save(metadata);
-              onInspectComplete(null, metadata)
+      async.parallel(parallels, function(err2, result) {
+        if (err2)
+          onInspectComplete(err2)
+        else {
+          var metadata = {}
+          for (var directory in result) {
+            for (var name in result[directory]) {
+              var key = generateKey(path.join(directory, name));
+              var value = result[directory][name];
+              value['key'] = key;
+              value['name'] = name;
+              value['directory'] = directory;
+              metadata[key] = value;
             }
-          })
-        } else
-          onInspectComplete(err)
+          }
+          save(metadata)
+          onInspectComplete(null, metadata)
+        }
       });
     }
   });
+}
+
+function inspectDirectory(directory) {
+  return function(cb) {
+    fs.readdir(directory, function(err, folders) {
+      if (!err) {
+        var parallels = {}
+        for (var i = 0; i < folders.length; i++) {
+          var dir = folders[i]
+          if (dir.indexOf('.') == 0)
+            continue;
+
+          var stat = fs.statSync(path.join(directory, dir));
+          if (!stat.isDirectory())
+            parallels[dir] = processInvalid(directory, dir, false, 'files_in_tiles_folder')
+          else if (isInt(dir))
+            parallels[dir] = processInvalid(directory, dir, true, 'numeric_folder_in_tiles_folder')
+          else
+            parallels[dir] = processResult(directory, dir)
+        }
+
+        async.parallel(parallels, function(err2, metadata) {
+          if (err2)
+            cb(err)
+          else {
+            cb(null, metadata)
+          }
+        })
+      } else if (err.code == 'ENOENT') { //Folder gone, no big deal
+        cb(null, {})
+      } else { //Unknown error
+        cb(err)
+      }
+    });
+  };
+}
+
+function generateKey(str) {
+  var hash = 0, i = 0, len = str.length;
+  while (i < len)
+    hash  = ((hash << 5) - hash + str.charCodeAt(i++)) << 0;
+  return (hash + 2147483647) + 1;
 }
 
 /**
@@ -77,7 +123,7 @@ function onInspectComplete(err, model) {
   callbackQueue.loading = false;
 }
 
-function getFormat(tileSet, cb) {
+function getFormat(directory, tileSet, cb) {
   var opts = { matchBase: true, nodir: true, nocase: true }
   var callback = function(err, matches) {
     if (matches.length == 1)
@@ -91,7 +137,7 @@ function getFormat(tileSet, cb) {
       cb({found: false })
   };
 
-  var folder = path.join(settings.getTilesDirectory(), tileSet);
+  var folder = path.join(directory, tileSet);
   var supported = ['jpg', 'jpeg', 'png']
 
   var status = null;
@@ -108,11 +154,11 @@ function getFormat(tileSet, cb) {
 
 }
 
-function processResult(tileSet) {
+function processResult(directory, tileSet) {
   return function(cb) {
-    getFormat(tileSet, function(result) {
+    getFormat(directory, tileSet, function(result) {
       var valid = result.found && result.directory_count == 3
-      var obj = { valid: valid, eligible: true }
+      var obj = { directory: directory, valid: valid, eligible: true }
       if (valid) {
         obj.format = result.format;
         obj.extension = result.extension;
@@ -128,9 +174,9 @@ function processResult(tileSet) {
   };
 }
 
-function processInvalid(tileSet, isDir, error) {
+function processInvalid(directory, tileSet, isDir, error) {
   return function(cb) {
-    cb(null, { valid: false, eligible: isDir, errors: [ error ] });
+    cb(null, { directory: directory, valid: false, eligible: isDir, errors: [ error ] });
   };
 }
 
@@ -138,6 +184,7 @@ function processInvalid(tileSet, isDir, error) {
 function save(model) {
   CACHED_JSON = JSON.parse(JSON.stringify(model));
   fs.writeFileSync(getFileLocation(), JSON.stringify(model), 'utf8');
+  ServerEvents.emit('tl_after_reinspect', CACHED_JSON);
 }
 
 function load(cb) {

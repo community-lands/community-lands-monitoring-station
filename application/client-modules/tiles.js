@@ -39,7 +39,35 @@
         }
         content += '</div>'
       }
+
       document.getElementById('tiles_listing').innerHTML = content
+      var tilesDirectoriesHTML = '<table class="table table-condensed small">';
+      for (i in result.directories) {
+        var dir = result.directories[i]
+        tilesDirectoriesHTML += '<tr>'
+        tilesDirectoriesHTML += '<td>'
+        tilesDirectoriesHTML += '<div class="btn btn-xs"><i class="' + (dir.available ? 'fa fa-check text-success' : 'fa fa-question text-warning') + '"></div>'
+        tilesDirectoriesHTML += '</td>'
+        tilesDirectoriesHTML += '<td>' + dir.directory + '</td>'
+        tilesDirectoriesHTML += '<td align="right">'
+        if (!dir.isDefault) {
+          tilesDirectoriesHTML += '<div class="btn btn-xs tilesDirectoryRemoveBtn" data-directory="' + dir.directory + '">'
+          tilesDirectoriesHTML += '<i class="fa fa-remove"></i>'
+          tilesDirectoriesHTML += '</div>'
+        }
+        tilesDirectoriesHTML += '</td>'
+        tilesDirectoriesHTML += '</tr>'
+      }
+      tilesDirectoriesHTML += '</table>';
+      document.getElementById('tiles_folder').innerHTML = tilesDirectoriesHTML;
+
+      var els = document.getElementsByClassName('tilesDirectoryRemoveBtn');
+      for (var i in els) {
+        els[i].onclick = function() {
+          if (confirm(t('confirm.removeTilesDirectory')))
+            ipc.send('tiles_remove_directory', { directory: this.getAttribute('data-directory') });
+        }
+      }
     }
   })
 
@@ -49,5 +77,11 @@
   });
 
   ipc.send('tiles_list')
+
+  $(document).ready(function() {
+    $("#tilesDirectoryChooserBtn").click(function() {
+      ipc.send('tiles_add_directory');
+    });
+  });
 
 })(window.app)
