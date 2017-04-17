@@ -296,6 +296,23 @@ function unzipTrackData(source, target) {
   }
 }
 
+ipc.on('tracks_list', function (event, arg) {
+  var pattern = path.join(settings.getTracksDirectory(), "**", "*.+(gpx|csv)");
+  glob(pattern, { matchBase: true, nodir: true, nocase: true }, function(err, matches) {
+    var result = {}
+    if (!err) {
+      for (var i = 0; i < matches.length; i++) {
+        var dir = matches[i];
+        var file = path.basename(dir);
+        var folder = path.basename(path.dirname(dir));
+        var list = result[folder] || []
+        list.push(file)
+        result[folder] = list
+      }
+    }
+    event.sender.send('has_tracks_list', result);
+  });
+});
 
 ipc.on('filter_list', function (event, arg) {
   var options = {
@@ -561,6 +578,18 @@ function refreshTiles() {
   Tiles.refresh(function() {
     mainWindow.send('tiles_list_changed');
   });
+}
+
+var TracksDir = settings.getTracksDirectory();
+try {
+  fs.ensureDirSync(TracksDir);
+} catch (e) { // It's ok
+}
+try {
+  fs.watch(TracksDir, { recursive: true }, function() {
+    mainWindow.send('tracks_list_changed');
+  });
+} catch (e) { //It's ok
 }
 
 function isInt(value) {
