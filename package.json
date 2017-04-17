@@ -36,6 +36,7 @@
     "archiver": "*",
     "async": "~0.2.5",
     "body-parser": "^1.13.3",
+    "chokidar": "^1.6.1",
     "community-lands-software-utils": "git+ssh://github.com/community-lands/community-lands-software-utils.git#master",
     "csv-parse": "^1.0.4",
     "dotenv": "^2.0.0",

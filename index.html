@@ -98,10 +98,21 @@
           </div>
           <h4><i class="fa fa-map fa-lg" aria-hidden="true"></i> &#160; <span data-translate="title.saved_tiles"></span></h4>
           <div class="well">
-            <div data-translate="prompt.tiles_folder">
-              Folder for custom Map Tiles:
+            <div>
+              <div class="pull-right">
+                <button id="tilesDirectoryChooserBtn" class="btn btn-xs btn-primary">
+                  <span style='margin-right:5px' data-translate="button.add_tiles_directory">Add Another Tiles Directory</span>
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+              <div>
+                <div data-translate="prompt.tiles_folder">
+                  Folder for custom Map Tiles:
+                </div>
+              </div>
+              <div style="clear:both;height:1px">&nbsp;</div>
+              <div><b id="tiles_folder"></b></div>
             </div>
-            <div><b id="tiles_folder"></b></div>
             <div data-translate="help.tiles.usage" class="help-block"></div>
             <div id="tiles_listing" style="margin-top:20px">
               <div class="text-center">

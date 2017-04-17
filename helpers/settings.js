@@ -51,6 +51,19 @@ function get(cb) {
   });
 }
 
+function patch(settings, cb) {
+  get(function(err, selected) {
+    if (err)
+      cb(err)
+    else {
+      Object.keys(settings).forEach(function(key) {
+        selected[key] = settings[key]
+        save(selected, cb);
+      });
+    }
+  });
+}
+
 function save(settings, cb) {
   if (LOCATION) {
     var properties = ''
@@ -146,7 +159,15 @@ function mapFilter() {
   };
 }
 
-function getTilesDirectory() {
+function getTilesDirectories() {
+  var dirs = [ getDefaultTilesDirectory() ];
+  var addl = process.env.tiles_directories;
+  if (addl)
+    dirs = dirs.concat(addl.split(";"))
+  return dirs;
+}
+
+function getDefaultTilesDirectory() {
   return path.join(getRootPath(), 'Maps', 'Tiles');
 }
 
@@ -203,6 +224,7 @@ module.exports = {
   load: load,
   get: get,
   save: save,
+  patch: patch,
   getDefaults: getDefaultSettings,
   getDataDirectory: getDataDirectory,
   getBackupDirectory: getBackupDirectory,
@@ -214,7 +236,8 @@ module.exports = {
   getCommunityLandsPort: getCommunityLandsPort,
   getFiltersDirectory: getFiltersDirectory,
   getMapFilterSettings: mapFilter,
-  getTilesDirectory: getTilesDirectory,
+  getTilesDirectories: getTilesDirectories,
+  getDefaultTilesDirectory: getDefaultTilesDirectory,
   getGlobalMapsDirectory: getGlobalMapsDirectory,
   getGlobalFormsDirectory: getGlobalFormsDirectory,
   getTracksDirectory: getTracksDirectory,

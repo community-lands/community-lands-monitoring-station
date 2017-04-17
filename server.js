@@ -64,9 +64,10 @@ app.get('/mapfilter/filters', MapFilter.listFilters)
 app.post('/mapfilter/filters/local', bodyParser.json(), MapFilter.saveFilter)
 app.delete('/mapfilter/filters/local/:id', MapFilter.deleteFilter);
 
+// Map Tiles
 app.get('/bing-metadata/:url', Bing.metadata)
-
 app.get('/bing-proxy/:url', Bing.prepare, Bing.proxy)
+app.get('/map-tiles/:id*', TileLayers.getTile)
 
 app.get('/tracks', Tracks.tracks)
 app.get('/sounds/:file', Tracks.sounds)

@@ -37,10 +37,14 @@ var glob = require('glob')
 var readline = require('readline')
 var path = require('path')
 var unzip = require('unzip2');
+var watcher = require('chokidar');
 var GeoJson = require('./helpers/rebuild-geojson')
 var async = require('async');
 var i18n = require('./helpers/locale.js');
 var Tiles = require('./helpers/tile-layers.js');
+
+var TilesWatcherTimeout = null;
+var TilesWatcher = null;
 
 ipc.on('show_configuration', function (event, arg) {
   try {
@@ -52,7 +56,7 @@ ipc.on('show_configuration', function (event, arg) {
       'shared_secret': settings.getSharedSecret(),
       'locale': settings.getLocale() || _defaults.locale,
       'community_lands': !(settings.getCommunityLandsServer() === undefined || settings.getCommunityLandsToken() === undefined),
-      'tiles': settings.getTilesDirectory(),
+      'tiles': settings.getDefaultTilesDirectory(),
       'tracks': settings.getTracksDirectory()
     }
     console.log(_results)
@@ -203,23 +207,40 @@ ipc.on('form_list', function (event, arg) {
 
 function listTiles(cb) {
   Tiles.get(function(err, md) {
-    if (err)
+    if (err) {
+      /*
+       * Probably in cases of major error, should reset any custom installed 
+       * tile directories and start fresh
+       */
       cb(err)
-    else {
+    } else {
       var warnFiles = warnFolders = false;
-      var result = { error: false, tiles: [], warnings: [] };
+      var result = { error: false, tiles: [], warnings: [], directories: [] };
       Object.keys(md).forEach(function(file) {
         var stats = md[file];
         if (!stats.eligible)
           warnFiles = true;
         else {
-          stats.name = file;
           result.tiles.push(stats);
         }
       });
       if (warnFiles)
         result.warnings.push("error.files_in_tiles_folder")
       result.tiles.sort(function(a, b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0 });
+      result.directories = settings.getTilesDirectories().map(function(value) {
+        var available = false;
+        try {
+          fs.accessSync(value, fs.F_OK | fs.R_OK); //only need to read
+          available = true;
+        } catch (e) { //Directory unavailable
+        }
+        return {
+          available: available,
+          directory: value,
+          isDefault: value == settings.getDefaultTilesDirectory()
+        }
+      });
+
       cb(null, result);
     }
   });
@@ -296,6 +317,58 @@ function unzipTrackData(source, target) {
   }
 }
 
+ipc.on('tiles_add_directory', function (event) {
+  var options = {
+    properties: ['openDirectory'],
+    defaultPath: settings.getDataDirectory()
+  }
+  dialog.showOpenDialog(mainWindow, options, function (folders) {
+    if (folders) {
+      var folder = folders[0];
+      var existing = settings.getTilesDirectories();
+      if (existing.indexOf(folder) >= 0)
+        event.sender.send('show_status', { message: 'errors.duplicate_tiles_folder', options: { type: 'error' } });
+      else {
+        var current = process.env.tiles_directories;
+        if (!current)
+          current = folder;
+        else
+          current += ';' + folder;
+        settings.patch({ tiles_directories: current }, function (err) {
+          if (!err) {
+            process.env.tiles_directories = current;
+            setupTilesWatcher();
+            refreshTiles();
+          }
+        });
+      }
+    }
+  });
+});
+
+ipc.on('tiles_remove_directory', function (event, args) {
+  var current = (process.env.tiles_directories || '').split(";")
+  var idx = current.indexOf(args.directory)
+  if (idx > -1)
+    delete current[idx]
+  var result = ''
+  for (var i = 0; i < current.length; i++) {
+    if (current[i]) {
+      if (!result)
+        result = current[i]
+      else
+        result += ';' + current[i]
+    }
+  }
+  settings.patch({ tiles_directories: result }, function (err) {
+    if (!err) {
+      process.env.tiles_directories = result;
+      setupTilesWatcher();
+      refreshTiles();
+    }
+  });
+});
+
 ipc.on('tracks_list', function (event, arg) {
   var pattern = path.join(settings.getTracksDirectory(), "**", "*.+(gpx|csv)");
   glob(pattern, { matchBase: true, nodir: true, nocase: true }, function(err, matches) {
@@ -368,7 +441,7 @@ ipc.on('settings_list', function (event, arg) {
 })
 
 ipc.on('settings_save', function (event, arg) {
-  settings.save(arg, function (err) {
+  settings.patch(arg, function (err) {
     if (err) {
       event.sender.send('has_settings_save', '{"error",true, "code":"could_not_save_settings", "message":"Could not save settings file"}')
     } else {
@@ -448,8 +521,8 @@ ipc.on('list_map_layers', function (event, arg) {
     else {
       event.sender.send('has_list_map_layers', result.tiles.filter(function(value) {
         return value.valid;
-      }).map(function(value) { 
-        return {name: value.name, value: value.name}
+      }).map(function(value) {
+        return {name: value.name, value: value.key + ''}
       }));
     }
   });
@@ -482,7 +555,6 @@ ipc.on('import_files', function(event, args) {
               });
             });
           } catch (e) {
-            console.log(e);
             event.sender.send('has_import_files', { error: true, code: 'import_unzip_failed', ex: e });
           }
         }
@@ -562,17 +634,38 @@ try {
 } catch (e) { // It's ok
 }
 
-var TilesDir = settings.getTilesDirectory()
-try {
-  fs.ensureDirSync(TilesDir)
-} catch (e) { // It's ok
-}
-try {
-  fs.watch(TilesDir, function (evt, filename) {
-    refreshTiles();
+function setupTilesWatcher() {
+  if (TilesWatcher)
+    TilesWatcher.close();
+
+  TilesWatcher = new watcher.FSWatcher({
+    //ignored: /(^|[\/\\])\../,
+    ignoreInitial: true,
+    persistent: true,
+    depth: 1
   });
-} catch (e) { // It's ok
+
+  var TilesDirs = settings.getTilesDirectories();
+  for (var i in TilesDirs) {
+    var TilesDir = TilesDirs[i];
+    if (TilesDir == settings.getDefaultTilesDirectory()) {
+      try {
+        fs.ensureDirSync(TilesDir)
+      } catch (e) { // It's ok
+      }
+    }
+    try {
+      TilesWatcher.add(TilesDir)
+    } catch (e) { // It's ok
+    }
+  }
+  TilesWatcher.on('raw', function(evt, path) {
+    if (TilesWatcherTimeout)
+      clearTimeout(TilesWatcherTimeout)
+    TilesWatcherTimeout = setTimeout(refreshTiles, 1000);
+  });
 }
+setupTilesWatcher();
 
 function refreshTiles() {
   Tiles.refresh(function() {
