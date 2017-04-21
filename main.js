@@ -23,9 +23,13 @@ const context = {
 require('./components/filters').bind(context);
 require('./components/forms').bind(context);
 require('./components/import_export').bind(context);
-require('./components/settings').bind(context);
+require('./components/settings').bind(context).setDefaults({
+  'tiles': settings.getDefaultTilesDirectory(),
+  'tracks': settings.getTracksDirectory()
+});
 require('./components/tracks').bind(context);
 require('./components/upload').bind(context);
+
 const Tiles = require('./components/tiles'); //We need this later
 Tiles.bind(context);
 
