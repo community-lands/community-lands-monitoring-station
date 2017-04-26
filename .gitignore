@@ -3,6 +3,15 @@ application/data/
 application/lib/
 application/shared-modules/
 
+helpers/locale.js
+helpers/server-events.js
+helpers/settings.js
+helpers/workspaces.js
+
+components/filters.js
+components/settings.js
+components/upload.js
+
 # Mac OS X
 .DS_Store
 
