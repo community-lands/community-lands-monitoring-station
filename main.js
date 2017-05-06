@@ -24,8 +24,13 @@ require('./components/filters').bind(context);
 require('./components/forms').bind(context);
 require('./components/import_export').bind(context);
 require('./components/settings').bind(context).setDefaults({
-  'tiles': settings.getDefaultTilesDirectory(),
-  'tracks': settings.getTracksDirectory()
+  shared_secret: 'demo',
+  mapLayer: null,
+  mapZoom: null,
+  mapCenterLat: null,
+  mapCenterLong: null,
+  tiles: settings.getDefaultTilesDirectory(),
+  tracks: settings.getTracksDirectory()
 });
 require('./components/tracks').bind(context);
 require('./components/upload').bind(context);
