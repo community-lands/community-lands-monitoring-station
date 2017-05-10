@@ -31,7 +31,7 @@ require('./components/settings').bind(context).setDefaults({
   mapCenterLong: null,
   tiles: settings.getDefaultTilesDirectory(),
   tracks: settings.getTracksDirectory()
-});
+}).setHidden(['tiles_directories']);
 require('./components/tracks').bind(context);
 require('./components/upload').bind(context);
 
