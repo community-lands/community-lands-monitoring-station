@@ -7,6 +7,7 @@ helpers/locale.js
 helpers/server-events.js
 helpers/settings.js
 helpers/workspaces.js
+helpers/chunked-uploader.js
 
 components/filters.js
 components/settings.js

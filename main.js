@@ -30,10 +30,11 @@ require('./components/settings').bind(context).setDefaults({
   mapCenterLat: null,
   mapCenterLong: null,
   tiles: settings.getDefaultTilesDirectory(),
-  tracks: settings.getTracksDirectory()
+  tracks: settings.getTracksDirectory(),
+  community_lands_upload: 'simple'
 }).setHidden(['tiles_directories']);
 require('./components/tracks').bind(context);
-require('./components/upload').bind(context);
+require('./components/upload').bind(context).saveWebsite(false);
 
 const Tiles = require('./components/tiles'); //We need this later
 Tiles.bind(context);
