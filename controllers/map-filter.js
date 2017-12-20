@@ -99,6 +99,7 @@ function config (req, res, next) {
           if (filterJson.longitude)
             data['mapCenterLong'] = filterJson.longitude
           data['dataUrl'] = '/mapfilter/json/mapfilter-locations.geojson?filter=' + filter
+          data['name'] = filterJson.name
           res.json(data)
         })
       }

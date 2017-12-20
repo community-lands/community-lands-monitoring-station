@@ -59,10 +59,14 @@ while [[ "$1" != "" ]]; do
   shift
 done
 
+# NVM Support
+source ~/.nvm/nvm.sh
+
 echo "# Cleaning out tiles"
 rm Monitoring/Maps/Bing/*.jpeg
 
 echo "# Installing dependencies if needed"
+nvm use
 npm install
 
 echo "# Building Community Lands Monitoring Station from $dir"
@@ -70,13 +74,7 @@ echo "# Building Community Lands Monitoring Station from $dir"
 if [ $step -ge $start -a $step -le $end ]
 then
   echo "$step) Updating MapFilter..."
-  cd ../mapfilter
-  git checkout fileodk
-  if [[ "$?" != 0 ]]
-  then
-    echo "Failed to checkout mapfilter branch 'fileodk'; perhaps there are conflicts. Fix this first, then re-run build script"
-    exit
-  fi
+  cd ../community-lands-monitoring-station-maps
   git pull
 
   if [[ "$?" != 0 ]]
@@ -118,11 +116,13 @@ fi
 if [ $step -ge $start -a $step -le $end ]
 then
   echo "$step) Building MapFilter..."
-  cd ../mapfilter
-  git pull
+  cd ../community-lands-monitoring-station-maps
+  nvm use
   sh install-dependencies.sh
-  npm run build:web && cp dist/* $dir/mapfilter/
+  rm -r $dir/mapfilter/*
+  yarn build:web && cp -r build/* $dir/mapfilter/
   cd $dir
+  nvm use
 fi
 
 ((step++))

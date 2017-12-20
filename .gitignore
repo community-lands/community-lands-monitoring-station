@@ -2,6 +2,7 @@
 application/data/
 application/lib/
 application/shared-modules/
+application/site-builder.js
 
 helpers/locale.js
 helpers/server-events.js
@@ -27,3 +28,4 @@ application/data/version.json
 application/site-builder.js
 templates/
 website/
+mapfilter/
