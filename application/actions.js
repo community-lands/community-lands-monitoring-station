@@ -33,11 +33,11 @@ ipc.on('has_configuration', function (evt, configuration) {
   document.getElementById('shared_secret').innerHTML =
     configuration.shared_secret
   document.getElementById('mapUrl').innerHTML = '<a id="mapUrlLink" href="' +
-    configuration.baseUrl + '/mapfilter?locale=' +
-    configuration.locale + '">' + configuration.baseUrl + '/mapfilter</a>'
+    configuration.localUrl + '/mapfilter?locale=' +
+    configuration.locale + '">' + configuration.localUrl + '/mapfilter</a>'
   document.getElementById('webUrl').innerHTML = '<a id="webUrlLink" href="' +
-    configuration.baseUrl + '/website' +
-    '">' + configuration.baseUrl + '/website</a>'
+    configuration.localUrl + '/website' +
+    '">' + configuration.localUrl + '/website</a>'
   document.getElementById('form_folder').innerHTML = configuration.directory +
     '/Monitoring/' + configuration.station + '/Forms'
   document.getElementById('track_folder').innerHTML = configuration.tracks
@@ -67,4 +67,3 @@ ipc.on('has_configuration', function (evt, configuration) {
 })
 
 ipc.send('show_configuration')
-

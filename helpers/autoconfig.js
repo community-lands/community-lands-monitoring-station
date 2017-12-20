@@ -42,7 +42,6 @@ Object.keys(ifaces).forEach(function (ifname) {
   })
 })
 
-process.env.baseUrl = process.env.baseUrl || ('http://localhost:' + process.env.port)
+process.env.baseUrl = process.env.baseUrl || ('http://' + settings.localhost + ':' + process.env.port)
 
 console.log('')
-

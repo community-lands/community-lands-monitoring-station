@@ -17,7 +17,7 @@
         content += '<table class="table table-condensed">'
         for (var index in filters) {
           content += '<tr>'
-          content += '<td><a class="map-link" href="' + config.baseUrl +
+          content += '<td><a class="map-link" href="' + config.localUrl +
             '/mapfilter?locale=' + config.locale + '&filter=' +
             filters[index].id + '">' +
             filters[index].name + '</a></td>'

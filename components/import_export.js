@@ -54,7 +54,7 @@ function bind(app) {
 
   ipc.on('backup_submissions', function (event, arg) {
     var options = {
-      hostname: 'localhost',
+      hostname: settings.localhost,
       port: settings.getPort() || 3000,
       path: '/save/all',
       method: 'GET'
@@ -99,7 +99,7 @@ function bind(app) {
 
   ipc.on('check_last_backup', function (event, arg) {
     var options = {
-      hostname: 'localhost',
+      hostname: settings.localhost,
       port: settings.getPort() || 3000,
       path: '/save/status',
       method: 'GET'
