@@ -24,5 +24,6 @@ builds/
 dist/
 Monitoring/Maps/Bing/
 application/data/version.json
+application/site-builder.js
 templates/
 website/
