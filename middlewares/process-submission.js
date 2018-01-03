@@ -1,4 +1,5 @@
-var settings = require('../helpers/settings')
+const settings = require('../helpers/settings'),
+  logger = require('../helpers/logger')
 
 var xform2json = require('xform-to-json')
 var extend = require('xtend')
@@ -21,7 +22,7 @@ function ProcessSubmission (options) {
       return next(new Error('No form submission found'))
     }
 
-    console.log('Received xml submission')
+    logger.info('Received xml submission')
 
     options = extend(defaults, options)
 
@@ -45,7 +46,7 @@ function ProcessSubmission (options) {
         instanceId: meta.instanceId.replace(/^uuid:/, '')
       }
 
-      console.log('Processed xml submission as json')
+      logger.info('Processed xml submission as json: %s', req.submission.instanceId)
       next()
     })
   }

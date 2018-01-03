@@ -59,6 +59,8 @@
     "tmp": "0.0.33",
     "togeojson": "^0.14.2",
     "unzip2": "^0.2.5",
+    "winston": "^2.4.0",
+    "winston-daily-rotate-file": "^1.7.2",
     "xform-to-json": "^1.1.0",
     "xtend": "^4.0.1"
   },

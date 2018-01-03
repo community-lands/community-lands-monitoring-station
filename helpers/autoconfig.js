@@ -1,27 +1,29 @@
 var settings = require('./settings');
 settings.load()
 
+const logger = require('./logger');
+
 // Detect IP, set up defaults for configuration variables if not set
 var os = require('os')
 var ifaces = os.networkInterfaces()
 
-console.log('CONFIGURATION SETTINGS')
-console.log('----------------------')
+logger.info('CONFIGURATION SETTINGS')
+logger.info('----------------------')
 
 process.env.port = settings.getPort() || '3000'
-console.log('Port number to use for the local web server')
-console.log('  port: ' + process.env.port)
+logger.info('Port number to use for the local web server')
+logger.info('  port: ' + process.env.port)
 process.env.data_directory = settings.getDataDirectory();
-console.log('Where your Monitoring folder lives')
-console.log('  directory: ' + process.env.data_directory)
+logger.info('Where your Monitoring folder lives')
+logger.info('  directory: ' + process.env.data_directory)
 process.env.station = settings.getStation() || 'DEMO'
-console.log('Name of this monitoring station')
-console.log('(and its station-specific folder under Monitoring)')
-console.log('  station: ' + process.env.station)
+logger.info('Name of this monitoring station')
+logger.info('(and its station-specific folder under Monitoring)')
+logger.info('  station: ' + process.env.station)
 process.env.shared_secret = settings.getSharedSecret() || 'demo'
-console.log('The secret password for ODK users who connect to this station')
-console.log('(User ID should be a pseudonymous agent or device number you make up)')
-console.log('  shared_secret: ' + process.env.shared_secret)
+logger.info('The secret password for ODK users who connect to this station')
+logger.info('(User ID should be a pseudonymous agent or device number you make up)')
+logger.info('  shared_secret: ' + process.env.shared_secret)
 
 process.env.community_lands_token = process.env.community_lands_token || 'test_token'
 process.env.community_lands_server = process.env.community_lands_server || 'www.communitylands.org'
@@ -35,13 +37,13 @@ Object.keys(ifaces).forEach(function (ifname) {
     }
 
     process.env.baseUrl = process.env.baseUrl || ('http://' + iface.address + ':' + process.env.port)
-    console.log('Base URL to set in ODK Connect and similar tools')
-    console.log('  baseUrl: ' + process.env.baseUrl)
-    console.log('Base URL for viewing maps -- put this in your browser')
-    console.log('  ' + process.env.baseUrl + '/mapfilter')
+    logger.info('Base URL to set in ODK Connect and similar tools')
+    logger.info('  baseUrl: ' + process.env.baseUrl)
+    logger.info('Base URL for viewing maps -- put this in your browser')
+    logger.info('  ' + process.env.baseUrl + '/mapfilter')
   })
 })
 
 process.env.baseUrl = process.env.baseUrl || ('http://' + settings.localhost + ':' + process.env.port)
 
-console.log('')
+logger.info('')

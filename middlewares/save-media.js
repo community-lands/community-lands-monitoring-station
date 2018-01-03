@@ -2,7 +2,9 @@ var extend = require('xtend')
 var fs = require('fs')
 var path = require('path')
 var persistFs = require('../helpers/persist-fs')
-//var updateFileRef = require('../helpers/update-file-ref')
+var async = require('async')
+
+const logger = require('../helpers/logger')
 
 var defaults = {
   store: 'fs'
@@ -25,46 +27,62 @@ function SaveMedia (options) {
   return function (req, res, next) {
     if (!req.files.length) return next()
     if (!req.submission) return next(new Error('no form submission found'))
-    console.log('Received %s media files with submission', req.files.length)
+    logger.info('Received %s media files with submission', req.files.length)
+    logger.info(req.submission.json)
 
-    var taskCount = 0
     var s3bucket = req.params.s3bucket
-    var index = 1
 
-    req.files.forEach(function (file) {
-      var storeOptions = {
-        filesystem: {
-          path: req.submission.location
-        },
-        filename: req.submission.instanceId + '_' + index + path.extname(file.originalFilename), //file.originalFilename,
-        s3bucket: s3bucket,
-        file: file
-      }
-
-      index++
-
-      store(fs.createReadStream(file.path), storeOptions, function onSave (err, url) {
-        if (err) onError(err)
-        // store a reference to where the file is now stored on the file object
-        console.log(req.submission.json)
-        file.url = (req.submission.location + storeOptions.filename).replace(/.*Monitoring/,'')
-        if(req.submission.json["properties"]["photos"]){
-          req.submission.json["properties"]["photos"]["picture"] = file.url
-        } else {
-            if(req.submission.json["properties"]["picture"]){
-              req.submission.json["properties"]["picture"] = file.url
-            }
+    var tasks = req.files.map(function (indexOrFile, maybeFile) {
+      return function (cb) {
+        var index = 1
+        var file = indexOrFile
+        if (maybeFile) {
+          index = indexOrFile
+          file = maybeFile
         }
-        //updateFileRef(req.submission.json, file)
-        taskCount++
-        // Quick and dirty check whether we have processed all the files
-        if (taskCount < req.files.length) return
+        var storeOptions = {
+          filesystem: {
+            path: req.submission.location
+          },
+          filename: req.submission.instanceId + '_' + index + path.extname(file.originalFilename), //file.originalFilename,
+          s3bucket: s3bucket,
+          file: file
+        }
+
+        logger.info('Attempt to store media %s...', file.originalFilename)
+
+        store(fs.createReadStream(file.path), storeOptions, function onSave (err, url) {
+          if (err) {
+            cb(err)
+          } else {
+            // store a reference to where the file is now stored on the file object
+
+            file.url = (req.submission.location + storeOptions.filename).replace(/.*Monitoring/,'')
+            if (req.submission.json["properties"]["photos"]) {
+              req.submission.json["properties"]["photos"]["picture"] = file.url
+            } else {
+              if (req.submission.json["properties"]["picture"]) {
+                req.submission.json["properties"]["picture"] = file.url
+              }
+            }
+            index++
+            cb(null, index)
+          }
+        })
+      }
+    })
+
+    async.waterfall(tasks, function (err, result) {
+      if (err)
+        onError(err)
+      else {
         cleanupFiles()
         next()
-      })
+      }
     })
 
     function onError (err) {
+      logger.error('Failed to save media.', { error: err })
       cleanupFiles()
       next(err)
     }
@@ -77,7 +95,7 @@ function SaveMedia (options) {
     function cleanupFiles () {
       req.files.forEach(function (file) {
         fs.unlink(file.path, function (err) {
-          if (err) console.error('Error deleting file %s', file.path)
+          if (err) logger.error('Error deleting file %s', file.path)
         })
       })
     }

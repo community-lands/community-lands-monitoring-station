@@ -1,3 +1,4 @@
+const logger = require('../helpers/logger')
 var storage = require('../helpers/community-storage.js')
 
 var MAP = 'Monitoring.geojson';
@@ -9,7 +10,7 @@ var MAP = 'Monitoring.geojson';
 function AppendGeoJSON (options) {
   return function (req, res, next) {
     if (req.submission && req.submission.geojson) {
-      console.log("Received a GeoJSON submission");
+      logger.info("Received a GeoJSON submission");
 
       storage.getMap(MAP, function(err, data) {
         if (err) return next(err);
