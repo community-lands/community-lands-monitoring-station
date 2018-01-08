@@ -17,7 +17,7 @@ var callbackQueue = {
 };
 
 /**
- * Return a status of this tileset, whether it is in good condition 
+ * Return a status of this tileset, whether it is in good condition
  * or has problems. If problems, return error codes in a list
  */
 function inspect(cb) {
@@ -196,7 +196,7 @@ function load(cb) {
         cb(err)
       else {
         try {
-          cb(err, CACHED_JSON = JSON.stringify(model))
+          cb(err, CACHED_JSON = JSON.parse(text))
         } catch (e) {
           cb(e);
         }

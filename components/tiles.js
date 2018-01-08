@@ -100,7 +100,7 @@ function setupTilesWatcher() {
     TilesWatcher.close();
 
   TilesWatcher = new watcher.FSWatcher({
-    //ignored: /(^|[\/\\])\../,
+    ignored: /(^|[\/\\])\../,
     ignoreInitial: true,
     persistent: true,
     depth: 1
@@ -123,7 +123,7 @@ function setupTilesWatcher() {
   TilesWatcher.on('raw', function(evt, path) {
     if (TilesWatcherTimeout)
       clearTimeout(TilesWatcherTimeout)
-    TilesWatcherTimeout = setTimeout(refreshTiles, 1000);
+    TilesWatcherTimeout = setTimeout(refreshTiles, 2500);
   });
 }
 
@@ -140,7 +140,7 @@ function listTiles(cb) {
   Tiles.get(function(err, md) {
     if (err) {
       /*
-       * Probably in cases of major error, should reset any custom installed 
+       * Probably in cases of major error, should reset any custom installed
        * tile directories and start fresh
        */
       cb(err)
