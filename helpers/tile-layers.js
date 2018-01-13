@@ -1,6 +1,8 @@
 const fs = require('fs-extra'),
   path = require('path'),
   glob = require('glob'),
+  klaw = require('klaw'),
+  t2   = require('through2'),
   async = require('async')
 
 const ServerEvents = require('../helpers/server-events')
@@ -31,9 +33,9 @@ function doInspect() {
 
   callbackQueue.loading = true;
   load(function(err, model) {
-    if (model)
+    if (model) {
       onInspectComplete(err, model)
-    else {
+    } else {
       var parallels = {};
       var dirs = settings.getTilesDirectories();
       for (var idx in dirs) {
@@ -124,9 +126,12 @@ function onInspectComplete(err, model) {
 }
 
 function getFormat(directory, tileSet, cb) {
-  var opts = { matchBase: true, nodir: true, nocase: true }
+  checkFormatWithKlaw(directory, tileSet, cb)
+}
+
+function checkFormatWithGlob(directory, tileSet, cb) {
   var callback = function(err, matches) {
-    if (matches.length == 1)
+    if (matches && matches.length == 1)
       cb({
         found: true,
         format: matches[0].format.substring(1),
@@ -142,16 +147,79 @@ function getFormat(directory, tileSet, cb) {
 
   var status = null;
   var fmt = supported.join('|')
-  var g = new glob.Glob(path.join(folder, '**', '*.+(' + supported.join('|') + ')'), opts, callback);
+  var pattern = path.join('**', '*.+(' + supported.join('|') + ')')
+
+  var opts = { matchBase: true, nodir: true, nocase: true, root: folder, silent: true }
+
+  var g = new glob.Glob('/' + pattern, opts, callback);
   g.on('match', function(match) {
     var value = match.substring(folder.length + 1)
-    found = { format: path.extname(value), dirs: value.split(path.sep).length }
+    found = { format: path.extname(value), dirs: value.split('/').length }
     g.abort(); //Only need one
   });
   g.on('abort', function() {
     callback(null, [ found ]);
   });
+}
 
+function checkFormatWithKlaw(directory, tileSet, cb) {
+  var callback = function(err, matches) {
+    if (matches && matches.length == 1)
+      cb({
+        found: true,
+        format: matches[0].format.substring(1),
+        extension: matches[0].format,
+        directory_count: matches[0].dirs
+      })
+    else
+      cb({found: false })
+  };
+
+  var folder = path.join(directory, tileSet);
+  var supported = ['jpg', 'jpeg', 'png']
+
+  var status = null;
+  var found = null;
+
+  var fmt = supported.join('|')
+  var pattern = new RegExp('^.*\.(' + supported.join('|') + ')$', 'i')
+
+  var dirFilter = t2.obj(function (item, enc, next) {
+    var basename = path.basename(item.path)
+    if (!item.stats.isDirectory() && !(basename[0] === '.')) this.push(item)
+    next()
+  })
+
+  var regexFilter = t2.obj(function (item, enc, next) {
+    var basename = path.basename(item.path)
+    if (item.path.match(pattern)) this.push(item)
+    next()
+  })
+
+  var finder = t2.obj(function (item, enc, next) {
+    if (!found) {
+      var value = item.path.substring(folder.length + 1)
+      found =  {
+        format: path.extname(item.path),
+        dirs: value.split(path.sep).length
+      }
+      /**
+       * FIXME: This does not stop immediately! Perhaps a
+       * node upgrade to >8 will allow for this via close.
+       * For now, this is the best we can do...
+       */
+      this.destroy()
+    }
+    next()
+  })
+
+  klaw(folder, { queueMethod: 'pop' })
+    .pipe(dirFilter)
+    .pipe(regexFilter)
+    .pipe(finder)
+    .on('close', function() {
+      callback(null, [ found ])
+    })
 }
 
 function processResult(directory, tileSet) {
