@@ -88,8 +88,8 @@ function uploadSubmissionsSince (req, res, next, since) {
     archive.on('end', function() {
       var size = archive.pointer()
       var mode = settings.getCommunityLandsUploadMode() || 'simple'
-      if (mode == 'chunked' && size > Chunker.CHUNK_SIZE) {
-        uploadChunked(path, res)
+      if (mode.indexOf('chunked') === 0 && size > Chunker.getChunkSize(mode)) {
+        uploadChunked(path, mode, res)
       } else {
         uploadUnchunked(path, res)
       }
@@ -101,12 +101,13 @@ function uploadSubmissionsSince (req, res, next, since) {
   })
 }
 
-function uploadChunked(file, res) {
+function uploadChunked(file, mode, res) {
   var progressListener = function (data) {
     ServerEvents.emit('cl_upload_progress', false, data);
   }
   var options = {
     file: file,
+    mode: mode,
     progress: progressListener,
     getRequestOptions: function(method, path) {
       return getCLRequestOpts(method, path)
